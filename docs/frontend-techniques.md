@@ -36,14 +36,15 @@ No custom/third-party Elementor widgets beyond stock Elementor + Elementor Pro +
 ## Forms / lead capture — preserve exactly
 
 - Three CTA buttons point to `#corporate-form` (in-page anchor scroll)
-- One CTA button opens an **Elementor popup** (`popup id 43205`) — content not yet inspected, needs a look during implementation
+- One CTA button opens an **Elementor popup** (`popup id 43205`, titled "Newsletter Sign Up Pop Up") — confirmed to render the shortcode `[activecampaign form=1 css=1]`, i.e. ActiveCampaign form #1 embedded directly via shortcode
 - One CTA button links directly to an **external ActiveCampaign-hosted form**: `https://treattrunk.activehosted.com/f/1`
 - The `activecampaign-for-woocommerce` and `activecampaign-subscription-forms` plugins are active site-wide (see inventory) — the on-page form is very likely an ActiveCampaign embed/shortcode, not a native WordPress form plugin (no WPForms/CF7 markup found specific to this page's own content)
 - **This is a live marketing lead-gen integration** — must be preserved and re-tested working (not just visually present) in any redesign, on staging first
 
 ## Shortcodes
 
-At least one `elementor-widget-shortcode` block is used — likely rendering the ActiveCampaign form or a WooCommerce-related shortcode. Exact shortcode content not yet pulled (requires reading the Elementor JSON `_elementor_data`, deferred to implementation phase to avoid over-fetching page internals during the audit pass).
+- Confirmed: `[activecampaign form=1 css=1]` — ActiveCampaign's own shortcode, renders form #1 (used both in the newsletter popup and, almost certainly, the on-page `#corporate-form` section, since both trigger the same lead-capture flow). **This exact shortcode must be preserved and re-tested working** wherever it's used in the rebuild — it's the site's live marketing integration, not something to hand-roll.
+- The `#corporate-form` section's widget data wasn't found directly inside the page's own `_elementor_data` (searched, no match) — it's likely rendered via an Elementor saved/global template reference rather than inline widget data. Needs direct inspection in the Elementor editor during implementation to confirm the exact mechanism before touching it.
 
 ## Custom CSS / JS
 
