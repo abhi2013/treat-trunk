@@ -1,10 +1,8 @@
 # Staging Plan — treattrunk.co.uk
 
-## Current status: staging existence unconfirmed
+## Current status: confirmed — staging does not exist yet (2026-07-02)
 
-- No `staging`-style Lightsail alias exists in this machine's `~/.ssh/config` (only `treat-trunk`, pointing at production, is present).
-- AWS CLI is installed locally (`aws-cli/2.0.8`) but **not authenticated** (`aws sts get-caller-identity` fails with `InvalidClientTokenId`), so the Lightsail console/API can't be checked from here to confirm either way.
-- **Action needed from the user**: confirm whether a staging Lightsail instance already exists. If yes, provide its IP/hostname and SSH details (or add an SSH config alias like `treat-trunk-staging` the same way `treat-trunk` is set up, and this plan can pick it up the same way). If no, proceed with the "create staging" steps below.
+User confirmed no staging instance exists. Proceeding with the creation steps below. This is **console/instructions-only**: AWS CLI is installed locally but not authenticated, and per the standing safety rules it won't be used to create resources without separate explicit approval anyway — these are manual steps for the user to run in the Lightsail console.
 
 Nothing in this document has been executed. Creating a new Lightsail instance, attaching a static IP, or changing DNS are all irreversible-ish, billed, or externally-visible actions — every step below requires explicit approval before being run, and AWS CLI will not be used to create resources without that approval (per the standing safety rules).
 
