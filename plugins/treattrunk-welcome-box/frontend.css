@@ -1,0 +1,177 @@
+.woovr-variations {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.woovr-variations .woovr-variation {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.woovr-variations .woovr-variation:hover {
+    /*background-color: #f9f9f9;*/
+}
+.woovr-variations .option .option_header {
+	cursor: pointer;
+}
+.woovr-variations .woovr-variation > div {
+    padding-right: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.woovr-variations .woovr-variation > div:last-child {
+    padding-right: 0;
+}
+
+.woovr-variation-image {
+    width: 50px;
+    flex: 0 0 50px;
+}
+
+.woovr-variation-image img {
+    width: 40px;
+    height: 40px;
+    max-width: 40px;
+    display: block;
+}
+
+.woovr-variation-selector input {
+    outline: none;
+}
+
+.woovr-variation-name, .woovr-variation-selector {
+    flex-grow: 1;
+}
+
+.woovr-variation-name p {
+    margin-bottom: 0;
+    font-size: 12px;
+}
+
+.woovr-variation-price {
+    text-align: right;
+}
+
+.woovr-variation-radio .woovr-variation-selector {
+    width: 30px;
+    flex: 0 0 30px;
+}
+
+.woovr-variation-selector .dd-select {
+    background-color: #ffffff !important;
+}
+
+.woovr-variation-selector .dd-options {
+    max-height: 360px;
+}
+
+.woovr-variation-selector .dd-option-image, .woovr-variation-selector .dd-selected-image {
+    max-width: 42px;
+    border-radius: 3px;
+}
+
+.woovr-variation-selector .dd-selected-text, .woovr-variation-selector .dd-option-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: #6d6d6d;
+}
+
+
+
+/*******************/
+
+.woovr-variations .option {
+	float: left;
+	width: 100%;
+}
+.woovr-variations .option:first-child > div {
+	width: calc(50% - 10px);
+	float: left;
+}
+.single_variation_wrap .woocommerce-variation-description, .single_variation_wrap .woocommerce-variation-price, table.variations tr:first-child,
+.entry-summary .first-payment-date {
+	display: none;
+}
+.woovr-variations .option div.option_description, .woovr-variations .option div.option_header,
+.woovr-variation .woovr-variation-name, .woovr-variation-description, .woovr-variation-price {
+	width: 100%;
+}
+.woovr-variation .woovr-variation-selector {
+	/*display: none;*/
+}
+.woovr-variations .woovr-variation {
+	display: block;
+	padding: 5px;
+	border: 5px solid rgba(0,0,0,0);
+	margin: 5px;
+	background: none;
+}
+.woovr-variations .woovr-variation:hover {
+	background: rgba(23,162,153,0.1);
+}
+.woovr-variations .woovr-variation.active {
+	border-color: #17a299;
+	background: rgba(23,162,153,0.1);
+}
+.woovr-variation .woovr-variation-price {
+	text-align: left;
+}
+.woovr-variations .option {
+	margin: 10px;
+	padding: 10px;
+	border: 1px solid #aaa;
+	background: #f5f5f5;
+	position: relative;
+}
+.woovr-variations .option:nth-child(1) .woovr-variation {
+	display: none;
+}
+.woovr-variations .option:nth-child(2) .woovr-variation {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	opacity: 0;
+}
+.woovr-variations .option:nth-child(2) .woovr-variation > * {
+	display: none;
+}
+
+.woovr-variation-selector .fas {
+	color: #ccc;
+}
+.woovr-variation-radio .woovr-variation-selector {
+	float: left;
+}
+.woovr-variation-selector input:checked ~ .fas {
+	color: #17a299
+}
+.entry-summary .next_box {
+	display: none;
+}
+.hidden_paragraph {
+	display: none;
+}
+.hidden_paragraph.show {
+	display: block;
+}
+.hidden_link.show ~ .fa-caret-up::before {
+	content: "\f0d8";
+}
+.option_header .fa-circle {
+	width: 18px;
+	height: 18px;
+	display: inline-block;
+	text-align: center;
+	border-radius: 50%;
+	border: 1px solid #c1c1c1;
+	line-height: 16px;
+	font-size: 8px;
+	color: transparent;
+}
+.option.active .option_header .fa-circle {
+	color: #aaa;
+}
