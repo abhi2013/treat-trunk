@@ -40,5 +40,6 @@ page**, while keeping the Elementor data intact and reversible:
 
 ## Risk notes
 
-- Because the active theme (`hello-elementor`) has no child theme, the new page template file needs a home that doesn't add to the existing risk. Preference: a small custom plugin (under `corporate-ui/` in this repo) registering the template via `theme_page_templates`/`template_include`, rather than dropping a new file directly into the hand-edited `hello-elementor` theme. Final call made during Phase 10 implementation once the `functions1.php`/`functions2.php` question (see `site-inventory.md`) is resolved.
+- Because the active theme (`hello-elementor`) has no child theme, the new page template file needs a home that doesn't add to the existing risk. Preference: a small custom plugin (under `corporate-ui/` in this repo) registering the template via `theme_page_templates`/`template_include`, rather than dropping a new file directly into the hand-edited `hello-elementor` theme.
+- The `functions1.php`/`functions2.php` question (see `site-inventory.md`) is resolved — confirmed dead code, not a factor in this decision.
 - All of this happens on **staging first**; nothing here is applied to production without a separate, explicit approval after staging verification (`docs/testing-checklist.md`).

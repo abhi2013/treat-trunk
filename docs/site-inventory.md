@@ -32,7 +32,7 @@ were edited and nothing was installed to produce this document.
 - **No child theme exists** (`hello-elementor-child` not present)
 - The active theme has been **directly hand-edited**, not extended via a child theme:
   - `functions.php` (972 lines / ~31KB) — only include found inside it is `includes/admin-functions.php`; does **not** appear to `require` the two files below
-  - `functions1.php` (~15KB) and `functions2.php` (~17KB) exist alongside `functions.php` but were not found to be referenced from it — **status unclear, needs investigation before any theme changes** (may be dead files, or loaded from a plugin/mu-plugin)
+  - `functions1.php` (478 lines) and `functions2.php` (532 lines) exist alongside `functions.php` (972 lines) — **confirmed dead code**: not `require`d/`include`d anywhere in the theme's PHP files (grepped after copying locally). Diffing shows they're similar to each other (91 lines apart) but substantially different from the current `functions.php` (~500+ lines apart each) — almost certainly older snapshots left in place rather than deleted. Safe to ignore; not a blocker for editing `functions.php`.
   - `custom.css` (17KB), `custom.js` (~1KB) — theme-level custom styling/scripting
   - `automatewoo/` — custom AutomateWoo integration folder
   - `tpl-testing-ground.php` — looks like a scratch/testing template file
@@ -95,7 +95,7 @@ were edited and nothing was installed to produce this document.
 ## Risky dependencies / things to be careful about
 
 1. **No child theme** — all custom theme code lives directly in `hello-elementor`. A theme update would be destructive to custom code. Do not update this theme without a full diff/backup first, and do not assume future Elementor "Hello" updates are safe to auto-apply.
-2. **`functions1.php` / `functions2.php` status is unclear** — not obviously wired into `functions.php`. Must confirm whether they're dead code or loaded some other way before removing, renaming, or refactoring anything nearby.
+2. ~~`functions1.php` / `functions2.php` status is unclear~~ — **Resolved**: confirmed dead code (see above), not a blocker.
 3. **Checkout/cart/account WooCommerce template overrides already exist** in the theme — any page-template work must not disturb these files.
 4. **Live payment gateways + active subscriptions** — this store takes real recurring payments. Reinforces safety rule 4 (never touch checkout/cart/payments/orders without explicit approval) and means staging must force gateways to test mode before any testing.
 5. **Elementor core is several minor versions behind Elementor Pro's available update line** — don't bundle an Elementor update into unrelated work.
