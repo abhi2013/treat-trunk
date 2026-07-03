@@ -20,6 +20,19 @@ A snapshot-cloned instance boots with **production's live database and live cred
 
 Given this experience: **any future staging rebuild from a fresh snapshot must repeat this exact safety pass before any interactive testing** — it is not a one-time setup step, it's required after every snapshot-based (re)creation.
 
+### URL migration to staging domain (completed 2026-07-04)
+
+Ran `wp search-replace 'https://treattrunk.co.uk' 'https://staging.treattrunk.co.uk' --precise --skip-columns=guid` on staging — 14,369 replacements across `wp_options`, `wp_postmeta`, `wp_posts`, `wp_comments`, `wp_usermeta`, `wp_users`, and WP Rocket's own cache/URL tables.
+
+Two gotchas hit immediately after, both now fixed:
+
+1. **`siteurl` DB row was stored as `http://treattrunk.co.uk` (no `s`)** — the `https://` search string didn't match it, so it was skipped. Fixed with a direct `wp option update siteurl`.
+2. **`wp-config.php` had `WP_SITEURL`/`WP_HOME` hardcoded** to `https://treattrunk.co.uk/` (a Bitnami pattern for reliability) — these constants **override the DB entirely**, which is why the site kept reporting/redirecting to the production domain (visiting the staging IP directly was silently redirecting to production) even after the DB search-replace succeeded. Fixed by editing both constants in `wp-config.php` to `https://staging.treattrunk.co.uk/`.
+
+**Lesson for next time**: on a Bitnami WordPress instance, always check `wp-config.php` for hardcoded `WP_SITEURL`/`WP_HOME` constants *before or immediately after* running `search-replace` — the DB change alone is not sufficient and the mismatch symptom (redirects to the old domain) is easy to misread as a DNS/caching problem instead.
+
+**How to preview staging right now** (no DNS yet): add a `/etc/hosts` entry on your Mac mapping `staging.treattrunk.co.uk` to `35.178.179.3`, then visit `https://staging.treattrunk.co.uk`. Expect a browser SSL certificate warning (the Let's Encrypt cert on that instance was issued for `treattrunk.co.uk`, not the staging subdomain, since no cert has been issued for staging yet) — safe to click through for internal testing only; not to be treated as a real trust boundary.
+
 ## If staging does not exist: creation steps (Lightsail console, manual)
 
 1. **Snapshot production first** (see `docs/backup-plan.md` §1) so staging is created from a known-good, current copy — not from scratch.
