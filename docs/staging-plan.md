@@ -1,10 +1,24 @@
 # Staging Plan — treattrunk.co.uk
 
-## Current status: confirmed — staging does not exist yet (2026-07-02)
+## Current status: staging instance created (2026-07-03/04)
 
-User confirmed no staging instance exists. Proceeding with the creation steps below. This is **console/instructions-only**: AWS CLI is installed locally but not authenticated, and per the standing safety rules it won't be used to create resources without separate explicit approval anyway — these are manual steps for the user to run in the Lightsail console.
+User created `treattrunk-staging` from a production snapshot via the Lightsail console. Details:
 
-Nothing in this document has been executed. Creating a new Lightsail instance, attaching a static IP, or changing DNS are all irreversible-ish, billed, or externally-visible actions — every step below requires explicit approval before being run, and AWS CLI will not be used to create resources without that approval (per the standing safety rules).
+- Public IP: `35.178.179.3`
+- SSH: alias `treat-trunk-staging` added to `~/.ssh/config` (same user `bitnami`, same key `~/.ssh/treattrunk3.pem` — the key was already trusted because it's baked into the snapshot's disk image)
+- Confirmed genuinely separate from production: different internal hostname (`ip-172-26-11-51` vs production's `ip-172-26-4-189`)
+- DNS (`staging.treattrunk.co.uk`) not yet pointed at it — still pending, see Open Questions
+- Static IP not yet attached (currently using whatever IP Lightsail assigned on creation)
+
+### Critical post-creation safety pass (completed 2026-07-04)
+
+A snapshot-cloned instance boots with **production's live database and live credentials still in it**. Before any further use, this was verified and fixed:
+
+- **WP-Cron**: was NOT disabled by default — any stray HTTP hit to the instance could trigger it, and 31 overdue Action Scheduler jobs (WooCommerce Subscriptions-related) were queued. Fixed: added `define('DISABLE_WP_CRON', true);` to staging's `wp-config.php`.
+- **Payment gateways**: Stripe was `enabled=yes, testmode=no` with a live secret key present. WooCommerce Payments was `enabled=yes`. **Gotcha**: WooCommerce Payments' sub-methods (Afterpay/Clearpay, Klarna, Apple Pay, Google Pay) are stored as **separate gateway objects with their own settings**, under option names `woocommerce_{gateway_id}_settings` (not the bare gateway ID) — disabling the parent `woocommerce_payments` gateway does NOT disable these; each had to be disabled individually. All payment gateways are now confirmed `enabled=no` (verified via WooCommerce's own runtime `WC()->payment_gateways()->payment_gateways()` list, not just raw options).
+- **Still open**: `wp-mail-smtp` likely still holds production's real SMTP credentials — transactional emails could still send for real if manually triggered in wp-admin. Not yet fixed (see step 9 below).
+
+Given this experience: **any future staging rebuild from a fresh snapshot must repeat this exact safety pass before any interactive testing** — it is not a one-time setup step, it's required after every snapshot-based (re)creation.
 
 ## If staging does not exist: creation steps (Lightsail console, manual)
 
