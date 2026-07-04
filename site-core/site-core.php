@@ -145,3 +145,29 @@ add_action( 'wp_enqueue_scripts', function () {
 	}
 	wp_dequeue_style( 'wp-mediaelement' );
 }, 9999 );
+
+/**
+ * Accessibility: Elementor's Gallery widget renders each item as an <a> whose
+ * only child is a `role="img"` background-image div, not a real <img>. The
+ * div carries its own aria-label, but the wrapping link has no accessible
+ * name of its own, which accessibility/agentic-browsing audits flag as
+ * "Links must have discernible text". Elementor already puts good
+ * descriptive text in `data-elementor-lightbox-title` on every such link -
+ * copy it into an aria-label on the link itself.
+ */
+add_action( 'wp_footer', function () {
+	?>
+	<script>
+	document.addEventListener( 'DOMContentLoaded', function () {
+		document.querySelectorAll( 'a.e-gallery-item:not([aria-label])' ).forEach( function ( link ) {
+			var label = link.getAttribute( 'data-elementor-lightbox-title' );
+			if ( ! label ) {
+				var img = link.querySelector( '[role="img"][aria-label]' );
+				label = img ? img.getAttribute( 'aria-label' ) : null;
+			}
+			link.setAttribute( 'aria-label', label || 'View image' );
+		} );
+	} );
+	</script>
+	<?php
+}, 20 );
