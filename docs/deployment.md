@@ -34,6 +34,17 @@ The corporate page redesign is **live on production** as of 2026-07-05. Actual s
 - `site-core/mu-staging-email-block.php` (production needs real email)
 - Any of the WP-Cron/payment-gateway/indexing changes made on staging to handle the "clone of live DB" scenario — none of that applies to production, which was never touched in those respects.
 
+## PageSpeed Insights fixes — done 2026-07-04
+
+Shipped to staging first, then production, in this order:
+
+1. **CompressX `exclude_png` setting** (DB option `compressx_general_settings`, not file-based — no repo artifact) was `1` on both environments, meaning no PNG on the site (the majority of images — icons, illustrations, logo) ever got a WebP/AVIF `<picture>` rewrite, even though many WebP files already existed on disk. Flipped to `0` on staging then production, followed by a one-off batch reprocessing of the images that genuinely hadn't been converted yet (0 failures on either environment).
+2. **`site-core/site-core.php`**: added conditional loading for the Total Recipe Generator plugin's CSS (was loading site-wide including pages with no recipe content — the single biggest render-blocking resource on the homepage), async-deferred a handful of non-essential stylesheets (cookie consent banner, ActiveCampaign popup form, Pinterest save button, wc-partial-shipment widget, Mailjet form widget), and removed WordPress core's MediaElement (audio/video player) CSS from pages with no actual media content.
+   - Deliberately **excluded** the same async-defer treatment for Elementor's `e-transitions` stylesheet — it defines the opacity/transform states for Elementor's hover-animation effects (fade-in/zoom/etc), so deferring it risked leaving an animated above-the-fold element invisible/mistransformed until load. The lab-test evidence for this was inconclusive (single-run PageSpeed Insights scores on this server vary ±14 points with zero code changes, and repeat test calls in quick succession return a cached report, not fresh runs — confirmed via identical `fetchTime` values), so this was a code-level judgment call, not something PSI numbers could actually prove either way. Left excluded given the small size of the win (~189ms) relative to the residual doubt.
+3. Net effect on production (single lab-test run, mobile): PageSpeed Performance score 71 → 89 immediately after step 1 + the initial batch of step 2. Real-world field data (CrUX, 28-day rolling) was already rated **FAST** across FCP/LCP/CLS before any of this work — these changes target the synthetic lab-test/Core Web Vitals score, not a real user-facing slowness problem.
+
+**Known unresolved, not blocking**: WP Rocket's "Remove Unused CSS" / critical-CSS feature has been failing authentication against WP Rocket's own SaaS build service since at least 2026-06-03 (`400: We could not authenticate your request...`), confirmed still broken as of 2026-07-04 despite the site's license/registration checking out correctly on wp-rocket.me. Open support ticket with WP Rocket; the remaining ~2.3s of render-blocking CSS (core WooCommerce/Elementor/Google Fonts stylesheets, deliberately left untouched here as too risky to hand-defer without real critical CSS) is gated on that getting fixed.
+
 ## Rollback
 
 - **Corporate page specifically**: reset `_wp_page_template` back to its prior value (`default`) — the original Elementor-built page reappears, since nothing was deleted (see `docs/elementor-removal-plan.md`).
