@@ -111,10 +111,10 @@ Goal: self-serve bulk ordering for corporate buyers, with volume discounts, with
 **Bulk-to-one-address discount (the common case: N letterbox boxes, one delivery address)**:
 - Mechanism: **automatic quantity-based cart discount via custom code** (not a new plugin, not separate "20-pack"/"50-pack" products). A small pricing rule (via WooCommerce's cart-price-calculation hooks) checks the quantity of the Letterbox product in the cart and applies a percentage discount automatically. This will live in a new custom plugin under `site-core/` in this repo — fully reviewable, no third-party dependency, tested on staging before touching production.
 - Rationale for custom code over a dynamic-pricing plugin: no new install/approval needed, and this is a simple enough rule that a plugin's admin UI isn't worth the added dependency surface — the user explicitly chose this option over a plugin-based alternative.
-- Tiers (based on real Letterbox price of £15.99/unit):
+- Tiers (based on real Letterbox price of £15.99/unit) — **confirmed by user 2026-07-04** (original proposal of 20%/30% would not leave margin):
   - 1–19 units: full price, £15.99/box
-  - 20+ units: 20% off → **£12.79/box** (20 boxes = £255.80)
-  - 50+ units: bigger discount, **exact percentage still to be confirmed by the user** (proposed default: 30% off → £11.19/box, 50 boxes = £559.50) — do not publish a specific 50+ price until confirmed.
+  - 20+ units: **15% off → £13.59/box** (20 boxes = £271.80)
+  - 50+ units: **20% off → £12.79/box** (50 boxes = £639.50)
 - **No discount code needed and none will be built** — the discount applies automatically based on cart quantity. "One address" isn't something that needs separate verification: a single WooCommerce order only ever ships to one address by default, so the condition is inherently satisfied by normal checkout behavior.
 
 **Multi-address orders (e.g. 50 boxes to 50 different individual home addresses — the "Remote Team Boxes" concept)**:
@@ -122,4 +122,4 @@ Goal: self-serve bulk ordering for corporate buyers, with volume discounts, with
 - Not pursuing self-serve multi-address ordering at this time — that would require a multi-address shipping plugin (new install, needs approval) plus real development/testing effort, and would delay the corporate page launch. Revisit as a future enhancement if demand justifies it.
 - Implication for the page: the "Remote Team Boxes" card keeps linking to the quote form (`#quote`), not a product page.
 
-**Still open before implementation can finalize the pricing copy**: exact 50+ unit discount percentage (default proposed: 30%, awaiting confirmation).
+Pricing tiers are now confirmed — nothing blocking implementation on the pricing side.
