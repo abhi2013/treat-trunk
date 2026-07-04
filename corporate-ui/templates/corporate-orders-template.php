@@ -221,22 +221,50 @@ get_header();
 			</div>
 
 			<?php
-			// Real WeWork London buildings, sourced from wework.com's own location
-			// listings (2026-07-05) - a partial but genuine subset of their ~63
-			// London locations, so the dropdown reflects real buildings rather than
-			// making the customer type a location from memory. "Not listed" keeps
-			// the offer open to anyone at a WeWork we didn't capture.
+			// Real WeWork UK buildings with full addresses, provided by the user
+			// 2026-07-05 (authoritative source, supersedes the earlier partial
+			// list sourced from web search). "Not listed" keeps the offer open
+			// to anyone at a WeWork not in this list.
 			$wework_locations = array(
-				'Medius House (Soho)', 'Aldwych House (Midtown)', '33 Queen St (Blackfriars)',
-				"17 St Helen's Place (City)", 'The Monument (Monument)', "1 St Katharine's Way (Southwark)",
-				'10 Devonshire Square (Whitechapel)', '26 Hatton Garden (Midtown)', '16 Great Chapel St (Soho)',
-				'North West House (Marylebone)', '1 Mark Square (Shoreditch)', 'Kings Place (King\'s Cross)',
-				'2 Minster Court (Tower Bridge)', 'Aviation House (Midtown)', '8 Devonshire Square (Whitechapel)',
-				'1 Waterhouse Square (Midtown)', '123 Buckingham Palace Rd (Victoria)', '145 City Rd (Old St)',
-				'10 York Rd (Waterloo)', '2 Eastbourne Terrace (Paddington)', '3 Waterhouse Square (Camden)',
-				'5 Merchant Square (Paddington)', '30 Churchill Place (Canary Wharf)', '77 Leadenhall Street (Aldgate)',
-				'120 Moorgate (Moorgate)', '184 Shepherds Bush Rd (Hammersmith)', 'Moor Place (Moorgate)',
-				'No.1 Poultry (Bank)', 'The Hewitt (Shoreditch)', '70 Wilson Street (Shoreditch)',
+				'London'    => array(
+					'Medius House - 2 Sheraton St, London W1F 8BH',
+					'16 Great Chapel St - 16 Great Chapel St, London W1F 8FL',
+					'123 Buckingham Palace Rd - 123 Buckingham Palace Rd, London SW1W 9SH',
+					'Aldwych House - 71-91 Aldwych, London WC2B 4HN',
+					'Aviation House - 125 Kingsway, London WC2B 6NH',
+					'1 Waterhouse Square - 1 Waterhouse Square, London EC1N 2ST',
+					'3 Waterhouse Square - 3 Waterhouse Square, London EC1N 2SW',
+					'26 Hatton Garden - 26 Hatton Garden, London EC1N 8BN',
+					'33 Queen St - 33 Queen St, London EC4R 1AP',
+					'North West House - 119 Marylebone Rd, London NW1 5PU',
+					'5 Merchant Square - 5 Merchant Square, London W2 1AY',
+					'2 Eastbourne Terrace - 2 Eastbourne Terrace, London W2 6LG',
+					'184 Shepherds Bush Rd - 184 Shepherds Bush Rd, London W6 7NL',
+					"1 St Katharine's Way - 1 St Katharine's Way, London E1W 1UN",
+					'10 York Rd - 10 York Rd, London SE1 7ND',
+					'Kings Place - 90 York Way, London N1 9AG',
+					'1 Mark Sq - 1 Mark Square, London EC2A 4EG',
+					'145 City Rd - 145 City Rd, London EC1V 1AZ',
+					'8 Devonshire Square - 8 Devonshire Square, London EC2M 4YJ',
+					'10 Devonshire Square - 10 Devonshire Square, London EC2M 4YP',
+					'30 Churchill Place - 30 Churchill Place, London E14 5RE',
+					"17 St Helen's Place - 17 St Helen's Pl, London EC3A 6DG",
+					'The Monument - 51 Eastcheap, London EC3M 1DT',
+					'77 Leadenhall Street - 77 Leadenhall St, London EC3A 3DE',
+					'120 Moorgate - 120 Moorgate, London EC2M 6UR',
+					'Moor Place - 1 Fore Street Ave, London EC2Y 9DT',
+					'2 Minster Court - 2 Minster Court, London EC3R 7BB',
+				),
+				'Manchester' => array(
+					"One St Peter's Square - One St Peter's Square, Manchester M2 3DE",
+					'Dalton Place - 29 John Dalton St, Manchester M2 6FW',
+				),
+				'Edinburgh' => array(
+					'80 George Street - 80 George St, Edinburgh EH2 3BU',
+				),
+				'Cambridge' => array(
+					'50-60 Station Road - 50-60 Station Rd, Cambridge CB1 2JH',
+				),
 			);
 			?>
 			<form id="tt-wework-form" style="background: #FBF8F2; border-radius: 22px; padding: 26px; display: flex; flex-direction: column; gap: 12px;">
@@ -244,8 +272,12 @@ get_header();
 				<input type="text" id="tt-ww-company" placeholder="Company name" required style="font-size: 15px; padding: 12px 14px; border: 1.5px solid #DDD3BE; border-radius: 12px; width: 100%; box-sizing: border-box;">
 				<select id="tt-ww-location" required style="font-size: 15px; padding: 12px 14px; border: 1.5px solid #DDD3BE; border-radius: 12px; width: 100%; box-sizing: border-box;">
 					<option value="">Select your WeWork building&hellip;</option>
-					<?php foreach ( $wework_locations as $loc ) : ?>
-						<option value="<?php echo esc_attr( $loc ); ?>"><?php echo esc_html( $loc ); ?></option>
+					<?php foreach ( $wework_locations as $city => $buildings ) : ?>
+						<optgroup label="<?php echo esc_attr( $city ); ?>">
+							<?php foreach ( $buildings as $loc ) : ?>
+								<option value="<?php echo esc_attr( $loc ); ?>"><?php echo esc_html( $loc ); ?></option>
+							<?php endforeach; ?>
+						</optgroup>
 					<?php endforeach; ?>
 					<option value="Not listed">My WeWork isn&rsquo;t listed</option>
 				</select>
