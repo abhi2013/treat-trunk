@@ -363,11 +363,11 @@ get_header();
 			<div style="display: flex; flex-direction: column; gap: 16px;">
 				<h2 style="font-weight: 700; font-size: 32px; margin: 0; color: #F6EED9;">Request a quote within 24 hours</h2>
 				<p style="font-size: 16px; line-height: 1.6; color: #CFE0CC; margin: 0;">Tell us about your team and what you have in mind - bulk letterbox orders, a monthly subscription, gifting, or your free WeWork welcome box. Our team replies personally, usually the same day.</p>
-				<div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px; font-size: 14.5px; color: #9FBCA0; font-weight: 600;">
-					<span>&#9993; hello@treattrunk.co.uk</span>
-					<span>&#9201; Replies within 24 hours</span>
-					<span>&#163; Volume discounts &amp; invoicing available</span>
-				</div>
+				<ul style="list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #9FBCA0; font-weight: 600; border-left: 2px solid rgba(159, 188, 160, 0.4);">
+					<li style="padding-left: 14px;">hello@treattrunk.co.uk</li>
+					<li style="padding-left: 14px;">Replies within 24 hours</li>
+					<li style="padding-left: 14px;">Volume discounts &amp; invoicing available</li>
+				</ul>
 			</div>
 			<div style="background: #FBF8F2; border-radius: 22px; padding: 28px;">
 				<?php
