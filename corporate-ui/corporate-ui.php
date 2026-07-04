@@ -31,3 +31,25 @@ add_filter( 'template_include', function ( string $template ): string {
 	}
 	return $template;
 } );
+
+/**
+ * Load the real Quicksand/Nunito Sans webfonts (matching the original design)
+ * plus the polish/responsive stylesheet - only on this one page, not site-wide.
+ */
+add_action( 'wp_enqueue_scripts', function () {
+	if ( ! is_page() || get_page_template_slug( get_queried_object_id() ) !== TT_CORP_UI_TEMPLATE_KEY ) {
+		return;
+	}
+	wp_enqueue_style(
+		'tt-corp-fonts',
+		'https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Nunito+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap',
+		array(),
+		null
+	);
+	wp_enqueue_style(
+		'tt-corp-orders-css',
+		plugins_url( 'assets/corporate-orders.css', __FILE__ ),
+		array(),
+		filemtime( TT_CORP_UI_DIR . 'assets/corporate-orders.css' )
+	);
+} );

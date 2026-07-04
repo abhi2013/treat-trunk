@@ -16,7 +16,7 @@
 get_header();
 ?>
 
-<div style="font-family: 'Nunito Sans', -apple-system, sans-serif; color: #1F3B2C; background: #FBF8F2;">
+<div class="tt-corp-page" style="font-family: 'Nunito Sans', -apple-system, sans-serif; color: #1F3B2C; background: #FBF8F2;">
 
 	<!-- Announcement bar (WeWork offer - confirmed active 2026-07-04) -->
 	<div style="background: #1F4D38; color: #F6EED9; text-align: center; padding: 10px 16px; font-size: 14px; font-weight: 600;">
@@ -25,7 +25,7 @@ get_header();
 	</div>
 
 	<!-- Hero -->
-	<section style="display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: center; padding: 64px 48px 72px; max-width: 1240px; margin: 0 auto;">
+	<section class="tt-corp-hero" style="display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: center; padding: 72px 48px 80px; max-width: 1240px; margin: 0 auto;">
 		<div style="display: flex; flex-direction: column; gap: 22px;">
 			<div style="display: flex; gap: 10px; flex-wrap: wrap;">
 				<span style="background: #EADFC8; color: #6B5A2E; font-size: 12.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 14px; border-radius: 999px;">For offices &amp; teams</span>
@@ -60,7 +60,7 @@ get_header();
 	</div>
 
 	<!-- Product cards -->
-	<section id="boxes" style="padding: 72px 48px 40px; max-width: 1240px; margin: 0 auto;">
+	<section id="boxes" class="tt-corp-section" style="padding: 72px 48px 40px; max-width: 1240px; margin: 0 auto;">
 		<div style="text-align: center; margin-bottom: 44px;">
 			<h2 style="font-weight: 700; font-size: 34px; margin: 0 0 12px; color: #1F3B2C;">Pick your corporate snacking setup</h2>
 			<p style="font-size: 17px; color: #44543F; margin: 0;">Buy online in minutes &mdash; or <a href="#quote" style="color: #C75B39; font-weight: 700;">talk to Sally</a> for bespoke branding, mixed orders and volume pricing.</p>
@@ -69,12 +69,12 @@ get_header();
 		<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px;">
 
 			<!-- Card 1: Letterbox, bulk discount applies automatically at checkout -->
-			<div style="background: #FFFFFF; border: 1px solid #E8E0D0; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
+			<div class="tt-corp-card-wrap" style="background: #FFFFFF; border: 1px solid #E8E0D0; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
 				<div style="position: relative;">
 					<img src="https://treattrunk.co.uk/wp-content/uploads/2021/05/Treat-Trunk-Mini-Healthy-Snack-Box-March-1200.jpg" alt="Letterbox snack box" style="width: 100%; height: 180px; object-fit: cover; display: block;">
 					<span style="position: absolute; top: 12px; left: 12px; background: #F2C94C; color: #4A3A08; font-size: 11.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px;">Best seller</span>
 				</div>
-				<div style="padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 10px; flex: 1;">
+				<div class="tt-corp-card" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
 					<h3 style="font-weight: 700; font-size: 20px; margin: 0; color: #1F3B2C;">Bulk Letterbox Boxes</h3>
 					<p style="font-size: 14.5px; line-height: 1.55; color: #44543F; margin: 0; flex: 1;">Letterbox-friendly snack boxes posted directly to your team&rsquo;s home or office addresses. Order online in one click &mdash; volume pricing applies automatically, no code needed.</p>
 					<div style="font-weight: 700; font-size: 22px; color: #1F4D38;">£15.99 <span style="font-size: 13.5px; font-weight: 600; color: #6A7A64;">/box &middot; 20+: 15% off &middot; 50+: 20% off</span></div>
@@ -101,12 +101,12 @@ get_header();
 			</div>
 
 			<!-- Card 2: Monthly Office Subscription -->
-			<div style="background: #FFFFFF; border: 1px solid #E8E0D0; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
+			<div class="tt-corp-card-wrap" style="background: #FFFFFF; border: 1px solid #E8E0D0; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
 				<div style="position: relative;">
 					<img src="https://treattrunk.co.uk/wp-content/uploads/2020/08/Treat-Trunk-August-2020-1200.jpg" alt="Monthly office snack box" style="width: 100%; height: 180px; object-fit: cover; display: block;">
 					<span style="position: absolute; top: 12px; left: 12px; background: #E3EFE2; color: #1F4D38; font-size: 11.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px;">Subscription</span>
 				</div>
-				<div style="padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 10px; flex: 1;">
+				<div class="tt-corp-card" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
 					<h3 style="font-weight: 700; font-size: 20px; margin: 0; color: #1F3B2C;">Monthly Office Subscription</h3>
 					<p style="font-size: 14.5px; line-height: 1.55; color: #44543F; margin: 0; flex: 1;">A big box of 20+ healthy snacks for the office kitchen, refreshed every month. Pause or cancel anytime.</p>
 					<div style="font-weight: 700; font-size: 22px; color: #1F4D38;">£39.99<span style="font-size: 14px; font-weight: 600; color: #6A7A64;">/month</span></div>
@@ -115,12 +115,12 @@ get_header();
 			</div>
 
 			<!-- Card 3: Remote Team Boxes - quote/manual for now, no product page yet -->
-			<div style="background: #FFFFFF; border: 1px solid #E8E0D0; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
+			<div class="tt-corp-card-wrap" style="background: #FFFFFF; border: 1px solid #E8E0D0; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
 				<div style="position: relative;">
 					<img src="https://treattrunk.co.uk/wp-content/uploads/2021/05/Treat-Trunk-Healthy-Vegan-Snack-Box-1200-2.jpg" alt="Snack boxes for remote staff" style="width: 100%; height: 180px; object-fit: cover; display: block;">
 					<span style="position: absolute; top: 12px; left: 12px; background: #EADFC8; color: #6B5A2E; font-size: 11.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px;">Remote teams</span>
 				</div>
-				<div style="padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 10px; flex: 1;">
+				<div class="tt-corp-card" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
 					<h3 style="font-weight: 700; font-size: 20px; margin: 0; color: #1F3B2C;">Remote Team Boxes</h3>
 					<p style="font-size: 14.5px; line-height: 1.55; color: #44543F; margin: 0; flex: 1;">Individual boxes posted to each remote employee&rsquo;s home address. Send us a spreadsheet of addresses and we&rsquo;ll sort the rest &mdash; get a quote tailored to your team size.</p>
 					<div style="font-weight: 700; font-size: 22px; color: #1F4D38;">Custom pricing</div>
@@ -129,16 +129,30 @@ get_header();
 			</div>
 
 			<!-- Card 4: Client & Staff Gifting -->
-			<div style="background: #FFFFFF; border: 1px solid #E8E0D0; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
+			<div class="tt-corp-card-wrap" style="background: #FFFFFF; border: 1px solid #E8E0D0; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
 				<div style="position: relative;">
 					<img src="https://treattrunk.co.uk/wp-content/uploads/2019/10/Treat-Trunk-Healthy-Snack-Box-1200-scaled.jpg" alt="Client gift snack box" style="width: 100%; height: 180px; object-fit: cover; display: block;">
 					<span style="position: absolute; top: 12px; left: 12px; background: #F7DFD6; color: #A94729; font-size: 11.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px;">Gifting</span>
 				</div>
-				<div style="padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 10px; flex: 1;">
+				<div class="tt-corp-card" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
 					<h3 style="font-weight: 700; font-size: 20px; margin: 0; color: #1F3B2C;">Client &amp; Staff Gifting</h3>
 					<p style="font-size: 14.5px; line-height: 1.55; color: #44543F; margin: 0; flex: 1;">One-off thank-yous, onboarding gifts, Christmas orders. Add your branding to boxes, stickers and gift cards.</p>
 					<div style="font-weight: 700; font-size: 22px; color: #1F4D38;">£28.99<span style="font-size: 14px; font-weight: 600; color: #6A7A64;">/gift</span></div>
 					<a href="https://treattrunk.co.uk/product/one-off-treat-trunk/" style="background: #1F4D38; color: #F6EED9; text-align: center; font-weight: 700; font-size: 15.5px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Send a gift box</a>
+				</div>
+			</div>
+
+			<!-- Card 5: Deluxe Corporate Snack Box (new £100 product) -->
+			<div class="tt-corp-card-wrap" style="background: #FFFFFF; border: 2px solid #1F4D38; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
+				<div style="position: relative;">
+					<img src="https://treattrunk.co.uk/wp-content/uploads/2021/05/Treat-Trunk-Healthy-Vegan-Snack-Box-1200-2.jpg" alt="Deluxe corporate snack box" style="width: 100%; height: 180px; object-fit: cover; display: block;">
+					<span style="position: absolute; top: 12px; left: 12px; background: #1F4D38; color: #F6EED9; font-size: 11.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px;">Biggest box</span>
+				</div>
+				<div class="tt-corp-card" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
+					<h3 style="font-weight: 700; font-size: 20px; margin: 0; color: #1F3B2C;">Deluxe Corporate Snack Box</h3>
+					<p style="font-size: 14.5px; line-height: 1.55; color: #44543F; margin: 0; flex: 1;">Our biggest one-off box: 50+ sugar sensible, predominantly vegan snacks (some fan favourites included in multiples) &mdash; built for office kitchens, team days and client visits.</p>
+					<div style="font-weight: 700; font-size: 22px; color: #1F4D38;">£100<span style="font-size: 14px; font-weight: 600; color: #6A7A64;">/box</span></div>
+					<a href="https://treattrunk.co.uk/product/corporate-snack-box/" style="background: #1F4D38; color: #F6EED9; text-align: center; font-weight: 700; font-size: 15.5px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Shop the deluxe box</a>
 				</div>
 			</div>
 		</div>
@@ -146,7 +160,7 @@ get_header();
 	</section>
 
 	<!-- Comparison: value/attributes, not just price (rebased on Letterbox bulk pricing 2026-07-04) -->
-	<section style="padding: 24px 48px 56px; max-width: 900px; margin: 0 auto;">
+	<section class="tt-corp-section" style="padding: 24px 48px 56px; max-width: 900px; margin: 0 auto;">
 		<div style="text-align: center; margin-bottom: 32px;">
 			<h2 style="font-weight: 700; font-size: 32px; margin: 0 0 10px; color: #1F3B2C;">Why Treat Trunk over a standard office box</h2>
 			<p style="font-size: 16px; color: #44543F; margin: 0;">It&rsquo;s not just price &mdash; it&rsquo;s what&rsquo;s actually in the box.</p>
@@ -198,24 +212,65 @@ get_header();
 	</section>
 
 	<!-- WeWork offer -->
-	<section id="wework" style="padding: 48px; max-width: 1240px; margin: 0 auto;">
-		<div style="background: #1F4D38; border-radius: 28px; padding: 48px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; align-items: center;">
+	<section id="wework" class="tt-corp-section" style="padding: 48px; max-width: 1240px; margin: 0 auto;">
+		<div style="background: #1F4D38; border-radius: 28px; padding: 48px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; align-items: start;">
 			<div style="display: flex; flex-direction: column; gap: 18px;">
 				<span style="align-self: flex-start; background: #F2C94C; color: #4A3A08; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 14px; border-radius: 999px;">Free for WeWork members</span>
 				<h2 style="font-weight: 700; font-size: 32px; line-height: 1.15; margin: 0; color: #F6EED9;">Based in a WeWork? Your first box is on us.</h2>
-				<p style="font-size: 17px; line-height: 1.6; color: #CFE0CC; margin: 0; max-width: 56ch;">Any business working from a WeWork office space gets a free welcome snack box &mdash; a full-size Treat Trunk with 20+ healthy snacks for the team to try. No card details, no commitment.</p>
-				<a href="#quote" style="align-self: flex-start; background: #F2C94C; color: #4A3A08; font-weight: 700; font-size: 16.5px; padding: 14px 28px; border-radius: 999px; text-decoration: none;">Claim your free welcome box</a>
+				<p style="font-size: 17px; line-height: 1.6; color: #CFE0CC; margin: 0; max-width: 56ch;">Any business working from a WeWork office space gets a free welcome snack box &mdash; a full-size Treat Trunk with 20+ healthy snacks for the team to try. No card details, no commitment. Pick your WeWork building and we&rsquo;ll take it from there.</p>
 			</div>
-			<div style="display: flex; flex-direction: column; gap: 12px;">
-				<div style="background: rgba(246, 238, 217, 0.08); border: 1px solid rgba(246, 238, 217, 0.2); border-radius: 16px; padding: 16px 20px; color: #F6EED9; font-size: 14.5px; font-weight: 600;">1 &rarr; Fill in the enquiry form with your WeWork location</div>
-				<div style="background: rgba(246, 238, 217, 0.08); border: 1px solid rgba(246, 238, 217, 0.2); border-radius: 16px; padding: 16px 20px; color: #F6EED9; font-size: 14.5px; font-weight: 600;">2 &rarr; We post a free full-size box to your office</div>
-				<div style="background: rgba(246, 238, 217, 0.08); border: 1px solid rgba(246, 238, 217, 0.2); border-radius: 16px; padding: 16px 20px; color: #F6EED9; font-size: 14.5px; font-weight: 600;">3 &rarr; Love it? Set up a subscription for your team</div>
-			</div>
+
+			<?php
+			// Real WeWork London buildings, sourced from wework.com's own location
+			// listings (2026-07-05) - a partial but genuine subset of their ~63
+			// London locations, so the dropdown reflects real buildings rather than
+			// making the customer type a location from memory. "Not listed" keeps
+			// the offer open to anyone at a WeWork we didn't capture.
+			$wework_locations = array(
+				'Medius House (Soho)', 'Aldwych House (Midtown)', '33 Queen St (Blackfriars)',
+				"17 St Helen's Place (City)", 'The Monument (Monument)', "1 St Katharine's Way (Southwark)",
+				'10 Devonshire Square (Whitechapel)', '26 Hatton Garden (Midtown)', '16 Great Chapel St (Soho)',
+				'North West House (Marylebone)', '1 Mark Square (Shoreditch)', 'Kings Place (King\'s Cross)',
+				'2 Minster Court (Tower Bridge)', 'Aviation House (Midtown)', '8 Devonshire Square (Whitechapel)',
+				'1 Waterhouse Square (Midtown)', '123 Buckingham Palace Rd (Victoria)', '145 City Rd (Old St)',
+				'10 York Rd (Waterloo)', '2 Eastbourne Terrace (Paddington)', '3 Waterhouse Square (Camden)',
+				'5 Merchant Square (Paddington)', '30 Churchill Place (Canary Wharf)', '77 Leadenhall Street (Aldgate)',
+				'120 Moorgate (Moorgate)', '184 Shepherds Bush Rd (Hammersmith)', 'Moor Place (Moorgate)',
+				'No.1 Poultry (Bank)', 'The Hewitt (Shoreditch)', '70 Wilson Street (Shoreditch)',
+			);
+			?>
+			<form id="tt-wework-form" style="background: #FBF8F2; border-radius: 22px; padding: 26px; display: flex; flex-direction: column; gap: 12px;">
+				<input type="text" id="tt-ww-name" placeholder="Your name" required style="font-size: 15px; padding: 12px 14px; border: 1.5px solid #DDD3BE; border-radius: 12px; width: 100%; box-sizing: border-box;">
+				<input type="text" id="tt-ww-company" placeholder="Company name" required style="font-size: 15px; padding: 12px 14px; border: 1.5px solid #DDD3BE; border-radius: 12px; width: 100%; box-sizing: border-box;">
+				<select id="tt-ww-location" required style="font-size: 15px; padding: 12px 14px; border: 1.5px solid #DDD3BE; border-radius: 12px; width: 100%; box-sizing: border-box;">
+					<option value="">Select your WeWork building&hellip;</option>
+					<?php foreach ( $wework_locations as $loc ) : ?>
+						<option value="<?php echo esc_attr( $loc ); ?>"><?php echo esc_html( $loc ); ?></option>
+					<?php endforeach; ?>
+					<option value="Not listed">My WeWork isn&rsquo;t listed</option>
+				</select>
+				<input type="text" id="tt-ww-address" placeholder="Suite/floor or delivery notes (optional)" style="font-size: 15px; padding: 12px 14px; border: 1.5px solid #DDD3BE; border-radius: 12px; width: 100%; box-sizing: border-box;">
+				<button type="submit" style="background: #F2C94C; color: #4A3A08; border: none; font-weight: 700; font-size: 16px; padding: 14px 0; border-radius: 999px; cursor: pointer;">Claim your free welcome box</button>
+				<span style="font-size: 12.5px; color: #6A7A64;">Opens a pre-filled email to hello@treattrunk.co.uk &mdash; nothing sends without you pressing send.</span>
+			</form>
+			<script>
+			document.getElementById('tt-wework-form').addEventListener('submit', function (e) {
+				e.preventDefault();
+				var name = document.getElementById('tt-ww-name').value;
+				var company = document.getElementById('tt-ww-company').value;
+				var location = document.getElementById('tt-ww-location').value;
+				var address = document.getElementById('tt-ww-address').value;
+				var subject = 'WeWork free welcome box - ' + company;
+				var body = 'Name: ' + name + '\nCompany: ' + company + '\nWeWork building: ' + location
+					+ (address ? '\nNotes: ' + address : '') + '\n\nPlease send our free WeWork welcome box!';
+				window.location.href = 'mailto:hello@treattrunk.co.uk?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+			});
+			</script>
 		</div>
 	</section>
 
 	<!-- How it works -->
-	<section style="padding: 56px 48px; max-width: 1240px; margin: 0 auto;">
+	<section class="tt-corp-section" style="padding: 56px 48px; max-width: 1240px; margin: 0 auto;">
 		<h2 style="font-weight: 700; font-size: 32px; text-align: center; margin: 0 0 40px; color: #1F3B2C;">Corporate orders, without the admin</h2>
 		<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px;">
 			<div style="background: #FFFFFF; border: 1px solid #E8E0D0; border-radius: 20px; padding: 28px; display: flex; flex-direction: column; gap: 12px;">
@@ -237,7 +292,7 @@ get_header();
 	</section>
 
 	<!-- Testimonials (verified against real page content 2026-07-04) -->
-	<section style="background: #F2ECDE; padding: 56px 48px;">
+	<section class="tt-corp-section" style="background: #F2ECDE; padding: 56px 48px;">
 		<div style="max-width: 1240px; margin: 0 auto;">
 			<h2 style="font-weight: 700; font-size: 32px; text-align: center; margin: 0 0 36px; color: #1F3B2C;">What corporate clients say</h2>
 			<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px;">
@@ -261,7 +316,7 @@ get_header();
 	</section>
 
 	<!-- Why Treat Trunk -->
-	<section style="padding: 56px 48px; max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; align-items: center;">
+	<section class="tt-corp-section" style="padding: 56px 48px; max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; align-items: center;">
 		<img src="https://treattrunk.co.uk/wp-content/uploads/2022/02/IMG_0413-1-768x1024.jpeg" alt="Corporate order packed at Treat Trunk" style="width: 100%; height: 420px; object-fit: cover; border-radius: 24px;">
 		<div style="display: flex; flex-direction: column; gap: 16px;">
 			<h2 style="font-weight: 700; font-size: 30px; margin: 0; color: #1F3B2C;">Why offices choose Treat Trunk</h2>
@@ -276,7 +331,7 @@ get_header();
 	</section>
 
 	<!-- FAQ -->
-	<section style="padding: 24px 48px 56px; max-width: 800px; margin: 0 auto;">
+	<section class="tt-corp-section" style="padding: 24px 48px 56px; max-width: 800px; margin: 0 auto;">
 		<h2 style="font-weight: 700; font-size: 32px; text-align: center; margin: 0 0 28px; color: #1F3B2C;">Corporate FAQs</h2>
 		<div style="display: flex; flex-direction: column; gap: 12px;">
 			<details style="background: #FFFFFF; border: 1px solid #E8E0D0; border-radius: 14px; padding: 16px 20px;">
@@ -303,7 +358,7 @@ get_header();
 	</section>
 
 	<!-- Quote / enquiry - REAL ActiveCampaign integration, not a mock form -->
-	<section id="quote" style="background: #1F4D38; padding: 64px 48px;">
+	<section id="quote" class="tt-corp-section" style="background: #1F4D38; padding: 64px 48px;">
 		<div style="max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 48px; align-items: start;">
 			<div style="display: flex; flex-direction: column; gap: 16px;">
 				<h2 style="font-weight: 700; font-size: 32px; margin: 0; color: #F6EED9;">Get a tailored quote within 24 hours</h2>
