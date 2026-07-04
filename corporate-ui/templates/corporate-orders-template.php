@@ -76,9 +76,27 @@ get_header();
 				</div>
 				<div style="padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 10px; flex: 1;">
 					<h3 style="font-weight: 700; font-size: 20px; margin: 0; color: #1F3B2C;">Bulk Letterbox Boxes</h3>
-					<p style="font-size: 14.5px; line-height: 1.55; color: #44543F; margin: 0; flex: 1;">Letterbox-friendly snack boxes posted directly to your team&rsquo;s home or office addresses. Order any quantity &mdash; volume pricing applies automatically in your cart.</p>
+					<p style="font-size: 14.5px; line-height: 1.55; color: #44543F; margin: 0; flex: 1;">Letterbox-friendly snack boxes posted directly to your team&rsquo;s home or office addresses. Order online in one click &mdash; volume pricing applies automatically, no code needed.</p>
 					<div style="font-weight: 700; font-size: 22px; color: #1F4D38;">£15.99 <span style="font-size: 13.5px; font-weight: 600; color: #6A7A64;">/box &middot; 20+: 15% off &middot; 50+: 20% off</span></div>
-					<a href="https://treattrunk.co.uk/product/letterbox/" style="background: #1F4D38; color: #F6EED9; text-align: center; font-weight: 700; font-size: 15.5px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Shop letterbox boxes</a>
+
+					<?php
+					// One-click bulk ordering: WooCommerce's native add-to-cart URL
+					// (?add-to-cart={id}&quantity={n}) adds the item and redirects
+					// straight to the basket at the correct discounted price - no
+					// product-page visit, no manually typing a quantity, no "email us."
+					$letterbox_id = 40245;
+					$qty20_url    = esc_url( add_query_arg( array( 'add-to-cart' => $letterbox_id, 'quantity' => 20 ), home_url( '/' ) ) );
+					$qty50_url    = esc_url( add_query_arg( array( 'add-to-cart' => $letterbox_id, 'quantity' => 50 ), home_url( '/' ) ) );
+					?>
+					<div style="display: flex; flex-direction: column; gap: 8px;">
+						<a href="<?php echo $qty20_url; ?>" style="background: #1F4D38; color: #F6EED9; text-align: center; font-weight: 700; font-size: 15px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Order 20 boxes &mdash; 15% off (£271.80) &rarr;</a>
+						<a href="<?php echo $qty50_url; ?>" style="background: #1F4D38; color: #F6EED9; text-align: center; font-weight: 700; font-size: 15px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Order 50 boxes &mdash; 20% off (£639.50) &rarr;</a>
+						<form method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>" style="display: flex; gap: 6px; margin-top: 2px;">
+							<input type="hidden" name="add-to-cart" value="<?php echo esc_attr( $letterbox_id ); ?>">
+							<input type="number" name="quantity" min="1" value="1" aria-label="Custom quantity" style="width: 70px; padding: 10px 8px; border: 1.5px solid #DDD3BE; border-radius: 10px; font-size: 14px;">
+							<button type="submit" style="flex: 1; background: #FFFFFF; color: #1F4D38; border: 2px solid #1F4D38; font-weight: 700; font-size: 14px; padding: 10px 0; border-radius: 999px; cursor: pointer;">Add custom quantity</button>
+						</form>
+					</div>
 				</div>
 			</div>
 
@@ -127,46 +145,56 @@ get_header();
 		<p style="text-align: center; font-size: 14px; color: #6A7A64; margin: 26px 0 0;">Bigger team? Mixed dietary needs? <a href="#quote" style="color: #C75B39; font-weight: 700;">Get volume pricing</a> &mdash; we&rsquo;ve shipped orders from 5 boxes to 800+.</p>
 	</section>
 
-	<!-- Cost comparison (figures verified 2026-07-04 against snackfully.co.uk published pricing, inc. VAT) -->
-	<section style="padding: 24px 48px 56px; max-width: 1240px; margin: 0 auto;">
-		<div style="text-align: center; margin-bottom: 36px;">
-			<h2 style="font-weight: 700; font-size: 32px; margin: 0 0 10px; color: #1F3B2C;">How we compare on cost</h2>
-			<p style="font-size: 16px; color: #44543F; margin: 0;">Like-for-like healthy office snacking &mdash; no bulk cases to sort, no 50-snack minimums.</p>
+	<!-- Comparison: value/attributes, not just price (rebased on Letterbox bulk pricing 2026-07-04) -->
+	<section style="padding: 24px 48px 56px; max-width: 900px; margin: 0 auto;">
+		<div style="text-align: center; margin-bottom: 32px;">
+			<h2 style="font-weight: 700; font-size: 32px; margin: 0 0 10px; color: #1F3B2C;">Why Treat Trunk over a standard office box</h2>
+			<p style="font-size: 16px; color: #44543F; margin: 0;">It&rsquo;s not just price &mdash; it&rsquo;s what&rsquo;s actually in the box.</p>
 		</div>
-		<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; align-items: stretch;">
-
-			<div style="background: #1F4D38; border-radius: 20px; padding: 30px 28px; display: flex; flex-direction: column; gap: 16px;">
-				<span style="font-weight: 700; font-size: 19px; color: #F6EED9;">Treat Trunk Office Box</span>
-				<div style="font-weight: 700; font-size: 28px; color: #F2C94C;">~£1.75 <span style="font-size: 15px; color: #CFE0CC; font-weight: 600;">per snack</span></div>
-				<div style="font-size: 14px; color: #CFE0CC; font-weight: 600;">£39.99/month &middot; 20+ hand-curated snacks &middot; delivery included</div>
-				<div style="display: flex; flex-direction: column; gap: 9px; font-size: 14.5px; color: #F6EED9; line-height: 1.5;">
-					<div>&#10003; Every snack is health-conscious &amp; low sugar</div>
-					<div>&#10003; New selection curated monthly &mdash; zero admin</div>
-					<div>&#10003; No minimum &mdash; from one box to 800+</div>
-				</div>
-			</div>
-
-			<div style="background: #FFFFFF; border: 1px solid #E8E0D0; border-radius: 20px; padding: 30px 28px; display: flex; flex-direction: column; gap: 16px;">
-				<span style="font-weight: 700; font-size: 19px; color: #1F3B2C;">Snackfully Premium Office Box</span>
-				<div style="font-weight: 700; font-size: 28px; color: #1F3B2C;">£1.75 <span style="font-size: 15px; color: #6A7A64; font-weight: 600;">per snack</span></div>
-				<div style="font-size: 14px; color: #6A7A64; font-weight: 600;">£87.50 for 50 snacks (inc. VAT) &mdash; a per-order minimum spend</div>
-				<div style="display: flex; flex-direction: column; gap: 9px; font-size: 14.5px; color: #44543F; line-height: 1.5;">
-					<div>&#10005; 50-snack minimum for the premium option</div>
-					<div>&#10005; Office-only delivery &mdash; no letterbox option for remote staff</div>
-				</div>
-			</div>
-
-			<div style="background: #FFFFFF; border: 1px solid #E8E0D0; border-radius: 20px; padding: 30px 28px; display: flex; flex-direction: column; gap: 16px;">
-				<span style="font-weight: 700; font-size: 19px; color: #1F3B2C;">Snackfully Standard Office Box</span>
-				<div style="font-weight: 700; font-size: 28px; color: #1F3B2C;">£1.10 <span style="font-size: 15px; color: #6A7A64; font-weight: 600;">per snack</span></div>
-				<div style="font-size: 14px; color: #6A7A64; font-weight: 600;">£54.99 for 50 snacks (inc. VAT) &mdash; cheaper, but a different product</div>
-				<div style="display: flex; flex-direction: column; gap: 9px; font-size: 14.5px; color: #44543F; line-height: 1.5;">
-					<div>&#10005; Mixed sweet &amp; savoury, not a health-first selection</div>
-					<div>&#10005; You do the dietary filtering yourself</div>
-				</div>
-			</div>
+		<div style="overflow-x: auto;">
+		<table style="width: 100%; border-collapse: collapse; background: #FFFFFF; border-radius: 20px; overflow: hidden; border: 1px solid #E8E0D0;">
+			<thead>
+				<tr style="background: #1F4D38;">
+					<th style="text-align: left; padding: 16px 20px; font-weight: 700; font-size: 14.5px; color: #CFE0CC;"></th>
+					<th style="text-align: left; padding: 16px 20px; font-weight: 700; font-size: 15.5px; color: #F6EED9;">Treat Trunk</th>
+					<th style="text-align: left; padding: 16px 20px; font-weight: 700; font-size: 15.5px; color: #CFE0CC;">Snackfully Premium</th>
+				</tr>
+			</thead>
+			<tbody style="font-size: 14.5px; color: #33422F;">
+				<tr style="border-top: 1px solid #E8E0D0;">
+					<td style="padding: 14px 20px; font-weight: 700;">Bulk price</td>
+					<td style="padding: 14px 20px;">from <strong>£12.79/box</strong> on 50+ box orders</td>
+					<td style="padding: 14px 20px; color: #6A7A64;">£87.50 per 50 snacks (£1.75/snack), no bulk tiers</td>
+				</tr>
+				<tr style="border-top: 1px solid #E8E0D0; background: #FBF8F2;">
+					<td style="padding: 14px 20px; font-weight: 700;">Sugar-conscious</td>
+					<td style="padding: 14px 20px;">&#10003; Every snack is low-sugar by default</td>
+					<td style="padding: 14px 20px; color: #6A7A64;">&#10005; Mixed selection, not sugar-focused</td>
+				</tr>
+				<tr style="border-top: 1px solid #E8E0D0;">
+					<td style="padding: 14px 20px; font-weight: 700;">Good-for-you snacks</td>
+					<td style="padding: 14px 20px;">&#10003; Handpicked for nutritional value, mostly vegan</td>
+					<td style="padding: 14px 20px; color: #6A7A64;">&#10005; Standard snack mix, not health-curated</td>
+				</tr>
+				<tr style="border-top: 1px solid #E8E0D0; background: #FBF8F2;">
+					<td style="padding: 14px 20px; font-weight: 700;">Allergy &amp; dietary catering</td>
+					<td style="padding: 14px 20px;">&#10003; Gluten-free/nut-free tailored per person, even within one bulk order</td>
+					<td style="padding: 14px 20px; color: #6A7A64;">&#10005; No per-person tailoring mentioned</td>
+				</tr>
+				<tr style="border-top: 1px solid #E8E0D0;">
+					<td style="padding: 14px 20px; font-weight: 700;">Minimum order</td>
+					<td style="padding: 14px 20px;">&#10003; None</td>
+					<td style="padding: 14px 20px; color: #6A7A64;">&#10005; 50-snack minimum</td>
+				</tr>
+				<tr style="border-top: 1px solid #E8E0D0; background: #FBF8F2;">
+					<td style="padding: 14px 20px; font-weight: 700;">Delivery</td>
+					<td style="padding: 14px 20px;">&#10003; Letterbox to home addresses, or bulk to one office</td>
+					<td style="padding: 14px 20px; color: #6A7A64;">&#10005; Office-only</td>
+				</tr>
+			</tbody>
+		</table>
 		</div>
-		<p style="text-align: center; font-size: 12.5px; color: #8A937F; margin: 20px 0 0;">Snackfully prices checked July 2026 from published pricing at snackfully.co.uk (ex VAT figures with 20% VAT added for a like-for-like comparison). Treat Trunk pricing shown inc. VAT.</p>
+		<p style="text-align: center; font-size: 12.5px; color: #8A937F; margin: 18px 0 0;">Snackfully pricing checked July 2026 from published pricing at snackfully.co.uk (ex VAT, 20% VAT added for a like-for-like comparison).</p>
 	</section>
 
 	<!-- WeWork offer -->
