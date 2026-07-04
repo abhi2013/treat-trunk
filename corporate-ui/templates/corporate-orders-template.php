@@ -122,7 +122,7 @@ get_header();
 				</div>
 				<div class="tt-corp-card" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
 					<h3 style="font-weight: 700; font-size: 20px; margin: 0; color: #1F3B2C;">Remote Team Boxes</h3>
-					<p style="font-size: 14.5px; line-height: 1.55; color: #44543F; margin: 0; flex: 1;">Individual boxes posted to each remote employee&rsquo;s home address. Send us a spreadsheet of addresses and we&rsquo;ll sort the rest - get a quote tailored to your team size.</p>
+					<p style="font-size: 14.5px; line-height: 1.55; color: #44543F; margin: 0; flex: 1;">Healthy office snacks delivered individually to each remote employee&rsquo;s home address. Send us a spreadsheet of addresses and we&rsquo;ll sort the rest - get a quote tailored to your team size.</p>
 					<div style="font-weight: 700; font-size: 22px; color: #1F4D38;">Custom pricing</div>
 					<a href="#quote" style="background: #FFFFFF; color: #1F4D38; border: 2px solid #1F4D38; text-align: center; font-weight: 700; font-size: 15.5px; padding: 10px 0; border-radius: 999px; text-decoration: none;">Set up for my team</a>
 				</div>
@@ -136,7 +136,7 @@ get_header();
 				</div>
 				<div class="tt-corp-card" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
 					<h3 style="font-weight: 700; font-size: 20px; margin: 0; color: #1F3B2C;">Client &amp; Staff Gifting</h3>
-					<p style="font-size: 14.5px; line-height: 1.55; color: #44543F; margin: 0; flex: 1;">One-off thank-yous, onboarding gifts, Christmas orders. Add your branding to boxes, stickers and gift cards.</p>
+					<p style="font-size: 14.5px; line-height: 1.55; color: #44543F; margin: 0; flex: 1;">Corporate gifting for one-off thank-yous, onboarding gifts and Christmas orders. Add your branding to boxes, stickers and gift cards.</p>
 					<div style="font-weight: 700; font-size: 22px; color: #1F4D38;">£28.99<span style="font-size: 14px; font-weight: 600; color: #6A7A64;">/gift</span></div>
 					<a href="<?php echo esc_url( home_url( '/product/one-off-treat-trunk/' ) ); ?>" style="background: #1F4D38; color: #F6EED9; text-align: center; font-weight: 700; font-size: 15.5px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Send a gift box</a>
 				</div>
@@ -366,6 +366,14 @@ get_header();
 	<section class="tt-corp-section" style="padding: 24px 48px 56px; max-width: 800px; margin: 0 auto;">
 		<h2 style="font-weight: 700; font-size: 32px; text-align: center; margin: 0 0 28px; color: #1F3B2C;">Corporate FAQs</h2>
 		<div style="display: flex; flex-direction: column; gap: 12px;">
+			<details style="background: #FFFFFF; border: 1px solid #E8E0D0; border-radius: 14px; padding: 16px 20px;">
+				<summary style="font-weight: 700; font-size: 16px; color: #1F3B2C; cursor: pointer;">What is a corporate snack box?</summary>
+				<p style="font-size: 14.5px; line-height: 1.6; color: #44543F; margin: 10px 0 0;">A corporate snack box is a curated selection of office snacks delivered to your workplace or straight to staff at home, ideal for office kitchens, client visits, staff wellbeing and team perks. Ours are predominantly vegan, sugar sensible and sourced from independent UK brands.</p>
+			</details>
+			<details style="background: #FFFFFF; border: 1px solid #E8E0D0; border-radius: 14px; padding: 16px 20px;">
+				<summary style="font-weight: 700; font-size: 16px; color: #1F3B2C; cursor: pointer;">How much do office snacks cost for a team?</summary>
+				<p style="font-size: 14.5px; line-height: 1.6; color: #44543F; margin: 10px 0 0;">Our Letterbox snack box is £15.99/box, dropping automatically to £13.75/box on 20+ box orders and £13.00/box on 50+ box orders to one address. A one-off Deluxe Corporate Snack Box (50+ snacks) is £100. No minimum order and no discount code needed.</p>
+			</details>
 			<details style="background: #FFFFFF; border: 1px solid #E8E0D0; border-radius: 14px; padding: 16px 20px;">
 				<summary style="font-weight: 700; font-size: 16px; color: #1F3B2C; cursor: pointer;">Can you deliver to lots of individual home addresses?</summary>
 				<p style="font-size: 14.5px; line-height: 1.6; color: #44543F; margin: 10px 0 0;">Yes - this is our speciality. Send us a spreadsheet of names and addresses and we&rsquo;ll post a tracked, letterbox-friendly box to every one. We&rsquo;ve handled orders of 800+.</p>
