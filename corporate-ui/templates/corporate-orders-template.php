@@ -77,7 +77,7 @@ get_header();
 				<div class="tt-corp-card" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
 					<h3 style="font-weight: 700; font-size: 20px; margin: 0; color: #1F3B2C;">Bulk Letterbox Boxes</h3>
 					<p style="font-size: 14.5px; line-height: 1.55; color: #44543F; margin: 0; flex: 1;">Letterbox-friendly snack boxes posted directly to your team&rsquo;s home or office addresses. Order online in one click &mdash; volume pricing applies automatically, no code needed.</p>
-					<div style="font-weight: 700; font-size: 22px; color: #1F4D38;">£15.99 <span style="font-size: 13.5px; font-weight: 600; color: #6A7A64;">/box &middot; 20+: 15% off &middot; 50+: 20% off</span></div>
+					<div style="font-weight: 700; font-size: 22px; color: #1F4D38;">£15.99 <span style="font-size: 13.5px; font-weight: 600; color: #6A7A64;">/box &middot; 20+: £13.75/box &middot; 50+: £13.00/box</span></div>
 
 					<?php
 					// One-click bulk ordering: WooCommerce's native add-to-cart URL
@@ -89,8 +89,8 @@ get_header();
 					$qty50_url    = esc_url( add_query_arg( array( 'add-to-cart' => $letterbox_id, 'quantity' => 50 ), home_url( '/' ) ) );
 					?>
 					<div style="display: flex; flex-direction: column; gap: 8px;">
-						<a href="<?php echo $qty20_url; ?>" style="background: #1F4D38; color: #F6EED9; text-align: center; font-weight: 700; font-size: 15px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Order 20 boxes &mdash; 15% off (£271.80) &rarr;</a>
-						<a href="<?php echo $qty50_url; ?>" style="background: #1F4D38; color: #F6EED9; text-align: center; font-weight: 700; font-size: 15px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Order 50 boxes &mdash; 20% off (£639.50) &rarr;</a>
+						<a href="<?php echo $qty20_url; ?>" style="background: #1F4D38; color: #F6EED9; text-align: center; font-weight: 700; font-size: 15px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Order 20 boxes (£275) &rarr;</a>
+						<a href="<?php echo $qty50_url; ?>" style="background: #1F4D38; color: #F6EED9; text-align: center; font-weight: 700; font-size: 15px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Order 50 boxes (£650) &rarr;</a>
 						<form method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>" style="display: flex; gap: 6px; margin-top: 2px;">
 							<input type="hidden" name="add-to-cart" value="<?php echo esc_attr( $letterbox_id ); ?>">
 							<input type="number" name="quantity" min="1" value="1" aria-label="Custom quantity" style="width: 70px; padding: 10px 8px; border: 1.5px solid #DDD3BE; border-radius: 10px; font-size: 14px;">
@@ -110,7 +110,7 @@ get_header();
 					<h3 style="font-weight: 700; font-size: 20px; margin: 0; color: #1F3B2C;">Monthly Office Subscription</h3>
 					<p style="font-size: 14.5px; line-height: 1.55; color: #44543F; margin: 0; flex: 1;">A big box of 20+ healthy snacks for the office kitchen, refreshed every month. Pause or cancel anytime.</p>
 					<div style="font-weight: 700; font-size: 22px; color: #1F4D38;">£39.99<span style="font-size: 14px; font-weight: 600; color: #6A7A64;">/month</span></div>
-					<a href="https://treattrunk.co.uk/product/treat-trunk-monthly-subscription/" style="background: #1F4D38; color: #F6EED9; text-align: center; font-weight: 700; font-size: 15.5px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Start a subscription</a>
+					<a href="<?php echo esc_url( home_url( '/product/treat-trunk-monthly-subscription/' ) ); ?>" style="background: #1F4D38; color: #F6EED9; text-align: center; font-weight: 700; font-size: 15.5px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Start a subscription</a>
 				</div>
 			</div>
 
@@ -138,7 +138,7 @@ get_header();
 					<h3 style="font-weight: 700; font-size: 20px; margin: 0; color: #1F3B2C;">Client &amp; Staff Gifting</h3>
 					<p style="font-size: 14.5px; line-height: 1.55; color: #44543F; margin: 0; flex: 1;">One-off thank-yous, onboarding gifts, Christmas orders. Add your branding to boxes, stickers and gift cards.</p>
 					<div style="font-weight: 700; font-size: 22px; color: #1F4D38;">£28.99<span style="font-size: 14px; font-weight: 600; color: #6A7A64;">/gift</span></div>
-					<a href="https://treattrunk.co.uk/product/one-off-treat-trunk/" style="background: #1F4D38; color: #F6EED9; text-align: center; font-weight: 700; font-size: 15.5px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Send a gift box</a>
+					<a href="<?php echo esc_url( home_url( '/product/one-off-treat-trunk/' ) ); ?>" style="background: #1F4D38; color: #F6EED9; text-align: center; font-weight: 700; font-size: 15.5px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Send a gift box</a>
 				</div>
 			</div>
 
@@ -152,7 +152,7 @@ get_header();
 					<h3 style="font-weight: 700; font-size: 20px; margin: 0; color: #1F3B2C;">Deluxe Corporate Snack Box</h3>
 					<p style="font-size: 14.5px; line-height: 1.55; color: #44543F; margin: 0; flex: 1;">Our biggest one-off box: 50+ sugar sensible, predominantly vegan snacks (some fan favourites included in multiples) &mdash; built for office kitchens, team days and client visits.</p>
 					<div style="font-weight: 700; font-size: 22px; color: #1F4D38;">£100<span style="font-size: 14px; font-weight: 600; color: #6A7A64;">/box</span></div>
-					<a href="https://treattrunk.co.uk/product/corporate-snack-box/" style="background: #1F4D38; color: #F6EED9; text-align: center; font-weight: 700; font-size: 15.5px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Shop the deluxe box</a>
+					<a href="<?php echo esc_url( home_url( '/product/corporate-snack-box/' ) ); ?>" style="background: #1F4D38; color: #F6EED9; text-align: center; font-weight: 700; font-size: 15.5px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Shop the deluxe box</a>
 				</div>
 			</div>
 		</div>
@@ -177,7 +177,7 @@ get_header();
 			<tbody style="font-size: 14.5px; color: #33422F;">
 				<tr style="border-top: 1px solid #E8E0D0;">
 					<td style="padding: 14px 20px; font-weight: 700;">Bulk price</td>
-					<td style="padding: 14px 20px;">from <strong>£12.79/box</strong> on 50+ box orders</td>
+					<td style="padding: 14px 20px;">from <strong>£13.00/box</strong> on 50+ box orders</td>
 					<td style="padding: 14px 20px; color: #6A7A64;">£87.50 per 50 snacks (£1.75/snack), no bulk tiers</td>
 				</tr>
 				<tr style="border-top: 1px solid #E8E0D0; background: #FBF8F2;">
