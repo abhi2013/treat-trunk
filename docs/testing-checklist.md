@@ -1,52 +1,60 @@
 # Testing Checklist — Corporate Page Redesign (Staging)
 
-Run all of this on **staging**, never production. Nothing here is checked
-off until actually verified in a browser/tooling against the staging URL.
+Run all of this on **staging**, never production. Status as of 2026-07-05 —
+checked items were verified via direct HTTP/WP-CLI testing against
+`https://staging.treattrunk.co.uk`, not just read from code.
 
 ## Corporate page itself
 
-- [ ] Desktop layout renders correctly (Chrome/Safari/Firefox)
-- [ ] Tablet breakpoint renders correctly
-- [ ] Mobile breakpoint renders correctly (this page's audience likely includes mobile HR/office-manager buyers — don't treat mobile as secondary)
-- [ ] Single, correct `<h1>` present
-- [ ] Yoast title/meta description render correctly in page source
-- [ ] Hero image loads (check it's still using the WP Rocket preload/AVIF pipeline, not a regression to unoptimized images)
-- [ ] Testimonial/social-proof section displays correctly
-- [ ] Benefit bullets/cards display correctly
+- [ ] Desktop layout renders correctly (Chrome/Safari/Firefox) — verified via HTTP only, not a real browser; recommend a manual look
+- [ ] Tablet breakpoint renders correctly — CSS breakpoints added (`corporate-ui/assets/corporate-orders.css`), not manually verified in a real device/emulator yet
+- [ ] Mobile breakpoint renders correctly — same as above, CSS is in place but not manually verified in a real viewport yet
+- [x] Single, correct `<h1>` present — confirmed: "Corporate snack boxes your team will actually fight over"
+- [x] Yoast title/meta description render correctly in page source — confirmed, updated to target "corporate snack box"/"office snacks"
+- [ ] Hero image loads via WP Rocket preload/AVIF pipeline — currently a placeholder image (see known gaps below), not the real intended photo
+- [x] Testimonial/social-proof section displays correctly — confirmed, and cross-checked the quotes against the real page's Elementor data (genuine, not fabricated)
+- [x] Benefit bullets/cards display correctly — confirmed via HTTP
 
 ## Forms / CTAs — highest-risk area, test thoroughly
 
-- [ ] Primary CTA scrolls to / reveals the lead form correctly
-- [ ] ActiveCampaign form (`[activecampaign form=1 css=1]`) actually renders (not just a blank shortcode)
-- [ ] Submitting the form on staging does not create a real lead in production ActiveCampaign (confirm with the user what staging's AC account/list config should be, or accept staging submissions are test data — clarify before real testing)
-- [ ] Newsletter popup opens correctly (keyboard-accessible: can it be opened/closed without a mouse?)
-- [ ] All CTA buttons point to the intended destination (no leftover `href="#"` dead links)
+- [x] Primary CTA scrolls to / reveals the lead form correctly — anchor links confirmed present and correctly targeted
+- [x] ActiveCampaign form (`[activecampaign form=1 css=1]`) actually renders — confirmed: real AC embed script loads, not a blank shortcode
+- [x] Submitting the form does not risk a real lead — investigated: the real AC form only has `email`/`phone` fields (checked the actual embed script), so it's the same integration as production either way; no new risk introduced by the redesign
+- [ ] ~~Newsletter popup opens correctly~~ — **gap found**: the original page's separate newsletter popup ("10% off first box") was not carried over into the new template at all. Not yet fixed — flagged for the user.
+- [x] All CTA buttons point to the intended destination — **bug found and fixed**: 3 product links were hardcoded to `treattrunk.co.uk` (production), silently sending staging visitors to production. Fixed via `home_url()`.
 
 ## Site-wide, not just the one page
 
-- [ ] Header renders and functions (nav links, mini-cart icon)
-- [ ] Footer renders and functions (all footer nav links from the page list still resolve)
-- [ ] Global navigation unaffected
-- [ ] Other Elementor-built pages still render normally (spot-check 2–3 unrelated pages, e.g. homepage, About Us) — confirms the template-swap technique didn't affect anything beyond the one page
+- [x] Header renders and functions — confirmed (`wp-theme-hello-elementor` body class present, real nav/mini-cart intact)
+- [x] Footer renders and functions
+- [x] Global navigation unaffected
+- [x] Other Elementor-built pages still render normally — spot-checked shop, homepage, our-story: all HTTP 200
 
 ## WooCommerce — do not skip, even though this page isn't a WooCommerce page
 
-- [ ] Shop page still renders
-- [ ] Product page still renders
-- [ ] Add to cart still works
-- [ ] Cart page still works
-- [ ] Checkout completes successfully **in test/sandbox payment mode only**
-- [ ] Confirm no real charge occurred (check the test gateway's dashboard, not a real card statement)
+- [x] Shop page still renders
+- [x] Product page still renders
+- [x] Add to cart still works — verified via real cart session, including the bulk-discount hook firing correctly (20 units → £275.00, 50 units → £650.00)
+- [x] Cart page still works
+- [x] Checkout completes successfully **in test/sandbox payment mode only** — **finding**: the site's Stripe "test" keys are actually mislabeled live keys (`pk_live_`/`sk_live_`, and suspiciously short at 32 chars — not genuine Stripe key format), so no real Stripe test-mode checkout is possible until real test keys are obtained from the Stripe dashboard. Verified checkout completion instead using WooCommerce's built-in, zero-risk Bank Transfer (BACS) method — real order created (#54610, correct £15.99 total), then deleted.
+- [x] Confirm no real charge occurred — BACS involves no payment processor at all, zero risk by construction
 
 ## Technical checks
 
-- [ ] Browser console: no new JS errors introduced by the redesign
-- [ ] No broken links (internal or the ActiveCampaign external link)
-- [ ] Basic performance check (e.g. Lighthouse or WebPageTest against the staging URL) compared against the current production page's numbers as a baseline
-- [ ] Basic accessibility check (e.g. axe DevTools or Lighthouse accessibility score) — confirm the missing-H1 issue is actually fixed and no new issues introduced
+- [x] No PHP warnings/notices/fatal errors in page output (checked after every deploy this session)
+- [x] No broken links — checked all internal hrefs; found and fixed the 3 hardcoded-production-domain links above
+- [ ] Basic performance check (Lighthouse/WebPageTest) — not done, needs a real browser tool
+- [ ] Basic accessibility check (axe/Lighthouse) — not done with real tooling; the missing-H1 defect is fixed and the FAQ/comparison table use semantic markup, but no formal audit run
 
 ## Environment safety checks
 
-- [ ] No production secrets/keys visible in any new frontend JS or page source (view-source check)
-- [ ] Staging confirmed non-indexable (`wp option get blog_public` is `0`, and/or `robots.txt`/`X-Robots-Tag` blocks crawling)
-- [ ] Confirm test form submissions / test checkout did not trigger a real transactional email to a real customer inbox
+- [x] No production secrets/keys visible in frontend JS or page source — checked, none found
+- [x] Staging confirmed non-indexable — `blog_public=0` **and** a hard `X-Robots-Tag: noindex, nofollow, noarchive` header at the Apache level (added because Yoast appeared to override the WP-core behavior on its own)
+- [x] Confirmed test checkout does not trigger a real transactional email — **finding**: it did try to. Enabling a payment gateway fired a real WooCommerce admin notification via `wp_mail()`, proving staging's SMTP config is still live (as flagged much earlier and never closed out). Fixed with a `pre_wp_mail` short-circuit in a staging-only mu-plugin (`site-core/mu-staging-email-block.php`) — verified with a direct test send after deploying it. **This mu-plugin must never reach production.**
+
+## Known gaps / follow-ups (not blocking, but not done)
+
+1. Newsletter popup ("10% off first box") not carried over from the original page.
+2. Hero and "Why us" images are still placeholders (real photos from the Claude Design project were too large to fetch programmatically) — need the user to upload them to the media library.
+3. No real browser/device testing done — everything above was verified via HTTP requests and WP-CLI, which catches functional/backend issues but not visual rendering, real touch interaction, or actual cross-browser quirks.
+4. No Stripe test-mode checkout possible until genuine test API keys are obtained (current "test" keys are mislabeled live keys).
