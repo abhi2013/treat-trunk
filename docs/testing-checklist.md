@@ -20,7 +20,8 @@ checked items were verified via direct HTTP/WP-CLI testing against
 - [x] Primary CTA scrolls to / reveals the lead form correctly — anchor links confirmed present and correctly targeted
 - [x] ActiveCampaign form (`[activecampaign form=1 css=1]`) actually renders — confirmed: real AC embed script loads, not a blank shortcode
 - [x] Submitting the form does not risk a real lead — investigated: the real AC form only has `email`/`phone` fields (checked the actual embed script), so it's the same integration as production either way; no new risk introduced by the redesign
-- [ ] ~~Newsletter popup opens correctly~~ — **gap found**: the original page's separate newsletter popup ("10% off first box") was not carried over into the new template at all. Not yet fixed — flagged for the user.
+- [x] Newsletter popup opens correctly — **correction**: earlier note that this was missing was wrong. The "Grab your 10% discount code" trigger and its Elementor popup (post ID 43205, same `[activecampaign form=1 css=1]` shortcode) live in the site's shared header/footer chrome, not in the corporate page's own content — confirmed present and unaffected, since the template still calls `get_header()`/`get_footer()`.
+- [ ] **Known pending item (not blocking)**: the popup's rendered form shows an unclear "Opt In"/"On" label. Confirmed this is rendered dynamically by ActiveCampaign's own backend at runtime (not present in any static file, checked the embed script thoroughly) — must be edited directly in the ActiveCampaign account's form builder, which this project doesn't have access to.
 - [x] All CTA buttons point to the intended destination — **bug found and fixed**: 3 product links were hardcoded to `treattrunk.co.uk` (production), silently sending staging visitors to production. Fixed via `home_url()`.
 
 ## Site-wide, not just the one page
