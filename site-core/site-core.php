@@ -113,6 +113,48 @@ add_filter( 'style_loader_tag', function ( $html, $handle ) {
 		// above-the-fold animated image invisible/mistransformed until load,
 		// which regressed LCP from 3.4s to 4.6s. Confirmed via PSI re-test.
 	);
+
+	/**
+	 * Homepage-only: defer the generic (non-page-specific) theme/plugin core
+	 * CSS too, now that tt_critical_css_home() below inlines real critical
+	 * CSS covering what's needed for above-the-fold content. Deliberately
+	 * excludes the per-page Elementor-generated CSS (elementor-post-*),
+	 * which contains actual layout/positioning rules unique to this page's
+	 * widget arrangement, not just decorative styling - riskier to defer
+	 * without perfect critical-CSS coverage of every breakpoint. Also still
+	 * excludes 'e-transitions' (see above) since the critical CSS extraction
+	 * confirmed it captured no .elementor-animated-item rules either.
+	 */
+	if ( is_front_page() ) {
+		$defer_handles = array_merge( $defer_handles, array(
+			'wc-blocks-integration',
+			'woocommerce-layout',
+			'woocommerce-smallscreen',
+			'woocommerce-general',
+			'hello-elementor',
+			'hello-elementor-theme-style',
+			'custom',
+			'elementor-frontend',
+			'widget-nav-menu',
+			'widget-image',
+			'widget-woocommerce-menu-cart',
+			'widget-heading',
+			'widget-icon-list',
+			'widget-spacer',
+			'widget-gallery',
+			'elementor-gallery',
+			'swiper',
+			'e-swiper',
+			'widget-testimonial-carousel',
+			'widget-carousel-module-base',
+			'elementor-gf-local-roboto',
+			'elementor-gf-local-robotoslab',
+			'elementor-gf-local-knewave',
+			'elementor-gf-local-fredokaone',
+			'elementor-gf-local-damion',
+		) );
+	}
+
 	if ( in_array( $handle, $defer_handles, true ) ) {
 		$html = str_replace(
 			"rel='stylesheet'",
@@ -122,6 +164,28 @@ add_filter( 'style_loader_tag', function ( $html, $handle ) {
 	}
 	return $html;
 }, 10, 2 );
+
+/**
+ * PageSpeed: inline real critical CSS on the homepage so deferring the bulk
+ * of the theme/plugin stylesheets above doesn't cause a flash of unstyled
+ * content. Generated with the `critical` npm package (Puppeteer-based)
+ * against the live homepage at a 412x823 mobile viewport, matching
+ * Lighthouse's mobile emulation - not WP Rocket's critical-CSS feature,
+ * which has been failing authentication against WP Rocket's own SaaS
+ * build service since at least 2026-06-03 (open support ticket).
+ * Homepage-only for now; would need regenerating per-template to extend
+ * this same treatment to other page types.
+ */
+add_action( 'wp_head', function () {
+	if ( ! is_front_page() ) {
+		return;
+	}
+	$path = __DIR__ . '/assets/critical-home.css';
+	if ( ! file_exists( $path ) ) {
+		return;
+	}
+	echo '<style id="tt-critical-home">' . file_get_contents( $path ) . '</style>';
+}, 1 );
 
 /**
  * PageSpeed: WordPress core's MediaElement player CSS is enqueued on every
