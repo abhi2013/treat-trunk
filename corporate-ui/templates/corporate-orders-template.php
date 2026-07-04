@@ -31,8 +31,8 @@ get_header();
 				<span style="background: #EADFC8; color: #6B5A2E; font-size: 12.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 14px; border-radius: 999px;">For offices &amp; teams</span>
 				<span style="background: #E3EFE2; color: #1F4D38; font-size: 12.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 14px; border-radius: 999px;">Vegetarian &amp; low sugar</span>
 			</div>
-			<h1 style="font-weight: 700; font-size: 44px; line-height: 1.1; margin: 0; color: #1F3B2C;">Healthy snacks your team will actually fight over</h1>
-			<p style="font-size: 18px; line-height: 1.6; margin: 0; max-width: 52ch; color: #44543F;">Hand-packed snack boxes from independent UK brands &mdash; delivered to your office, or straight through the letterbox of every remote employee. No vending-machine sadness, no admin.</p>
+			<h1 style="font-weight: 700; font-size: 44px; line-height: 1.1; margin: 0; color: #1F3B2C;">Corporate snack boxes your team will actually fight over</h1>
+			<p style="font-size: 18px; line-height: 1.6; margin: 0; max-width: 52ch; color: #44543F;">Hand-packed office snacks from independent UK brands - delivered to your office, or straight through the letterbox of every remote employee. No vending-machine sadness, no admin.</p>
 			<div style="display: flex; gap: 14px; align-items: center; flex-wrap: wrap;">
 				<a href="#boxes" style="background: #C75B39; color: #FFF7EE; font-weight: 700; font-size: 17px; padding: 15px 30px; border-radius: 999px; text-decoration: none;">Shop corporate boxes</a>
 				<a href="#quote" style="color: #1F4D38; font-weight: 700; font-size: 16px; text-decoration: underline; text-underline-offset: 4px;">Request a quote &rarr;</a>
@@ -45,7 +45,7 @@ get_header();
 		</div>
 		<div style="position: relative;">
 			<?php // TODO: swap for uploads/photos-1783026082440.jpeg once uploaded to the media library ?>
-			<img src="https://treattrunk.co.uk/wp-content/uploads/2022/02/IMG_0413-1-768x1024.jpeg" alt="Letterbox snack boxes being hand-packed at Treat Trunk HQ" style="width: 100%; height: 460px; object-fit: cover; border-radius: 24px; box-shadow: 0 24px 48px -20px rgba(31, 61, 44, 0.35);">
+			<img src="https://treattrunk.co.uk/wp-content/uploads/2022/02/IMG_0413-1-768x1024.jpeg" alt="Corporate snack box order being hand-packed at Treat Trunk HQ" style="width: 100%; height: 460px; object-fit: cover; border-radius: 24px; box-shadow: 0 24px 48px -20px rgba(31, 61, 44, 0.35);">
 		</div>
 	</section>
 
@@ -63,7 +63,7 @@ get_header();
 	<section id="boxes" class="tt-corp-section" style="padding: 72px 48px 40px; max-width: 1240px; margin: 0 auto;">
 		<div style="text-align: center; margin-bottom: 44px;">
 			<h2 style="font-weight: 700; font-size: 34px; margin: 0 0 12px; color: #1F3B2C;">Pick your corporate snacking setup</h2>
-			<p style="font-size: 17px; color: #44543F; margin: 0;">Buy online in minutes &mdash; or <a href="#quote" style="color: #C75B39; font-weight: 700;">talk to our team</a> for bespoke branding, mixed orders and volume pricing.</p>
+			<p style="font-size: 17px; color: #44543F; margin: 0;">Buy online in minutes - or <a href="#quote" style="color: #C75B39; font-weight: 700;">talk to our team</a> for bespoke branding, mixed orders and volume pricing.</p>
 		</div>
 
 		<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px;">
@@ -71,12 +71,12 @@ get_header();
 			<!-- Card 1: Letterbox, bulk discount applies automatically at checkout -->
 			<div class="tt-corp-card-wrap" style="background: #FFFFFF; border: 1px solid #E8E0D0; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
 				<div style="position: relative;">
-					<img src="https://treattrunk.co.uk/wp-content/uploads/2021/05/Treat-Trunk-Mini-Healthy-Snack-Box-March-1200.jpg" alt="Letterbox snack box" style="width: 100%; height: 180px; object-fit: cover; display: block;">
+					<img src="https://treattrunk.co.uk/wp-content/uploads/2021/05/Treat-Trunk-Mini-Healthy-Snack-Box-March-1200.jpg" alt="Corporate letterbox office snack box" style="width: 100%; height: 180px; object-fit: cover; display: block;">
 					<span style="position: absolute; top: 12px; left: 12px; background: #F2C94C; color: #4A3A08; font-size: 11.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px;">Best seller</span>
 				</div>
 				<div class="tt-corp-card" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
 					<h3 style="font-weight: 700; font-size: 20px; margin: 0; color: #1F3B2C;">Bulk Letterbox Boxes</h3>
-					<p style="font-size: 14.5px; line-height: 1.55; color: #44543F; margin: 0; flex: 1;">Letterbox-friendly snack boxes delivered directly to your office address. Order online in one click &mdash; volume pricing applies automatically, no code needed. Want your branding on the box? <a href="#quote" style="color: #C75B39; font-weight: 700;">Contact us directly</a>.</p>
+					<p style="font-size: 14.5px; line-height: 1.55; color: #44543F; margin: 0; flex: 1;">Letterbox-friendly snack boxes delivered directly to your office address. Order online in one click - volume pricing applies automatically, no code needed. Want your branding on the box? <a href="#quote" style="color: #C75B39; font-weight: 700;">Contact us directly</a>.</p>
 					<div style="font-weight: 700; font-size: 22px; color: #1F4D38;">£15.99 <span style="font-size: 13.5px; font-weight: 600; color: #6A7A64;">/box &middot; 20+: £13.75/box &middot; 50+: £13.00/box</span></div>
 
 					<?php
@@ -122,7 +122,7 @@ get_header();
 				</div>
 				<div class="tt-corp-card" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
 					<h3 style="font-weight: 700; font-size: 20px; margin: 0; color: #1F3B2C;">Remote Team Boxes</h3>
-					<p style="font-size: 14.5px; line-height: 1.55; color: #44543F; margin: 0; flex: 1;">Individual boxes posted to each remote employee&rsquo;s home address. Send us a spreadsheet of addresses and we&rsquo;ll sort the rest &mdash; get a quote tailored to your team size.</p>
+					<p style="font-size: 14.5px; line-height: 1.55; color: #44543F; margin: 0; flex: 1;">Individual boxes posted to each remote employee&rsquo;s home address. Send us a spreadsheet of addresses and we&rsquo;ll sort the rest - get a quote tailored to your team size.</p>
 					<div style="font-weight: 700; font-size: 22px; color: #1F4D38;">Custom pricing</div>
 					<a href="#quote" style="background: #FFFFFF; color: #1F4D38; border: 2px solid #1F4D38; text-align: center; font-weight: 700; font-size: 15.5px; padding: 10px 0; border-radius: 999px; text-decoration: none;">Set up for my team</a>
 				</div>
@@ -150,20 +150,20 @@ get_header();
 				</div>
 				<div class="tt-corp-card" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
 					<h3 style="font-weight: 700; font-size: 20px; margin: 0; color: #1F3B2C;">Deluxe Corporate Snack Box</h3>
-					<p style="font-size: 14.5px; line-height: 1.55; color: #44543F; margin: 0; flex: 1;">Our biggest one-off box: 50+ sugar sensible, predominantly vegan snacks (some fan favourites included in multiples) &mdash; built for office kitchens, team days and client visits.</p>
+					<p style="font-size: 14.5px; line-height: 1.55; color: #44543F; margin: 0; flex: 1;">Our biggest one-off box: 50+ sugar sensible, predominantly vegan snacks (some fan favourites included in multiples) - built for office kitchens, team days and client visits.</p>
 					<div style="font-weight: 700; font-size: 22px; color: #1F4D38;">£100<span style="font-size: 14px; font-weight: 600; color: #6A7A64;">/box</span></div>
 					<a href="<?php echo esc_url( home_url( '/product/corporate-snack-box/' ) ); ?>" style="background: #1F4D38; color: #F6EED9; text-align: center; font-weight: 700; font-size: 15.5px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Shop the deluxe box</a>
 				</div>
 			</div>
 		</div>
-		<p style="text-align: center; font-size: 14px; color: #6A7A64; margin: 26px 0 0;">Bigger team? Mixed dietary needs? <a href="#quote" style="color: #C75B39; font-weight: 700;">Get volume pricing</a> &mdash; we&rsquo;ve shipped orders from 5 boxes to 800+.</p>
+		<p style="text-align: center; font-size: 14px; color: #6A7A64; margin: 26px 0 0;">Bigger team? Mixed dietary needs? <a href="#quote" style="color: #C75B39; font-weight: 700;">Get volume pricing</a> - we&rsquo;ve shipped orders from 5 boxes to 800+.</p>
 	</section>
 
 	<!-- Comparison: value/attributes, not just price (rebased on Letterbox bulk pricing 2026-07-04) -->
 	<section class="tt-corp-section" style="padding: 24px 48px 56px; max-width: 900px; margin: 0 auto;">
 		<div style="text-align: center; margin-bottom: 32px;">
 			<h2 style="font-weight: 700; font-size: 32px; margin: 0 0 10px; color: #1F3B2C;">Why Treat Trunk over a standard office box</h2>
-			<p style="font-size: 16px; color: #44543F; margin: 0;">It&rsquo;s not just price &mdash; it&rsquo;s what&rsquo;s actually in the box.</p>
+			<p style="font-size: 16px; color: #44543F; margin: 0;">It&rsquo;s not just price - it&rsquo;s what&rsquo;s actually in the box.</p>
 		</div>
 		<div style="overflow-x: auto;">
 		<table style="width: 100%; border-collapse: collapse; background: #FFFFFF; border-radius: 20px; overflow: hidden; border: 1px solid #E8E0D0;">
@@ -217,7 +217,7 @@ get_header();
 			<div style="display: flex; flex-direction: column; gap: 18px;">
 				<span style="align-self: flex-start; background: #F2C94C; color: #4A3A08; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 14px; border-radius: 999px;">Free for WeWork members</span>
 				<h2 style="font-weight: 700; font-size: 32px; line-height: 1.15; margin: 0; color: #F6EED9;">Based in a WeWork? Your first box is on us.</h2>
-				<p style="font-size: 17px; line-height: 1.6; color: #CFE0CC; margin: 0; max-width: 56ch;">Any business working from a WeWork office space gets a free welcome snack box &mdash; a full-size Treat Trunk with 20+ healthy snacks for the team to try. No card details, no commitment. Pick your WeWork building and we&rsquo;ll take it from there.</p>
+				<p style="font-size: 17px; line-height: 1.6; color: #CFE0CC; margin: 0; max-width: 56ch;">Any business working from a WeWork office space gets a free welcome snack box - a full-size Treat Trunk with 20+ healthy snacks for the team to try. No card details, no commitment. Pick your WeWork building and we&rsquo;ll take it from there.</p>
 			</div>
 
 			<?php
@@ -251,7 +251,7 @@ get_header();
 				</select>
 				<input type="text" id="tt-ww-address" placeholder="Suite/floor or delivery notes (optional)" style="font-size: 15px; padding: 12px 14px; border: 1.5px solid #DDD3BE; border-radius: 12px; width: 100%; box-sizing: border-box;">
 				<button type="submit" style="background: #F2C94C; color: #4A3A08; border: none; font-weight: 700; font-size: 16px; padding: 14px 0; border-radius: 999px; cursor: pointer;">Claim your free welcome box</button>
-				<span style="font-size: 12.5px; color: #6A7A64;">Opens a pre-filled email to hello@treattrunk.co.uk &mdash; nothing sends without you pressing send.</span>
+				<span style="font-size: 12.5px; color: #6A7A64;">Opens a pre-filled email to hello@treattrunk.co.uk - nothing sends without you pressing send.</span>
 			</form>
 			<script>
 			document.getElementById('tt-wework-form').addEventListener('submit', function (e) {
@@ -276,17 +276,17 @@ get_header();
 			<div style="background: #FFFFFF; border: 1px solid #E8E0D0; border-radius: 20px; padding: 28px; display: flex; flex-direction: column; gap: 12px;">
 				<div style="width: 40px; height: 40px; border-radius: 999px; background: #E3EFE2; color: #1F4D38; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px;">1</div>
 				<h3 style="font-weight: 700; font-size: 19px; margin: 0; color: #1F3B2C;">Tell us about your team</h3>
-				<p style="font-size: 15px; line-height: 1.6; color: #44543F; margin: 0;">Headcount, budget, dietary needs, one office or fifty home addresses &mdash; order online or drop us a message.</p>
+				<p style="font-size: 15px; line-height: 1.6; color: #44543F; margin: 0;">Headcount, budget, dietary needs, one office or fifty home addresses - order online or drop us a message.</p>
 			</div>
 			<div style="background: #FFFFFF; border: 1px solid #E8E0D0; border-radius: 20px; padding: 28px; display: flex; flex-direction: column; gap: 12px;">
 				<div style="width: 40px; height: 40px; border-radius: 999px; background: #E3EFE2; color: #1F4D38; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px;">2</div>
 				<h3 style="font-weight: 700; font-size: 19px; margin: 0; color: #1F3B2C;">We hand-pack every box</h3>
-				<p style="font-size: 15px; line-height: 1.6; color: #44543F; margin: 0;">Snacks are handpicked from small, ethical UK brands &mdash; vegetarian, mostly vegan, low sugar, with your branding on request.</p>
+				<p style="font-size: 15px; line-height: 1.6; color: #44543F; margin: 0;">Snacks are handpicked from small, ethical UK brands - vegetarian, mostly vegan, low sugar, with your branding on request.</p>
 			</div>
 			<div style="background: #FFFFFF; border: 1px solid #E8E0D0; border-radius: 20px; padding: 28px; display: flex; flex-direction: column; gap: 12px;">
 				<div style="width: 40px; height: 40px; border-radius: 999px; background: #E3EFE2; color: #1F4D38; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px;">3</div>
 				<h3 style="font-weight: 700; font-size: 19px; margin: 0; color: #1F3B2C;">Delivered &amp; tracked</h3>
-				<p style="font-size: 15px; line-height: 1.6; color: #44543F; margin: 0;">Bulk to one location or individually to every doorstep &mdash; all tracked, letterbox-friendly.</p>
+				<p style="font-size: 15px; line-height: 1.6; color: #44543F; margin: 0;">Bulk to one location or individually to every doorstep - all tracked, letterbox-friendly.</p>
 			</div>
 		</div>
 	</section>
@@ -303,7 +303,7 @@ get_header();
 				</figure>
 				<figure style="background: #FFFFFF; border-radius: 20px; padding: 26px; margin: 0; display: flex; flex-direction: column; gap: 14px;">
 					<div style="color: #F2C94C; font-size: 16px;">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-					<blockquote style="margin: 0; font-size: 15px; line-height: 1.6; color: #33422F; font-style: italic;">&ldquo;We ordered over 800 letterbox gifts to be sent to our staff &mdash; Sally was great and provided lots of options and costs to help us decide. A pleasure to deal with Treat Trunk.&rdquo;</blockquote>
+					<blockquote style="margin: 0; font-size: 15px; line-height: 1.6; color: #33422F; font-style: italic;">&ldquo;We ordered over 800 letterbox gifts to be sent to our staff - Sally was great and provided lots of options and costs to help us decide. A pleasure to deal with Treat Trunk.&rdquo;</blockquote>
 					<figcaption style="font-size: 14px; font-weight: 700; color: #1F4D38;">800-employee letterbox order</figcaption>
 				</figure>
 				<figure style="background: #FFFFFF; border-radius: 20px; padding: 26px; margin: 0; display: flex; flex-direction: column; gap: 14px;">
@@ -321,11 +321,11 @@ get_header();
 		<div style="display: flex; flex-direction: column; gap: 16px;">
 			<h2 style="font-weight: 700; font-size: 30px; margin: 0; color: #1F3B2C;">Why offices choose Treat Trunk</h2>
 			<div style="display: flex; flex-direction: column; gap: 12px; font-size: 15px; line-height: 1.55; color: #44543F;">
-				<div>&#10003; <strong>No minimum order</strong> &mdash; we work with big brands and five-person startups alike.</div>
-				<div>&#10003; <strong>Dietary needs sorted</strong> &mdash; vegetarian, mostly vegan, low sugar, allergen requirements handled per person.</div>
-				<div>&#10003; <strong>Your branding, our boxes</strong> &mdash; logos on stickers, wrapping and gift cards.</div>
-				<div>&#10003; <strong>Independent UK brands</strong> &mdash; every box champions small, ethical snack makers.</div>
-				<div>&#10003; <strong>One human, start to finish</strong> &mdash; you&rsquo;ll deal with a real person on our team, not a ticketing system.</div>
+				<div>&#10003; <strong>No minimum order</strong> - we work with big brands and five-person startups alike.</div>
+				<div>&#10003; <strong>Dietary needs sorted</strong> - vegetarian, mostly vegan, low sugar, allergen requirements handled per person.</div>
+				<div>&#10003; <strong>Your branding, our boxes</strong> - logos on stickers, wrapping and gift cards.</div>
+				<div>&#10003; <strong>Independent UK brands</strong> - every box champions small, ethical snack makers.</div>
+				<div>&#10003; <strong>One human, start to finish</strong> - you&rsquo;ll deal with a real person on our team, not a ticketing system.</div>
 			</div>
 		</div>
 	</section>
@@ -336,11 +336,11 @@ get_header();
 		<div style="display: flex; flex-direction: column; gap: 12px;">
 			<details style="background: #FFFFFF; border: 1px solid #E8E0D0; border-radius: 14px; padding: 16px 20px;">
 				<summary style="font-weight: 700; font-size: 16px; color: #1F3B2C; cursor: pointer;">Can you deliver to lots of individual home addresses?</summary>
-				<p style="font-size: 14.5px; line-height: 1.6; color: #44543F; margin: 10px 0 0;">Yes &mdash; this is our speciality. Send us a spreadsheet of names and addresses and we&rsquo;ll post a tracked, letterbox-friendly box to every one. We&rsquo;ve handled orders of 800+.</p>
+				<p style="font-size: 14.5px; line-height: 1.6; color: #44543F; margin: 10px 0 0;">Yes - this is our speciality. Send us a spreadsheet of names and addresses and we&rsquo;ll post a tracked, letterbox-friendly box to every one. We&rsquo;ve handled orders of 800+.</p>
 			</details>
 			<details style="background: #FFFFFF; border: 1px solid #E8E0D0; border-radius: 14px; padding: 16px 20px;">
 				<summary style="font-weight: 700; font-size: 16px; color: #1F3B2C; cursor: pointer;">Do the bulk discounts need a code?</summary>
-				<p style="font-size: 14.5px; line-height: 1.6; color: #44543F; margin: 10px 0 0;">No &mdash; order 20 or more Letterbox boxes to one address and the discount applies automatically in your cart. No code needed.</p>
+				<p style="font-size: 14.5px; line-height: 1.6; color: #44543F; margin: 10px 0 0;">No - order 20 or more Letterbox boxes to one address and the discount applies automatically in your cart. No code needed.</p>
 			</details>
 			<details style="background: #FFFFFF; border: 1px solid #E8E0D0; border-radius: 14px; padding: 16px 20px;">
 				<summary style="font-weight: 700; font-size: 16px; color: #1F3B2C; cursor: pointer;">Can you handle dietary requirements and allergies?</summary>
@@ -348,11 +348,11 @@ get_header();
 			</details>
 			<details style="background: #FFFFFF; border: 1px solid #E8E0D0; border-radius: 14px; padding: 16px 20px;">
 				<summary style="font-weight: 700; font-size: 16px; color: #1F3B2C; cursor: pointer;">Can we add our company branding?</summary>
-				<p style="font-size: 14.5px; line-height: 1.6; color: #44543F; margin: 10px 0 0;">Yes &mdash; we can incorporate your branding on boxes, stickers, wrapping and gift cards. Mention it in your enquiry and we&rsquo;ll quote for it.</p>
+				<p style="font-size: 14.5px; line-height: 1.6; color: #44543F; margin: 10px 0 0;">Yes - we can incorporate your branding on boxes, stickers, wrapping and gift cards. Mention it in your enquiry and we&rsquo;ll quote for it.</p>
 			</details>
 			<details style="background: #FFFFFF; border: 1px solid #E8E0D0; border-radius: 14px; padding: 16px 20px;">
 				<summary style="font-weight: 700; font-size: 16px; color: #1F3B2C; cursor: pointer;">Can we pay by invoice?</summary>
-				<p style="font-size: 14.5px; line-height: 1.6; color: #44543F; margin: 10px 0 0;">Yes &mdash; for corporate orders we can invoice your company directly. Mention it in the enquiry form and we&rsquo;ll set it up.</p>
+				<p style="font-size: 14.5px; line-height: 1.6; color: #44543F; margin: 10px 0 0;">Yes - for corporate orders we can invoice your company directly. Mention it in the enquiry form and we&rsquo;ll set it up.</p>
 			</details>
 		</div>
 	</section>
@@ -362,7 +362,7 @@ get_header();
 		<div style="max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 48px; align-items: start;">
 			<div style="display: flex; flex-direction: column; gap: 16px;">
 				<h2 style="font-weight: 700; font-size: 32px; margin: 0; color: #F6EED9;">Request a quote within 24 hours</h2>
-				<p style="font-size: 16px; line-height: 1.6; color: #CFE0CC; margin: 0;">Tell us about your team and what you have in mind &mdash; bulk letterbox orders, a monthly subscription, gifting, or your free WeWork welcome box. Our team replies personally, usually the same day.</p>
+				<p style="font-size: 16px; line-height: 1.6; color: #CFE0CC; margin: 0;">Tell us about your team and what you have in mind - bulk letterbox orders, a monthly subscription, gifting, or your free WeWork welcome box. Our team replies personally, usually the same day.</p>
 				<div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px; font-size: 14.5px; color: #9FBCA0; font-weight: 600;">
 					<span>&#9993; hello@treattrunk.co.uk</span>
 					<span>&#9201; Replies within 24 hours</span>
