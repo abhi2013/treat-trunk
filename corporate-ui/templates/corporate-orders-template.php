@@ -35,7 +35,7 @@ get_header();
 			<p style="font-size: 18px; line-height: 1.6; margin: 0; max-width: 52ch; color: #44543F;">Hand-packed snack boxes from independent UK brands &mdash; delivered to your office, or straight through the letterbox of every remote employee. No vending-machine sadness, no admin.</p>
 			<div style="display: flex; gap: 14px; align-items: center; flex-wrap: wrap;">
 				<a href="#boxes" style="background: #C75B39; color: #FFF7EE; font-weight: 700; font-size: 17px; padding: 15px 30px; border-radius: 999px; text-decoration: none;">Shop corporate boxes</a>
-				<a href="#quote" style="color: #1F4D38; font-weight: 700; font-size: 16px; text-decoration: underline; text-underline-offset: 4px;">Get a tailored quote &rarr;</a>
+				<a href="#quote" style="color: #1F4D38; font-weight: 700; font-size: 16px; text-decoration: underline; text-underline-offset: 4px;">Request a quote &rarr;</a>
 			</div>
 			<div style="display: flex; gap: 26px; margin-top: 6px; font-size: 14px; color: #6A7A64; font-weight: 600; flex-wrap: wrap;">
 				<span>&#10003; No minimum order</span>
@@ -63,7 +63,7 @@ get_header();
 	<section id="boxes" class="tt-corp-section" style="padding: 72px 48px 40px; max-width: 1240px; margin: 0 auto;">
 		<div style="text-align: center; margin-bottom: 44px;">
 			<h2 style="font-weight: 700; font-size: 34px; margin: 0 0 12px; color: #1F3B2C;">Pick your corporate snacking setup</h2>
-			<p style="font-size: 17px; color: #44543F; margin: 0;">Buy online in minutes &mdash; or <a href="#quote" style="color: #C75B39; font-weight: 700;">talk to Sally</a> for bespoke branding, mixed orders and volume pricing.</p>
+			<p style="font-size: 17px; color: #44543F; margin: 0;">Buy online in minutes &mdash; or <a href="#quote" style="color: #C75B39; font-weight: 700;">talk to our team</a> for bespoke branding, mixed orders and volume pricing.</p>
 		</div>
 
 		<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px;">
@@ -76,7 +76,7 @@ get_header();
 				</div>
 				<div class="tt-corp-card" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
 					<h3 style="font-weight: 700; font-size: 20px; margin: 0; color: #1F3B2C;">Bulk Letterbox Boxes</h3>
-					<p style="font-size: 14.5px; line-height: 1.55; color: #44543F; margin: 0; flex: 1;">Letterbox-friendly snack boxes posted directly to your team&rsquo;s home or office addresses. Order online in one click &mdash; volume pricing applies automatically, no code needed.</p>
+					<p style="font-size: 14.5px; line-height: 1.55; color: #44543F; margin: 0; flex: 1;">Letterbox-friendly snack boxes delivered directly to your office address. Order online in one click &mdash; volume pricing applies automatically, no code needed. Want your branding on the box? <a href="#quote" style="color: #C75B39; font-weight: 700;">Contact us directly</a>.</p>
 					<div style="font-weight: 700; font-size: 22px; color: #1F4D38;">£15.99 <span style="font-size: 13.5px; font-weight: 600; color: #6A7A64;">/box &middot; 20+: £13.75/box &middot; 50+: £13.00/box</span></div>
 
 					<?php
@@ -325,7 +325,7 @@ get_header();
 				<div>&#10003; <strong>Dietary needs sorted</strong> &mdash; vegetarian, mostly vegan, low sugar, allergen requirements handled per person.</div>
 				<div>&#10003; <strong>Your branding, our boxes</strong> &mdash; logos on stickers, wrapping and gift cards.</div>
 				<div>&#10003; <strong>Independent UK brands</strong> &mdash; every box champions small, ethical snack makers.</div>
-				<div>&#10003; <strong>One human, start to finish</strong> &mdash; you&rsquo;ll deal with Sally, not a ticketing system.</div>
+				<div>&#10003; <strong>One human, start to finish</strong> &mdash; you&rsquo;ll deal with a real person on our team, not a ticketing system.</div>
 			</div>
 		</div>
 	</section>
@@ -361,8 +361,8 @@ get_header();
 	<section id="quote" class="tt-corp-section" style="background: #1F4D38; padding: 64px 48px;">
 		<div style="max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 48px; align-items: start;">
 			<div style="display: flex; flex-direction: column; gap: 16px;">
-				<h2 style="font-weight: 700; font-size: 32px; margin: 0; color: #F6EED9;">Get a tailored quote within 24 hours</h2>
-				<p style="font-size: 16px; line-height: 1.6; color: #CFE0CC; margin: 0;">Tell us about your team and what you have in mind &mdash; bulk letterbox orders, a monthly subscription, gifting, or your free WeWork welcome box. Sally replies personally, usually the same day.</p>
+				<h2 style="font-weight: 700; font-size: 32px; margin: 0; color: #F6EED9;">Request a quote within 24 hours</h2>
+				<p style="font-size: 16px; line-height: 1.6; color: #CFE0CC; margin: 0;">Tell us about your team and what you have in mind &mdash; bulk letterbox orders, a monthly subscription, gifting, or your free WeWork welcome box. Our team replies personally, usually the same day.</p>
 				<div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px; font-size: 14.5px; color: #9FBCA0; font-weight: 600;">
 					<span>&#9993; hello@treattrunk.co.uk</span>
 					<span>&#9201; Replies within 24 hours</span>
