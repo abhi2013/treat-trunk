@@ -145,12 +145,12 @@ get_header();
 			<!-- Card 5: Deluxe Corporate Snack Box (new £100 product) -->
 			<div class="tt-corp-card-wrap" style="background: #FFFFFF; border: 2px solid #1F4D38; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
 				<div style="position: relative;">
-					<img src="https://treattrunk.co.uk/wp-content/uploads/2021/05/Treat-Trunk-Healthy-Vegan-Snack-Box-1200-2.jpg" alt="Deluxe corporate snack box" style="width: 100%; height: 180px; object-fit: cover; display: block;">
+					<img src="https://treattrunk.co.uk/wp-content/uploads/2021/05/one-off-trunk-1024x1024.jpg" alt="Deluxe corporate snack box with 60+ office snacks" style="width: 100%; height: 180px; object-fit: cover; display: block;">
 					<span style="position: absolute; top: 12px; left: 12px; background: #1F4D38; color: #F6EED9; font-size: 11.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px;">Biggest box</span>
 				</div>
 				<div class="tt-corp-card" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
 					<h3 style="font-weight: 700; font-size: 20px; margin: 0; color: #1F3B2C;">Deluxe Corporate Snack Box</h3>
-					<p style="font-size: 14.5px; line-height: 1.55; color: #44543F; margin: 0; flex: 1;">Our biggest one-off box: 50+ sugar sensible, predominantly vegan snacks (some fan favourites included in multiples) - built for office kitchens, team days and client visits.</p>
+					<p style="font-size: 14.5px; line-height: 1.55; color: #44543F; margin: 0; flex: 1;">Our biggest one-off box: 60+ sugar sensible, predominantly vegan snacks (some fan favourites included in multiples) - built for office kitchens, team days and client visits.</p>
 					<div style="font-weight: 700; font-size: 22px; color: #1F4D38;">£100<span style="font-size: 14px; font-weight: 600; color: #6A7A64;">/box</span></div>
 					<a href="<?php echo esc_url( home_url( '/product/corporate-snack-box/' ) ); ?>" style="background: #1F4D38; color: #F6EED9; text-align: center; font-weight: 700; font-size: 15.5px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Shop the deluxe box</a>
 				</div>
@@ -372,7 +372,7 @@ get_header();
 			</details>
 			<details style="background: #FFFFFF; border: 1px solid #E8E0D0; border-radius: 14px; padding: 16px 20px;">
 				<summary style="font-weight: 700; font-size: 16px; color: #1F3B2C; cursor: pointer;">How much do office snacks cost for a team?</summary>
-				<p style="font-size: 14.5px; line-height: 1.6; color: #44543F; margin: 10px 0 0;">Our Letterbox snack box is £15.99/box, dropping automatically to £13.75/box on 20+ box orders and £13.00/box on 50+ box orders to one address. A one-off Deluxe Corporate Snack Box (50+ snacks) is £100. No minimum order and no discount code needed.</p>
+				<p style="font-size: 14.5px; line-height: 1.6; color: #44543F; margin: 10px 0 0;">Our Letterbox snack box is £15.99/box, dropping automatically to £13.75/box on 20+ box orders and £13.00/box on 50+ box orders to one address. A one-off Deluxe Corporate Snack Box (60+ snacks) is £100. No minimum order and no discount code needed.</p>
 			</details>
 			<details style="background: #FFFFFF; border: 1px solid #E8E0D0; border-radius: 14px; padding: 16px 20px;">
 				<summary style="font-weight: 700; font-size: 16px; color: #1F3B2C; cursor: pointer;">Can you deliver to lots of individual home addresses?</summary>
