@@ -18,17 +18,21 @@ the intended approach:
 3. On staging, the new page template is assigned to the `corporate-orders` page (see `docs/elementor-removal-plan.md`) — a low-risk, reversible change since the underlying Elementor data isn't deleted.
 4. Full run through `docs/testing-checklist.md` on staging before considering the work "done."
 
-## Deploying to production (future, requires explicit approval)
+## Deploying to production — done 2026-07-05
 
-Not planned as part of the initial corporate-page work described in this
-repo's docs so far — the user's brief was staging-first. If/when production
-deployment is requested:
+The corporate page redesign is **live on production** as of 2026-07-05. Actual sequence used, each step separately approved (the auto-mode permission layer specifically required its own explicit yes for plugin activation and for creating the new live product, beyond the general go-ahead for the overall plan):
 
-1. Confirm staging testing is fully green (`docs/testing-checklist.md`).
-2. Take a fresh Lightsail snapshot of production immediately before any change (`docs/backup-plan.md` §1).
-3. Show the exact file(s) to be changed and the exact copy command, and get explicit approval before running it — same pattern as every other production-write action in this project.
-4. Apply the same template-swap technique used on staging (reversible: switching `_wp_page_template` back undoes it).
-5. Immediately verify the live page and re-run the relevant subset of the testing checklist against production.
+1. Copied `site-core/site-core.php` and the `corporate-ui` plugin (template + CSS) to production's `wp-content/plugins/`, lint-checked, left inactive first.
+2. Activated both plugins (explicit approval) — verified the bulk-discount hook on a real cart simulation (20 units → £275.00) before touching anything customer-facing.
+3. Created the "Treat Trunk Corporate Snack Box" product on production (ID 54610, explicit approval) — same content/price/image as staging's version.
+4. Updated Yoast SEO title/meta on the production `corporate-orders` page (ID 36634).
+5. Switched `_wp_page_template` on production's page 36634 to the new template — this was the actual go-live moment.
+6. Cleared the one stale WP Rocket cache directory for `corporate-orders` specifically (not a full site cache flush) so the new template served immediately.
+7. Smoke-tested: live page HTML (correct H1/title, no PHP errors), homepage/shop/letterbox product all still 200, bulk-pricing note visible on the live product page, zero "staging" references leaked into production output.
+
+**Deliberately excluded from production** (staging-only safety nets, not needed/wanted on a live site):
+- `site-core/mu-staging-email-block.php` (production needs real email)
+- Any of the WP-Cron/payment-gateway/indexing changes made on staging to handle the "clone of live DB" scenario — none of that applies to production, which was never touched in those respects.
 
 ## Rollback
 
