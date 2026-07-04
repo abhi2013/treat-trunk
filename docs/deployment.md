@@ -45,6 +45,15 @@ Shipped to staging first, then production, in this order:
 
 **Known unresolved, not blocking**: WP Rocket's "Remove Unused CSS" / critical-CSS feature has been failing authentication against WP Rocket's own SaaS build service since at least 2026-06-03 (`400: We could not authenticate your request...`), confirmed still broken as of 2026-07-04 despite the site's license/registration checking out correctly on wp-rocket.me. Open support ticket with WP Rocket; the remaining ~2.3s of render-blocking CSS (core WooCommerce/Elementor/Google Fonts stylesheets, deliberately left untouched here as too risky to hand-defer without real critical CSS) is gated on that getting fixed.
 
+## Accessibility fixes ("agentic browsing" / link-name audit) — done 2026-07-04
+
+Lighthouse's `link-name` audit ("Links must have discernible text") was failing on 8 links: Elementor Gallery items, Elementor Social Icons widget links, and 3 "our-snacks" links wrapping sticker images with empty `alt=""`. Fixed via `site-core/site-core.php`:
+
+- A footer script labels gallery-item links from Elementor's own `data-elementor-lightbox-title` data, and social-icon links from a domain→label lookup against their `href`.
+- Real alt text set in the media library for the 3 sticker images (IDs 7142/7144/7146 — "Fun"/"Nutritious"/"Surprises") — correct regardless of the point below, but doesn't fully resolve the audit on its own: Elementor's live front-end render of these specific image-widget instances doesn't reliably reflect the current `_wp_attachment_image_alt` value (root cause not isolated — ruled out page cache, CompressX's own metadata, and any persistent object cache). The same footer script also labels these 3 links directly by the wrapped image's class as a working fallback.
+- **Two real bugs found and fixed along the way, not just PSI-score issues**: (1) the footer script originally waited for `DOMContentLoaded`, but WP Rocket's "delay JS execution" was rewriting it to only run after a real user interaction (scroll/click/etc) — by which point `DOMContentLoaded` had already long since fired, so the listener would never have fired for *any* real visitor either, not just Lighthouse. Fixed by excluding the script from delay via the `rocket_delay_js_exclusions` filter and removing the event-listener wrapper (the script runs unconditionally in the footer, after all markup it targets already exists). (2) The sticker-link fallback initially checked `link.textContent.trim()` to avoid mislabeling links that already have real text — but these links contain a `<noscript><img></noscript>` fallback, and with JS enabled `textContent` includes that noscript's raw markup as literal text, which caused the check to wrongly skip the very links it was meant to fix.
+- Verified via a real PSI API run (not just markup inspection): `link-name` audit went from failing (score 0, 8 broken links) to passing (score 1), Accessibility category 89 → 92.
+
 ## Rollback
 
 - **Corporate page specifically**: reset `_wp_page_template` back to its prior value (`default`) — the original Elementor-built page reappears, since nothing was deleted (see `docs/elementor-removal-plan.md`).

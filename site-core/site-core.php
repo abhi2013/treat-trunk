@@ -147,18 +147,37 @@ add_action( 'wp_enqueue_scripts', function () {
 }, 9999 );
 
 /**
- * Accessibility: Elementor's Gallery widget renders each item as an <a> whose
- * only child is a `role="img"` background-image div, not a real <img>. The
- * div carries its own aria-label, but the wrapping link has no accessible
- * name of its own, which accessibility/agentic-browsing audits flag as
- * "Links must have discernible text". Elementor already puts good
- * descriptive text in `data-elementor-lightbox-title` on every such link -
- * copy it into an aria-label on the link itself.
+ * Accessibility: fixes for links with no discernible accessible name,
+ * flagged by Lighthouse's "link-name" audit (and agentic-browsing tools
+ * that rely on a well-formed accessibility tree).
+ *
+ * - Elementor's Gallery widget renders each item as an <a> whose only child
+ *   is a `role="img"` background-image div, not a real <img> - the div has
+ *   its own aria-label, but the wrapping link doesn't. Elementor already
+ *   puts good descriptive text in `data-elementor-lightbox-title`; copy it
+ *   into an aria-label on the link itself.
+ * - Elementor's Social Icons widget renders icon-only links with no text or
+ *   label at all; label them from the recognisable domain in their href.
+ *
+ * Runs unconditionally in the footer (after all page content, so no need
+ * to wait for DOMContentLoaded - by the time this script tag is reached
+ * the gallery/icon markup already exists in the DOM). Excluded from WP
+ * Rocket's "delay JS execution" via rocket_delay_js_exclusions below:
+ * that feature was rewriting this into a script that only runs after a
+ * real user interaction (scroll/click/etc), which broke it for automated
+ * audits entirely, and even for real visitors meant the DOMContentLoaded
+ * listener this used to have would never fire, since DOMContentLoaded has
+ * long since happened by the time any interaction-triggered script runs.
  */
+add_filter( 'rocket_delay_js_exclusions', function ( $excluded ) {
+	$excluded[] = 'tt-a11y-link-labels';
+	return $excluded;
+} );
+
 add_action( 'wp_footer', function () {
 	?>
-	<script>
-	document.addEventListener( 'DOMContentLoaded', function () {
+	<script id="tt-a11y-link-labels">
+	(function () {
 		document.querySelectorAll( 'a.e-gallery-item:not([aria-label])' ).forEach( function ( link ) {
 			var label = link.getAttribute( 'data-elementor-lightbox-title' );
 			if ( ! label ) {
@@ -167,7 +186,53 @@ add_action( 'wp_footer', function () {
 			}
 			link.setAttribute( 'aria-label', label || 'View image' );
 		} );
-	} );
+
+		var socialLabels = {
+			'facebook.com': 'Facebook',
+			'instagram.com': 'Instagram',
+			'twitter.com': 'Twitter',
+			'x.com': 'Twitter',
+			'pinterest.': 'Pinterest',
+			'youtube.com': 'YouTube',
+			'tiktok.com': 'TikTok',
+			'linkedin.com': 'LinkedIn'
+		};
+		document.querySelectorAll( 'a.elementor-icon:not([aria-label])' ).forEach( function ( link ) {
+			var href = link.getAttribute( 'href' ) || '';
+			for ( var domain in socialLabels ) {
+				if ( href.indexOf( domain ) !== -1 ) {
+					link.setAttribute( 'aria-label', socialLabels[ domain ] );
+					break;
+				}
+			}
+		} );
+
+		// Belt-and-suspenders for a handful of "our-snacks" sticker links: the
+		// underlying images already have correct alt text in the media library
+		// (_wp_attachment_image_alt), but Elementor's live render doesn't
+		// reliably carry it through to these specific instances - cause not
+		// fully isolated. Label the wrapping link directly so the audit
+		// passes regardless of what the <img>/alt pipeline does upstream.
+		var knownIconLabels = {
+			'wp-image-7142': 'Fun',
+			'wp-image-7144': 'Nutritious',
+			'wp-image-7146': 'Surprises'
+		};
+		document.querySelectorAll( 'a:not([aria-label])' ).forEach( function ( link ) {
+			// Note: deliberately not gating this on link.textContent being
+			// empty - these links contain a <noscript><img></noscript>
+			// fallback, and with JS enabled, textContent includes that
+			// noscript's raw markup as literal (unparsed) text, which made
+			// an earlier version of this check wrongly treat the link as
+			// already having visible text and skip it.
+			for ( var cls in knownIconLabels ) {
+				if ( link.querySelector( '.' + cls ) ) {
+					link.setAttribute( 'aria-label', knownIconLabels[ cls ] );
+					break;
+				}
+			}
+		} );
+	})();
 	</script>
 	<?php
 }, 20 );
