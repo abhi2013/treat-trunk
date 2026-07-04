@@ -7,7 +7,10 @@ independent layers, used together:
 1. **Lightsail snapshot** — whole-instance, disk-level, fastest full restore, done from the AWS Lightsail console (manual, not automated by this workflow).
 2. **Local file + sanitized DB backups** — targeted, versionable-adjacent, used to seed staging and local dev and to diff custom code over time.
 
-Nothing in this document has been executed yet. File copies require approval (Phase 4); database export requires separate, explicit approval (Phase 5).
+**Status as of 2026-07-04**:
+- File copy (Phase 4) — **done**: custom theme + plugin code copied from production into this repo (`theme/`, `plugins/`), committed to Git.
+- **Staging** database — **done**: a full `wp db export` of the staging DB was taken on 2026-07-04 and stored locally at `backups/staging/2026-07-04-0856/database/` (288MB, 198 tables), after the safety pass (cron/gateways disabled, URL migration, noindex header) — this is a checkpoint of staging's current known-good state, not a distribution copy. Manifest in the same folder's `reports/`. Never committed (`.gitignore` covers `backups/`).
+- **Production** database export/sanitization (Phase 5) — **still not done**, still requires separate explicit approval before running (see §3 below). Nothing has been exported from production itself.
 
 ## 1. Lightsail snapshot (manual, console-based)
 
