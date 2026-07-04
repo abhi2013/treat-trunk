@@ -171,7 +171,7 @@ get_header();
 				<tr style="background: #1F4D38;">
 					<th style="text-align: left; padding: 16px 20px; font-weight: 700; font-size: 14.5px; color: #CFE0CC;"></th>
 					<th style="text-align: left; padding: 16px 20px; font-weight: 700; font-size: 15.5px; color: #F6EED9;">Treat Trunk</th>
-					<th style="text-align: left; padding: 16px 20px; font-weight: 700; font-size: 15.5px; color: #CFE0CC;">Snackfully Premium</th>
+					<th style="text-align: left; padding: 16px 20px; font-weight: 700; font-size: 15.5px; color: #CFE0CC;">Competitor</th>
 				</tr>
 			</thead>
 			<tbody style="font-size: 14.5px; color: #33422F;">
@@ -208,7 +208,7 @@ get_header();
 			</tbody>
 		</table>
 		</div>
-		<p style="text-align: center; font-size: 12.5px; color: #8A937F; margin: 18px 0 0;">Snackfully pricing checked July 2026 from published pricing at snackfully.co.uk (ex VAT, 20% VAT added for a like-for-like comparison).</p>
+		<p style="text-align: center; font-size: 12.5px; color: #8A937F; margin: 18px 0 0;">Competitor pricing checked July 2026 from a comparable UK office snack box provider's published pricing (ex VAT, 20% VAT added for a like-for-like comparison).</p>
 	</section>
 
 	<!-- WeWork offer -->
