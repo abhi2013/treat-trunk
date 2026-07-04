@@ -4,11 +4,10 @@
 
 User created `treattrunk-staging` from a production snapshot via the Lightsail console. Details:
 
-- Public IP: `35.178.179.3`
-- SSH: alias `treat-trunk-staging` added to `~/.ssh/config` (same user `bitnami`, same key `~/.ssh/treattrunk3.pem` — the key was already trusted because it's baked into the snapshot's disk image)
+- Public IP: `35.177.198.77` (static, attached 2026-07-04 — was `35.178.179.3` before; the old dynamic IP was released back to AWS's pool and is now fully unreachable, so update any reference to the old IP)
+- SSH: alias `treat-trunk-staging` in `~/.ssh/config` (same user `bitnami`, same key `~/.ssh/treattrunk3.pem` — the key was already trusted because it's baked into the snapshot's disk image); the `Hostname` was updated to the new static IP after it was attached
 - Confirmed genuinely separate from production: different internal hostname (`ip-172-26-11-51` vs production's `ip-172-26-4-189`)
-- DNS (`staging.treattrunk.co.uk`) not yet pointed at it — still pending, see Open Questions
-- Static IP not yet attached (currently using whatever IP Lightsail assigned on creation)
+- DNS: `staging.treattrunk.co.uk` already has an A record (not set up as part of this plan — pre-existing/set up independently), but as of 2026-07-04 it resolves to **both** the new correct IP and the old dead one (`dig +short staging.treattrunk.co.uk` returns both). **Action needed**: remove the stale `35.178.179.3` A record so only `35.177.198.77` remains — otherwise DNS round-robin will intermittently send visitors to a dead address.
 
 ### Critical post-creation safety pass (completed 2026-07-04)
 
@@ -31,7 +30,13 @@ Two gotchas hit immediately after, both now fixed:
 
 **Lesson for next time**: on a Bitnami WordPress instance, always check `wp-config.php` for hardcoded `WP_SITEURL`/`WP_HOME` constants *before or immediately after* running `search-replace` — the DB change alone is not sufficient and the mismatch symptom (redirects to the old domain) is easy to misread as a DNS/caching problem instead.
 
-**How to preview staging right now** (no DNS yet): add a `/etc/hosts` entry on your Mac mapping `staging.treattrunk.co.uk` to `35.178.179.3`, then visit `https://staging.treattrunk.co.uk`. Expect a browser SSL certificate warning (the Let's Encrypt cert on that instance was issued for `treattrunk.co.uk`, not the staging subdomain, since no cert has been issued for staging yet) — safe to click through for internal testing only; not to be treated as a real trust boundary.
+### PHP-FPM OPcache masking the wp-config.php fix (found and fixed 2026-07-04)
+
+After editing `wp-config.php`'s `WP_SITEURL`/`WP_HOME` constants (above), the site **still redirected to production** when tested over real HTTP (`curl` showed a genuine server-side `301`, header `x-redirect-by: WordPress`, `location: https://treattrunk.co.uk/`) — even though WP-CLI and the raw DB both already showed the correct staging values. Root cause: **PHP-FPM's OPcache had the old compiled `wp-config.php` cached in memory** and doesn't automatically notice on-disk edits. Fixed with `sudo /opt/bitnami/ctlscript.sh restart php-fpm`. Confirmed fixed via `curl` — `HTTP/2 200`, all URLs in the response (REST API discovery link, shortlink) correctly showing `staging.treattrunk.co.uk`.
+
+**Lesson for next time**: whenever `wp-config.php` (or any PHP file affecting global config) is edited directly on a Bitnami instance, restart `php-fpm` afterward — don't assume the on-disk edit takes effect immediately. Verifying via WP-CLI alone isn't sufficient to catch this, since WP-CLI runs as its own PHP process and may not exhibit the same stale-cache symptom as the long-running PHP-FPM pool serving real HTTP requests; verify via an actual `curl`/HTTP request too.
+
+**How to preview staging right now**: DNS already resolves `staging.treattrunk.co.uk` (once the stale record above is removed), so no `/etc/hosts` override should be needed. Expect a browser SSL certificate warning (the Let's Encrypt cert on that instance was issued for `treattrunk.co.uk`, not the staging subdomain, since no cert has been issued for staging yet) — safe to click through for internal testing only; not to be treated as a real trust boundary.
 
 ## If staging does not exist: creation steps (Lightsail console, manual)
 
