@@ -199,6 +199,18 @@
 		select.classList.add( 'tt-pillified' );
 		select.insertAdjacentElement( 'afterend', wrap );
 		select.addEventListener( 'change', syncFromSelect );
+
+		/* Default to the "Standard" size where one exists, rather than
+		   leaving the box unselected - one tap still changes it. */
+		if ( ! select.value ) {
+			var standardOpt = options.find( function ( o ) {
+				return /standard/i.test( o.textContent );
+			} );
+			if ( standardOpt ) {
+				select.value = standardOpt.value;
+				select.dispatchEvent( new Event( 'change', { bubbles: true } ) );
+			}
+		}
 		syncFromSelect();
 	} );
 } )();
