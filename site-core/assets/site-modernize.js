@@ -380,7 +380,9 @@
 	overlay.hidden = true;
 	overlay.innerHTML =
 		'<div class="tt-review-modal" role="dialog" aria-modal="true">' +
-			'<button type="button" class="tt-review-modal-close" aria-label="Close">✕</button>' +
+			'<button type="button" class="tt-review-modal-close" aria-label="Close">' +
+				'<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>' +
+			'</button>' +
 			'<span class="tt-review-modal-quote">“</span>' +
 			'<div class="tt-review-modal-text"></div>' +
 			'<div class="tt-review-modal-footer"></div>' +

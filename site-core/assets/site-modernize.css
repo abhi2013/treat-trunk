@@ -187,15 +187,22 @@ body .elementor-testimonial__name {
   right: 12px;
   width: 34px;
   height: 34px;
+  padding: 0;
+  margin: 0;
   border-radius: 50%;
   border: none;
   background: rgba(31, 77, 56, 0.1);
   color: var(--tt-forest);
   cursor: pointer;
-  display: grid;
-  place-items: center;
-  font-size: 1.1rem;
-  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tt-review-modal-close svg {
+  display: block;
+  width: 14px;
+  height: 14px;
+  flex: none;
 }
 .tt-review-modal-close:hover {
   background: rgba(31, 77, 56, 0.18);
