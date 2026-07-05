@@ -316,3 +316,20 @@
 		section.remove();
 	} );
 } )();
+
+/* Testimonial cards: add a small initial-letter avatar before each
+   reviewer name, since the widget's own settings have per-review
+   photos that never actually render (a pre-existing Elementor quirk,
+   not something this project's CSS/JS controls). */
+( function () {
+	document.querySelectorAll( '.elementor-testimonial__cite' ).forEach( function ( cite ) {
+		var nameEl = cite.querySelector( '.elementor-testimonial__name' );
+		if ( ! nameEl || ! nameEl.textContent.trim() ) {
+			return;
+		}
+		var avatar = document.createElement( 'div' );
+		avatar.className = 'tt-review-avatar';
+		avatar.textContent = nameEl.textContent.trim().charAt( 0 ).toUpperCase();
+		cite.parentNode.insertBefore( avatar, cite );
+	} );
+} )();
