@@ -552,3 +552,27 @@ body .elementor-element-02e713f .elementor-heading-title,
 body .elementor-element-bacd323 .elementor-heading-title {
   color: var(--tt-parchment) !important;
 }
+
+/* ---------- homepage: "why subscribe" benefits scroll strip ----------
+   Six items relocated here via JS from three separate stacking
+   sections (see site-modernize.js) into one horizontal, swipeable
+   strip - the same interaction as the reel player above it, instead of
+   a very long vertical scroll of near-identical icon+text blocks. */
+.tt-benefits-scroll {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding: 8px 20px 20px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+.tt-benefit-card {
+  flex: 0 0 auto;
+  width: 240px;
+  scroll-snap-align: start;
+  text-align: center;
+}
+.tt-benefit-card .elementor-widget-image {
+  max-width: 160px;
+  margin: 0 auto;
+}

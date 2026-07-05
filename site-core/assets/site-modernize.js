@@ -284,3 +284,35 @@
 		videos[ 0 ].play();
 	}
 } )();
+
+/* Homepage "why subscribe" benefits (Great variety, Snacks change
+   monthly, Convenient snack solutions, REAL food, Smaller ethical
+   brands, Predominantly Vegan friendly): six items across three
+   separate Elementor sections, stacking into one long vertical scroll
+   on mobile. Moved into a single horizontal-scroll strip instead,
+   matching the reel player above it - done by relocating the existing
+   columns in the DOM rather than rebuilding the Elementor content, so
+   the six items stay exactly where an editor would expect to find and
+   edit them in Elementor itself. */
+( function () {
+	var sectionIds = [ '17e28054', '74d434b8', '380fdfd4' ];
+	var sections = sectionIds
+		.map( function ( id ) {
+			return document.querySelector( '.elementor-element-' + id );
+		} )
+		.filter( Boolean );
+	if ( sections.length !== sectionIds.length ) {
+		return;
+	}
+	var wrap = document.createElement( 'div' );
+	wrap.className = 'tt-benefits-scroll';
+	sections[ 0 ].parentNode.insertBefore( wrap, sections[ 0 ] );
+	sections.forEach( function ( section ) {
+		var columns = section.querySelectorAll( ':scope > .elementor-container > .elementor-column' );
+		columns.forEach( function ( col ) {
+			col.classList.add( 'tt-benefit-card' );
+			wrap.appendChild( col );
+		} );
+		section.remove();
+	} );
+} )();
