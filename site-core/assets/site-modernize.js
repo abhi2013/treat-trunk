@@ -215,8 +215,62 @@
 	} );
 } )();
 
-/* Homepage Instagram reels section: the videos are self-hosted (see
-   instagram_section_v2.html) rather than Instagram's embed.js, so there
-   is no third-party script to lazy-load here anymore. preload="none" on
-   each <video> already keeps the initial page load light; the browser's
-   native controls handle play/pause. */
+/* Homepage Instagram reels section: self-hosted <video> elements (see
+   instagram_section_v3.html) that autoplay muted, in a loop, only while
+   scrolled into view - the same "always-alive" feel as scrolling a real
+   Instagram/TikTok feed, rather than a static poster waiting for a tap.
+   Native controls are replaced with a single custom mute toggle. */
+( function () {
+	var cards = document.querySelectorAll( '.tt-ig-card' );
+	if ( ! cards.length ) {
+		return;
+	}
+	cards.forEach( function ( card ) {
+		var video = card.querySelector( 'video' );
+		var muteBtn = card.querySelector( '.tt-ig-mute' );
+		if ( ! video ) {
+			return;
+		}
+		if ( muteBtn ) {
+			muteBtn.addEventListener( 'click', function ( e ) {
+				e.stopPropagation();
+				video.muted = ! video.muted;
+				muteBtn.setAttribute( 'aria-pressed', video.muted ? 'false' : 'true' );
+				muteBtn.setAttribute( 'aria-label', video.muted ? 'Unmute video' : 'Mute video' );
+			} );
+		}
+		card.addEventListener( 'click', function () {
+			if ( video.paused ) {
+				video.play();
+			} else {
+				video.pause();
+			}
+		} );
+	} );
+
+	if ( ! ( 'IntersectionObserver' in window ) ) {
+		return;
+	}
+	var io = new IntersectionObserver( function ( entries ) {
+		entries.forEach( function ( entry ) {
+			var card = entry.target;
+			var video = card.querySelector( 'video' );
+			if ( ! video ) {
+				return;
+			}
+			if ( entry.isIntersecting ) {
+				var playPromise = video.play();
+				if ( playPromise && playPromise.catch ) {
+					playPromise.catch( function () {} );
+				}
+				card.classList.add( 'tt-ig-playing' );
+			} else {
+				video.pause();
+				card.classList.remove( 'tt-ig-playing' );
+			}
+		} );
+	}, { threshold: 0.6 } );
+	cards.forEach( function ( card ) {
+		io.observe( card );
+	} );
+} )();

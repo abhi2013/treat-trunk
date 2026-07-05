@@ -31,6 +31,13 @@ body .elementor-widget-text-editor,
 body .elementor-widget-text-editor * {
   color: var(--tt-ink) !important;
 }
+/* some text-editor widgets carry a decorative per-widget font (e.g.
+   Damion, a script face) set directly in their Elementor settings -
+   one consistent family everywhere instead. */
+body .elementor-widget-text-editor,
+body .elementor-widget-text-editor * {
+  font-family: 'DM Sans', sans-serif !important;
+}
 
 /* ---------- links and nav ----------
    body a alone is only two tag selectors (0,0,2) - weaker than any single
@@ -468,24 +475,93 @@ body table.extra-options tr.option_is_gift td.label {
   -webkit-overflow-scrolling: touch;
   justify-content: flex-start;
 }
-.tt-ig-video {
-  width: 100%;
-  aspect-ratio: 9 / 16;
-  object-fit: cover;
-  border-radius: 12px;
+.tt-ig-card {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
   border: 1px solid rgba(31, 77, 56, 0.15);
-  box-shadow: 0 14px 30px -22px rgba(22, 48, 42, 0.35);
+  box-shadow: 0 16px 34px -22px rgba(22, 48, 42, 0.4);
   background: var(--tt-forest-deep);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
-.tt-ig-strip .tt-ig-video {
+.tt-ig-card:hover,
+.tt-ig-card:focus-within {
+  transform: translateY(-4px) scale(1.015);
+  box-shadow: 0 22px 40px -20px rgba(22, 48, 42, 0.5);
+}
+.tt-ig-strip .tt-ig-card {
   flex: 0 0 auto;
   width: 200px;
   scroll-snap-align: start;
+}
+.tt-ig-video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  object-fit: cover;
+}
+/* subtle bottom gradient so the mute icon always reads clearly over
+   any frame of the video, without needing a solid backing chip */
+.tt-ig-shade {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 46%;
+  background: linear-gradient(to top, rgba(10, 20, 16, 0.55), transparent);
+  pointer-events: none;
+}
+.tt-ig-mute {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(251, 248, 242, 0.92);
+  color: var(--tt-forest);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+.tt-ig-mute:hover {
+  background: var(--tt-parchment);
+  transform: scale(1.08);
+}
+.tt-ig-mute svg {
+  width: 18px;
+  height: 18px;
+}
+.tt-ig-mute .tt-ig-icon-on {
+  display: none;
+}
+.tt-ig-mute[aria-pressed="true"] .tt-ig-icon-off {
+  display: none;
+}
+.tt-ig-mute[aria-pressed="true"] .tt-ig-icon-on {
+  display: block;
+}
+/* playing state: a thin live-motion ring so paused/loading cards read
+   differently from ones actively autoplaying, echoing a "live" feel */
+.tt-ig-card.tt-ig-playing {
+  box-shadow: 0 0 0 2px var(--tt-gold), 0 16px 34px -22px rgba(22, 48, 42, 0.4);
 }
 .tt-ig-hint {
   font-size: 0.8rem;
   color: var(--tt-sage);
   margin-top: 6px;
+}
+.tt-ig-arrow {
+  display: inline-block;
+  animation: tt-ig-swipe 1.4s ease-in-out infinite;
+}
+@keyframes tt-ig-swipe {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(5px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tt-ig-arrow { animation: none; }
+  .tt-ig-card { transition: none; }
 }
 @media (min-width: 900px) {
   .tt-ig-strip {
@@ -507,4 +583,18 @@ body .elementor-element-373e36f img {
   width: 100% !important;
   height: auto !important;
   object-fit: cover !important;
+}
+
+/* ---------- homepage: Monthly / Mini Monthly Treat Trunk title bands ----------
+   Monthly used pink (#f0b5b2), Mini Monthly used the old teal
+   (#0f6277) - two different one-off widget-level background colors on
+   what's meant to read as a matching pair of product cards. Same forest
+   band as the blog title/newsletter sections elsewhere on the site. */
+body .elementor-element-02e713f,
+body .elementor-element-bacd323 {
+  background-color: var(--tt-forest) !important;
+}
+body .elementor-element-02e713f .elementor-heading-title,
+body .elementor-element-bacd323 .elementor-heading-title {
+  color: var(--tt-parchment) !important;
 }
