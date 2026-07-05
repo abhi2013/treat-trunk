@@ -17,4 +17,146 @@
 	sections.forEach( function ( el ) {
 		io.observe( el );
 	} );
+	/* Safety net: on some pages a section's initial layout height is 0 (or
+	   otherwise doesn't register as intersecting) before async content -
+	   images, archive grids - finishes loading, and the observer never
+	   fires again since it only reacts to threshold crossings. Force
+	   everything visible after a short delay so content can never be
+	   silently stuck invisible. */
+	setTimeout( function () {
+		sections.forEach( function ( el ) {
+			el.classList.add( 'tt-in' );
+		} );
+		io.disconnect();
+	}, 2500 );
+} )();
+
+/* Product-options pill toggles: highlight the checked radio's label via a
+   plain class rather than relying only on :has(), since that selector
+   isn't supported in older browsers still in real-world use. */
+( function () {
+	var table = document.querySelector( 'table.extra-options' );
+	if ( ! table ) {
+		return;
+	}
+	function syncPill( input ) {
+		var name = input.name;
+		document.querySelectorAll( 'input[name="' + name + '"]' ).forEach( function ( sibling ) {
+			var label = sibling.closest( 'label' );
+			if ( label ) {
+				label.classList.toggle( 'tt-pill-checked', sibling.checked );
+			}
+		} );
+	}
+	table.querySelectorAll( 'input[type="radio"]' ).forEach( function ( input ) {
+		syncPill( input );
+		input.addEventListener( 'change', function () {
+			syncPill( input );
+		} );
+	} );
+
+	/* The plugin's own conditional show/hide (e.g. gift_to/gift_from only
+	   when "Is this a gift?" is Yes) never ran on initial page load - only
+	   on a real user interaction - so every conditional field showed
+	   regardless of the actual (pre-checked) default selection. Dispatching
+	   a synthetic "change" event didn't trigger the plugin's own handler
+	   (it likely binds some other way), so this reads each row's own
+	   data-rules attribute and evaluates it directly instead. */
+	function fieldValue( name ) {
+		var checkedRadio = table.querySelector( 'input[type="radio"][name="' + name + '"]:checked' );
+		if ( checkedRadio ) {
+			return checkedRadio.value;
+		}
+		var checkbox = table.querySelector( 'input[type="checkbox"][name="' + name + '"]' );
+		if ( checkbox ) {
+			return checkbox.checked ? '1' : '';
+		}
+		var other = table.querySelector( '[name="' + name + '"]' );
+		return other ? other.value : null;
+	}
+	function flattenConditions( node, out ) {
+		if ( Array.isArray( node ) ) {
+			node.forEach( function ( n ) {
+				flattenConditions( n, out );
+			} );
+		} else if ( node && typeof node === 'object' && node.operator ) {
+			out.push( node );
+		}
+		return out;
+	}
+	function evaluateRow( row ) {
+		var rulesAttr = row.getAttribute( 'data-rules' );
+		var action = row.getAttribute( 'data-rules-action' );
+		if ( ! rulesAttr ) {
+			return;
+		}
+		var rules;
+		try {
+			rules = JSON.parse( rulesAttr );
+		} catch ( e ) {
+			return;
+		}
+		var conditions = flattenConditions( rules, [] );
+		var allMatch = conditions.every( function ( cond ) {
+			var name = cond.operand && cond.operand[ 0 ];
+			if ( ! name ) {
+				return true;
+			}
+			var actual = fieldValue( name );
+			if ( cond.operator === 'value_eq' ) {
+				return actual === cond.value;
+			}
+			return true;
+		} );
+		var shouldShow = action === 'hide' ? ! allMatch : allMatch;
+		row.style.display = shouldShow ? '' : 'none';
+	}
+	function evaluateAllRows() {
+		table.querySelectorAll( 'tr[data-rules]' ).forEach( evaluateRow );
+	}
+	table.addEventListener( 'change', evaluateAllRows );
+	table.addEventListener( 'input', evaluateAllRows );
+	evaluateAllRows();
+} )();
+
+/* WooCommerce's own variation dropdown (e.g. "Size"): replace with pill
+   buttons for a small option set, same treatment as the gift/who-for
+   pills above. The <select> itself stays in the DOM, visually hidden -
+   WooCommerce's price/stock update logic listens for its "change" event,
+   so pills just drive that same select rather than reimplementing it. */
+( function () {
+	document.querySelectorAll( 'table.variations select[name^="attribute_"]' ).forEach( function ( select ) {
+		var options = Array.prototype.filter.call( select.options, function ( o ) {
+			return o.value !== '';
+		} );
+		if ( options.length < 2 || options.length > 6 ) {
+			return;
+		}
+		var wrap = document.createElement( 'div' );
+		wrap.className = 'tt-variation-pills';
+
+		function syncFromSelect() {
+			Array.prototype.forEach.call( wrap.children, function ( pill, i ) {
+				pill.classList.toggle( 'tt-pill-checked', options[ i ].value === select.value );
+			} );
+		}
+
+		options.forEach( function ( opt ) {
+			var pill = document.createElement( 'button' );
+			pill.type = 'button';
+			pill.className = 'tt-variation-pill';
+			pill.textContent = opt.textContent;
+			pill.addEventListener( 'click', function () {
+				select.value = opt.value;
+				select.dispatchEvent( new Event( 'change', { bubbles: true } ) );
+				syncFromSelect();
+			} );
+			wrap.appendChild( pill );
+		} );
+
+		select.classList.add( 'tt-pillified' );
+		select.insertAdjacentElement( 'afterend', wrap );
+		select.addEventListener( 'change', syncFromSelect );
+		syncFromSelect();
+	} );
 } )();

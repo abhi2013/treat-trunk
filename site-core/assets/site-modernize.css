@@ -103,7 +103,7 @@ body .cli_action_button {
   background-color: var(--tt-forest) !important;
   border-color: var(--tt-forest) !important;
   color: var(--tt-parchment) !important;
-  border-radius: 3px !important;
+  border-radius: 11px !important;
   font-family: 'DM Sans', sans-serif !important;
   font-weight: 700 !important;
   transition: background-color 0.2s ease, transform 0.2s ease;
@@ -206,4 +206,158 @@ body .tt-reveal.tt-in {
     transform: none !important;
     transition: none !important;
   }
+}
+
+/* ---------- product order customisation (WooCommerce Extra Product
+   Options: gift options, "who are the snacks for", size, personalisation)
+   ----------
+   This plugin renders a rigid HTML <table> - fixed-width label column,
+   inline native radios - and no amount of color/font patching fixes that;
+   it needed an actual layout rebuild. Table/row/cell display roles are
+   dropped in favour of a spaced block layout, and inline radio options
+   become pill toggles. */
+body table.extra-options {
+  display: block !important;
+  width: 100% !important;
+  border: none !important;
+  margin: 0 0 4px 0 !important;
+}
+body table.extra-options tbody {
+  display: block !important;
+  width: 100% !important;
+}
+/* deliberately NOT !important on display: the plugin hides conditional
+   rows (e.g. gift-to/gift-from when "Is this a gift?" is No) via an
+   inline style="display:none", and !important here would have overridden
+   that and shown every field regardless of the selection. Without
+   !important this still beats the browser's default table-row display
+   (a UA style, lowest priority), so visible rows still get the block
+   layout - but the plugin's own hide/show logic keeps working. */
+body table.extra-options tr {
+  display: block;
+  width: 100% !important;
+  margin: 0 0 20px 0 !important;
+}
+body table.extra-options td.section-title,
+body table.extra-options td.label,
+body table.extra-options td.value {
+  display: block !important;
+  width: 100% !important;
+  padding: 0 !important;
+}
+body table.extra-options td.section-title {
+  padding-bottom: 10px !important;
+  margin-bottom: 6px !important;
+  border-bottom: 1.5px solid rgba(31, 77, 56, 0.15) !important;
+}
+body table.extra-options td.section-title h4 {
+  margin: 0 !important;
+}
+body table.extra-options td.label {
+  margin-bottom: 10px !important;
+}
+body table.extra-options .label-tag {
+  font-weight: 600 !important;
+  font-size: 0.92rem !important;
+}
+
+/* radio/checkbox rows: value cell becomes a wrapping flex row of pills */
+body table.extra-options tr[data-type="radio"] td.value {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+body table.extra-options label.radio.thwepo-inline {
+  margin: 0 !important;
+  padding: 10px 18px !important;
+  border: 1.5px solid rgba(31, 77, 56, 0.3) !important;
+  border-radius: 999px !important;
+  display: inline-flex !important;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+body table.extra-options label.radio.thwepo-inline.tt-pill-checked {
+  background-color: var(--tt-forest) !important;
+  border-color: var(--tt-forest) !important;
+  color: var(--tt-parchment) !important;
+}
+
+/* gift-wrap style checkbox row */
+body table.extra-options tr[data-type="checkbox"] td.value {
+  padding: 12px 16px !important;
+  border: 1.5px solid rgba(31, 77, 56, 0.2) !important;
+  border-radius: 6px !important;
+}
+body table.extra-options .label-wrapper-checkbox {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+}
+
+/* text/textarea rows: full-width fields, consistent with the rest of the site */
+body table.extra-options tr[data-type="inputtext"] input[type="text"],
+body table.extra-options tr[data-type="textarea"] textarea {
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+/* ---------- WooCommerce's own variation table (e.g. "Size") ----------
+   A completely separate, unstyled <table class="variations"> from
+   WooCommerce core - question label to the left, dropdown to the right,
+   the exact "label left, freeform field right" layout that looked dated.
+   Stacked to match the gift-options rebuild above. The native <select>
+   stays in the DOM (WooCommerce's own JS needs it) but is visually
+   replaced by pill buttons injected via site-modernize.js. */
+body table.variations,
+body table.variations tbody,
+body table.variations tr,
+body table.variations th,
+body table.variations td {
+  display: block !important;
+  width: 100% !important;
+}
+body table.variations th.label {
+  padding: 0 0 10px 0 !important;
+  font-weight: 600 !important;
+  font-size: 0.92rem !important;
+}
+body table.variations td.value {
+  padding: 0 !important;
+}
+body table.variations .reset_variations {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: var(--tt-forest) !important;
+}
+body select.tt-pillified {
+  position: absolute !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  height: 1px !important;
+  width: 1px !important;
+}
+.tt-variation-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.tt-variation-pill {
+  margin: 0;
+  padding: 10px 18px;
+  border: 1.5px solid rgba(31, 77, 56, 0.3);
+  border-radius: 999px;
+  background: transparent;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.92rem;
+  color: var(--tt-ink);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+.tt-variation-pill.tt-pill-checked {
+  background-color: var(--tt-forest);
+  border-color: var(--tt-forest);
+  color: var(--tt-parchment);
 }
