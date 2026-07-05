@@ -220,8 +220,11 @@ add_action( 'wp_enqueue_scripts', function () {
  *   its own aria-label, but the wrapping link doesn't. Elementor already
  *   puts good descriptive text in `data-elementor-lightbox-title`; copy it
  *   into an aria-label on the link itself.
- * - Elementor's Social Icons widget renders icon-only links with no text or
- *   label at all; label them from the recognisable domain in their href.
+ * - Elementor's Social Icons widget, and separately its Icon List widget
+ *   (used for the footer social links - a different widget with different
+ *   markup, `li.elementor-icon-list-item > a` instead of `a.elementor-icon`)
+ *   both render icon-only links with no text or label at all; label them
+ *   from the recognisable domain in their href.
  *
  * Runs unconditionally in the footer (after all page content, so no need
  * to wait for DOMContentLoaded - by the time this script tag is reached
@@ -259,9 +262,10 @@ add_action( 'wp_footer', function () {
 			'pinterest.': 'Pinterest',
 			'youtube.com': 'YouTube',
 			'tiktok.com': 'TikTok',
-			'linkedin.com': 'LinkedIn'
+			'linkedin.com': 'LinkedIn',
+			'contact-us': 'Contact us'
 		};
-		document.querySelectorAll( 'a.elementor-icon:not([aria-label])' ).forEach( function ( link ) {
+		document.querySelectorAll( 'a.elementor-icon:not([aria-label]), li.elementor-icon-list-item > a:not([aria-label])' ).forEach( function ( link ) {
 			var href = link.getAttribute( 'href' ) || '';
 			for ( var domain in socialLabels ) {
 				if ( href.indexOf( domain ) !== -1 ) {
