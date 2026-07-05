@@ -39,6 +39,28 @@
 	if ( ! table ) {
 		return;
 	}
+
+	/* "Is This a Gift?" pills read for themselves now instead of bare
+	   Yes/No, so the question label above them (hidden via CSS) isn't
+	   needed to understand what picking either one means. */
+	function relabel( input, text ) {
+		if ( ! input ) {
+			return;
+		}
+		var label = input.closest( 'label' );
+		if ( ! label ) {
+			return;
+		}
+		for ( var i = label.childNodes.length - 1; i >= 0; i-- ) {
+			if ( label.childNodes[ i ].nodeType === 3 ) {
+				label.childNodes[ i ].textContent = ' ' + text;
+				break;
+			}
+		}
+	}
+	relabel( table.querySelector( '#option_is_gift_1' ), 'Yes, it’s a gift' );
+	relabel( table.querySelector( '#option_is_gift_No' ), 'No, just for me' );
+
 	function syncPill( input ) {
 		var name = input.name;
 		document.querySelectorAll( 'input[name="' + name + '"]' ).forEach( function ( sibling ) {

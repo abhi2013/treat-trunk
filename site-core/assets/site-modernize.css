@@ -244,6 +244,7 @@ body table.extra-options td.value {
   display: block !important;
   width: 100% !important;
   padding: 0 !important;
+  text-align: left !important;
 }
 body table.extra-options td.section-title {
   padding-bottom: 10px !important;
@@ -254,11 +255,21 @@ body table.extra-options td.section-title h4 {
   margin: 0 !important;
 }
 body table.extra-options td.label {
-  margin-bottom: 10px !important;
+  margin-bottom: 14px !important;
 }
 body table.extra-options .label-tag {
   font-weight: 600 !important;
   font-size: 0.92rem !important;
+}
+/* the helper-text line under a field label (e.g. "We can cater for
+   simple allergies...") had no visual distinction from the label itself
+   and almost no gap before the input - looked like one cramped
+   paragraph. Muted color + its own top margin separates the two. */
+body table.extra-options .sublabel-tag {
+  display: block !important;
+  margin-top: 4px !important;
+  color: var(--tt-sage) !important;
+  font-weight: 400 !important;
 }
 
 /* radio/checkbox rows: value cell becomes a wrapping flex row of pills */
@@ -360,4 +371,54 @@ body select.tt-pillified {
   background-color: var(--tt-forest);
   border-color: var(--tt-forest);
   color: var(--tt-parchment);
+}
+
+/* ---------- blog archive cards ---------- */
+body .elementor-post__card {
+  border: 1px solid rgba(31, 77, 56, 0.15) !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+  box-shadow: 0 14px 30px -22px rgba(22, 48, 42, 0.35) !important;
+  background: var(--tt-parchment) !important;
+}
+body .elementor-post__badge {
+  background-color: var(--tt-gold) !important;
+  color: var(--tt-forest-deep) !important;
+  font-weight: 700 !important;
+}
+body .elementor-post__title {
+  font-size: 1.15rem !important;
+}
+body .elementor-post__excerpt p {
+  color: var(--tt-ink) !important;
+  opacity: 0.85;
+}
+body .elementor-post__meta-data {
+  color: var(--tt-sage) !important;
+  font-size: 0.82rem !important;
+}
+body .elementor-post__read-more {
+  font-weight: 600 !important;
+}
+
+/* ---------- single blog post: content image frame ----------
+   Scoped to .single-post so this never touches sticker/logo images
+   elsewhere on the site (those live on the homepage/shop, not on post
+   pages). */
+body.single-post .elementor-widget-image img {
+  border: 1px solid rgba(31, 77, 56, 0.15) !important;
+  border-radius: 4px !important;
+  box-shadow: 0 18px 40px -24px rgba(22, 48, 42, 0.35) !important;
+}
+body.single-post .page-header .elementor-post-avatar,
+body.single-post .page-header .elementor-post-date,
+body.single-post .page-header .elementor-icon {
+  color: var(--tt-parchment) !important;
+  opacity: 0.9;
+}
+
+/* "Is This a Gift?" pills say it themselves now (see site-modernize.js),
+   so the question label above them is redundant. */
+body table.extra-options tr.option_is_gift td.label {
+  display: none !important;
 }
