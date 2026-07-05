@@ -362,16 +362,13 @@
    the page each time one was opened. */
 ( function () {
 	var texts = Array.prototype.slice.call( document.querySelectorAll( '.elementor-testimonial__text' ) );
+	/* A scrollHeight/clientHeight comparison depends on the element
+	   already being laid out at real size - swiper keeps non-active
+	   slides at zero size until scrolled to, so that check silently
+	   passed (no Read more shown) for any review that was not the
+	   active slide, or was measured before swiper finished sizing it.
+	   A plain character-count guess has no such timing dependency. */
 	var overflowing = texts.filter( function ( text ) {
-		/* swiper keeps non-active slides at zero size until they are
-		   scrolled to, so scrollHeight/clientHeight report as equal
-		   (both effectively 0) for any review that was not the
-		   currently-active slide when this ran - which is why some
-		   long reviews got no Read more at all. Fall back to a plain
-		   character-count guess for anything reporting no real size. */
-		if ( text.clientHeight > 0 ) {
-			return text.scrollHeight > text.clientHeight + 2;
-		}
 		return text.textContent.trim().length > 260;
 	} );
 	if ( ! overflowing.length ) {
@@ -422,9 +419,21 @@
 		btn.type = 'button';
 		btn.className = 'tt-review-more';
 		btn.textContent = 'Read more';
-		btn.addEventListener( 'click', function () {
+		btn.addEventListener( 'click', function ( e ) {
+			e.stopPropagation();
 			openModal( text );
 		} );
 		text.parentNode.insertBefore( btn, text.nextSibling );
+
+		/* the whole card opens the same modal, not just the Read more
+		   button - the truncated text under a card that does nothing
+		   when clicked reads as broken. */
+		var card = text.closest( '.elementor-testimonial' );
+		if ( card ) {
+			card.classList.add( 'tt-review-clickable' );
+			card.addEventListener( 'click', function () {
+				openModal( text );
+			} );
+		}
 	} );
 } )();
