@@ -350,17 +350,15 @@ body input[type="checkbox"] {
   accent-color: var(--tt-forest) !important;
 }
 
-/* ---------- content image frame: homepage "how our subscription works" icons ----------
-   Scoped to specific element IDs, not a blanket image rule, so the sticker
-   illustrations and logo (kept exactly as-is per explicit feedback) are
-   never touched. Harmless no-op on pages where these IDs don't exist. */
+/* ---------- homepage "how our subscription works" icons ----------
+   Used to have a padded parchment/bordered square frame around them -
+   removed per feedback, image shown plain (still scoped to these
+   specific element IDs, not a blanket image rule, so the sticker
+   illustrations and logo elsewhere are untouched either way). */
 body .elementor-element-5f5dcd78 img,
 body .elementor-element-222a9495 img,
 body .elementor-element-3373525 img {
-  padding: 10px !important;
-  background: var(--tt-parchment) !important;
-  border: 1px solid rgba(31, 77, 56, 0.3) !important;
-  box-shadow: 0 14px 30px -20px rgba(22, 48, 42, 0.35) !important;
+  border-radius: 12px;
 }
 
 /* ---------- scroll reveal ---------- */
@@ -846,5 +844,10 @@ body .elementor-element-5c3a2ca img {
    descriptions right above it. */
 body .elementor-element-eb5f079,
 body .elementor-element-de2607b {
+  display: none !important;
+}
+/* "Something for everyone" - trailing line under How our subscription
+   works with no real content of its own. */
+body .elementor-element-74968cf {
   display: none !important;
 }
