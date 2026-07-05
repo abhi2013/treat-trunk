@@ -38,6 +38,19 @@ body .elementor-widget-text-editor,
 body .elementor-widget-text-editor * {
   font-family: 'DM Sans', sans-serif !important;
 }
+/* a handful of "benefit" headings (Great variety, Snacks change
+   monthly...) are h3 tags nested inside a text-editor widget, so the
+   ink-color rule above (a class selector, higher specificity than the
+   plain "h3" tag selector in the heading rule below) was winning and
+   showing them in body-text color instead of the heading accent. */
+body .elementor-widget-text-editor h1,
+body .elementor-widget-text-editor h2,
+body .elementor-widget-text-editor h3,
+body .elementor-widget-text-editor h4,
+body .elementor-widget-text-editor h5,
+body .elementor-widget-text-editor h6 {
+  color: var(--tt-forest) !important;
+}
 
 /* ---------- links and nav ----------
    body a alone is only two tag selectors (0,0,2) - weaker than any single
@@ -462,113 +475,54 @@ body table.extra-options tr.option_is_gift td.label {
   margin: 0;
   font-size: 0.98rem;
 }
-.tt-ig-hero {
-  max-width: 300px;
-  margin: 0 auto 32px;
-}
-.tt-ig-strip {
-  display: flex;
-  gap: 16px;
-  overflow-x: auto;
-  padding: 4px 4px 12px;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  justify-content: flex-start;
-}
-.tt-ig-card {
+/* single, larger auto-advancing player instead of a hero+strip grid -
+   one reel visible at a time, cycling to the next on its own. No audio
+   control at all: every video stays muted, by design. */
+.tt-ig-player {
   position: relative;
-  border-radius: 14px;
+  max-width: 380px;
+  margin: 0 auto;
+  border-radius: 16px;
   overflow: hidden;
   border: 1px solid rgba(31, 77, 56, 0.15);
-  box-shadow: 0 16px 34px -22px rgba(22, 48, 42, 0.4);
+  box-shadow: 0 22px 44px -22px rgba(22, 48, 42, 0.45);
   background: var(--tt-forest-deep);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-.tt-ig-card:hover,
-.tt-ig-card:focus-within {
-  transform: translateY(-4px) scale(1.015);
-  box-shadow: 0 22px 40px -20px rgba(22, 48, 42, 0.5);
-}
-.tt-ig-strip .tt-ig-card {
-  flex: 0 0 auto;
-  width: 200px;
-  scroll-snap-align: start;
 }
 .tt-ig-video {
-  display: block;
+  display: none;
   width: 100%;
   aspect-ratio: 9 / 16;
   object-fit: cover;
 }
-/* subtle bottom gradient so the mute icon always reads clearly over
-   any frame of the video, without needing a solid backing chip */
-.tt-ig-shade {
-  position: absolute;
-  inset: auto 0 0 0;
-  height: 46%;
-  background: linear-gradient(to top, rgba(10, 20, 16, 0.55), transparent);
-  pointer-events: none;
-}
-.tt-ig-mute {
-  position: absolute;
-  right: 10px;
-  bottom: 10px;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  border: none;
-  background: rgba(251, 248, 242, 0.92);
-  color: var(--tt-forest);
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  transition: transform 0.15s ease, background-color 0.15s ease;
-}
-.tt-ig-mute:hover {
-  background: var(--tt-parchment);
-  transform: scale(1.08);
-}
-.tt-ig-mute svg {
-  width: 18px;
-  height: 18px;
-}
-.tt-ig-mute .tt-ig-icon-on {
-  display: none;
-}
-.tt-ig-mute[aria-pressed="true"] .tt-ig-icon-off {
-  display: none;
-}
-.tt-ig-mute[aria-pressed="true"] .tt-ig-icon-on {
+.tt-ig-video.tt-ig-active {
   display: block;
 }
-/* playing state: a thin live-motion ring so paused/loading cards read
-   differently from ones actively autoplaying, echoing a "live" feel */
-.tt-ig-card.tt-ig-playing {
-  box-shadow: 0 0 0 2px var(--tt-gold), 0 16px 34px -22px rgba(22, 48, 42, 0.4);
+.tt-ig-dots {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 14px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
 }
-.tt-ig-hint {
-  font-size: 0.8rem;
-  color: var(--tt-sage);
-  margin-top: 6px;
+.tt-ig-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  background: rgba(251, 248, 242, 0.45);
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
 }
-.tt-ig-arrow {
-  display: inline-block;
-  animation: tt-ig-swipe 1.4s ease-in-out infinite;
+.tt-ig-dot--active {
+  background: var(--tt-gold);
+  transform: scale(1.25);
 }
-@keyframes tt-ig-swipe {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(5px); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .tt-ig-arrow { animation: none; }
-  .tt-ig-card { transition: none; }
-}
-@media (min-width: 900px) {
-  .tt-ig-strip {
-    justify-content: center;
-  }
-  .tt-ig-hint {
-    display: none;
+@media (min-width: 640px) {
+  .tt-ig-player {
+    max-width: 420px;
   }
 }
 

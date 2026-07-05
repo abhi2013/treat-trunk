@@ -215,62 +215,72 @@
 	} );
 } )();
 
-/* Homepage Instagram reels section: self-hosted <video> elements (see
-   instagram_section_v3.html) that autoplay muted, in a loop, only while
-   scrolled into view - the same "always-alive" feel as scrolling a real
-   Instagram/TikTok feed, rather than a static poster waiting for a tap.
-   Native controls are replaced with a single custom mute toggle. */
+/* Homepage Instagram reels section: one larger self-hosted <video> at a
+   time (see instagram_section_v4.html), auto-advancing to the next reel
+   when the current one ends, only while the player is scrolled into
+   view. No audio control - everything stays muted. */
 ( function () {
-	var cards = document.querySelectorAll( '.tt-ig-card' );
-	if ( ! cards.length ) {
+	var player = document.querySelector( '.tt-ig-player' );
+	if ( ! player ) {
 		return;
 	}
-	cards.forEach( function ( card ) {
-		var video = card.querySelector( 'video' );
-		var muteBtn = card.querySelector( '.tt-ig-mute' );
-		if ( ! video ) {
-			return;
+	var videos = Array.prototype.slice.call( player.querySelectorAll( '.tt-ig-video' ) );
+	var dots = Array.prototype.slice.call( player.querySelectorAll( '.tt-ig-dot' ) );
+	var current = 0;
+	var inView = false;
+
+	function showIndex( i ) {
+		videos[ current ].classList.remove( 'tt-ig-active' );
+		videos[ current ].pause();
+		if ( dots[ current ] ) {
+			dots[ current ].classList.remove( 'tt-ig-dot--active' );
 		}
-		if ( muteBtn ) {
-			muteBtn.addEventListener( 'click', function ( e ) {
-				e.stopPropagation();
-				video.muted = ! video.muted;
-				muteBtn.setAttribute( 'aria-pressed', video.muted ? 'false' : 'true' );
-				muteBtn.setAttribute( 'aria-label', video.muted ? 'Unmute video' : 'Mute video' );
-			} );
+		current = i;
+		var next = videos[ current ];
+		next.classList.add( 'tt-ig-active' );
+		if ( dots[ current ] ) {
+			dots[ current ].classList.add( 'tt-ig-dot--active' );
 		}
-		card.addEventListener( 'click', function () {
-			if ( video.paused ) {
-				video.play();
-			} else {
-				video.pause();
+		if ( next.preload === 'none' ) {
+			next.preload = 'auto';
+		}
+		if ( inView ) {
+			var p = next.play();
+			if ( p && p.catch ) {
+				p.catch( function () {} );
 			}
+		}
+	}
+
+	videos.forEach( function ( video, i ) {
+		video.addEventListener( 'ended', function () {
+			showIndex( ( i + 1 ) % videos.length );
+		} );
+	} );
+	dots.forEach( function ( dot, i ) {
+		dot.addEventListener( 'click', function () {
+			showIndex( i );
 		} );
 	} );
 
-	if ( ! ( 'IntersectionObserver' in window ) ) {
-		return;
-	}
-	var io = new IntersectionObserver( function ( entries ) {
-		entries.forEach( function ( entry ) {
-			var card = entry.target;
-			var video = card.querySelector( 'video' );
-			if ( ! video ) {
-				return;
-			}
-			if ( entry.isIntersecting ) {
-				var playPromise = video.play();
-				if ( playPromise && playPromise.catch ) {
-					playPromise.catch( function () {} );
+	if ( 'IntersectionObserver' in window ) {
+		var io = new IntersectionObserver( function ( entries ) {
+			entries.forEach( function ( entry ) {
+				inView = entry.isIntersecting;
+				var active = videos[ current ];
+				if ( inView ) {
+					var p = active.play();
+					if ( p && p.catch ) {
+						p.catch( function () {} );
+					}
+				} else {
+					active.pause();
 				}
-				card.classList.add( 'tt-ig-playing' );
-			} else {
-				video.pause();
-				card.classList.remove( 'tt-ig-playing' );
-			}
-		} );
-	}, { threshold: 0.6 } );
-	cards.forEach( function ( card ) {
-		io.observe( card );
-	} );
+			} );
+		}, { threshold: 0.6 } );
+		io.observe( player );
+	} else {
+		inView = true;
+		videos[ 0 ].play();
+	}
 } )();
