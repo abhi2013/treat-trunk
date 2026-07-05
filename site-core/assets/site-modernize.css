@@ -589,35 +589,12 @@ body table.extra-options tr.option_is_gift td.label {
 /* ---------- homepage: Instagram reels section ---------- */
 .tt-ig-section {
   /* no standalone background/heavy padding - this should read as a
-     compact continuation of the flow, not its own big block */
-  padding: 28px 20px 20px;
+     compact continuation of the flow, not its own big block. The
+     heading/subtitle that used to sit above the carousel were removed
+     as redundant, so there is no .tt-ig-head spacing to account for
+     any more - just enough top padding to clear whatever precedes it. */
+  padding: 16px 20px 20px;
   text-align: center;
-}
-.tt-ig-head {
-  max-width: 480px;
-  margin: 0 auto 28px;
-}
-.tt-ig-eyebrow {
-  display: block;
-  font-size: 0.76rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--tt-sage);
-  margin-bottom: 8px;
-}
-.tt-ig-title {
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 800;
-  font-size: 2rem;
-  color: var(--tt-forest);
-  margin: 0 0 8px;
-}
-.tt-ig-sub {
-  color: var(--tt-ink);
-  opacity: 0.75;
-  margin: 0;
-  font-size: 0.98rem;
 }
 /* carousel (4 reels + 6 real past-box photos) alongside an
    always-visible vertical list of the benefit text - stacked on
@@ -705,7 +682,7 @@ body table.extra-options tr.option_is_gift td.label {
 .tt-benefit-list {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
   width: 100%;
   max-width: 460px;
 }
@@ -716,17 +693,19 @@ body table.extra-options tr.option_is_gift td.label {
    their original two-column-per-section layout (Elementor's own
    generated CSS, not something flex-direction:column resets on its
    own) - without it every card sat at half the list width with a big
-   empty gap beside it. */
+   empty gap beside it. Padding and heading size kept deliberately
+   tight so the six cards stacked together land close to the
+   carousel's own height instead of towering well past it. */
 .tt-benefit-list .tt-benefit-card {
   width: 100% !important;
   background: var(--tt-parchment);
   border: 1px solid rgba(31, 77, 56, 0.12);
-  border-radius: 14px;
-  padding: 18px 20px;
+  border-radius: 12px;
+  padding: 10px 14px;
 }
 .tt-benefit-list .tt-benefit-card .elementor-heading-title {
-  font-size: 1.05rem !important;
-  margin-bottom: 10px;
+  font-size: 0.88rem !important;
+  margin-bottom: 4px;
 }
 /* .tt-benefit-card's real icon/text content lives two levels deeper:
    widget-wrap > an inner-section > two 50/50 inner-columns (icon,
@@ -757,12 +736,16 @@ body table.extra-options tr.option_is_gift td.label {
    stretching the image to an arbitrary box instead of a clean circle),
    and object-fit:cover keeps the artwork centred within that circle. */
 .tt-benefit-list .tt-benefit-card .elementor-widget-image img {
-  width: 68px;
-  height: 68px;
+  width: 48px;
+  height: 48px;
   aspect-ratio: 1 / 1;
   object-fit: cover;
   border-radius: 50%;
   display: block;
+}
+.tt-benefit-list .tt-benefit-card .elementor-widget-text-editor p {
+  font-size: 0.85rem !important;
+  line-height: 1.45;
 }
 @media (min-width: 640px) {
   .tt-ig-slides {
