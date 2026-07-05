@@ -1,0 +1,209 @@
+/*
+ * Site-wide brand-direction pilot (staging trial).
+ * Palette and typography extend the corporate-orders page (deep forest
+ * green, parchment/cream, gold, terracotta, DM Sans) to the rest of the
+ * site. Deliberately does NOT touch the sticker illustrations, the logo,
+ * or the corporate-orders page itself (excluded at the PHP enqueue level -
+ * it already has its own complete, hand-built design system).
+ */
+body {
+  --tt-forest: #1F4D38;
+  --tt-forest-deep: #16302A;
+  --tt-sage: #6A7A64;
+  --tt-parchment: #FBF8F2;
+  --tt-cream: #F2E9D3;
+  --tt-gold: #E3B23C;
+  --tt-terracotta: #B8532F;
+  --tt-ink: #1B2420;
+}
+
+/* ---------- base body copy ----------
+   The theme's own CSS sets body{color:#0f6277} and p{color:#0f6277}, so
+   every paragraph, price, and label inherited the same bright accent as
+   headings. Regular text gets a dark neutral instead; headings/buttons
+   below keep the forest green as the deliberate accent. */
+body,
+body p,
+body li,
+body .woocommerce-Price-amount,
+body span.from,
+body .elementor-widget-text-editor,
+body .elementor-widget-text-editor * {
+  color: var(--tt-ink) !important;
+}
+
+/* ---------- links and nav ----------
+   body a alone is only two tag selectors (0,0,2) - weaker than any single
+   class elsewhere in the cascade (0,1,0), so it silently lost to
+   .elementor-toggle-title and similar. The [href] attribute selector
+   brings it to (0,1,1), matching or beating a single class. */
+body a[href] {
+  color: var(--tt-forest) !important;
+}
+body a[href]:hover {
+  color: var(--tt-forest-deep) !important;
+}
+/* FAQ accordion triggers: a plain <a class="elementor-toggle-title"> with
+   no href, so the [href] rule above never matches it. */
+body .elementor-toggle-title {
+  color: var(--tt-forest) !important;
+}
+
+/* ---------- testimonials: attribution line was a stray light blue ---------- */
+body .elementor-testimonial__title {
+  color: var(--tt-sage) !important;
+}
+
+/* ---------- typography: one family instead of three ---------- */
+body h1,
+body h2,
+body h3,
+body h4,
+body h5,
+body h6,
+body .elementor-heading-title {
+  font-family: 'DM Sans', sans-serif !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.01em;
+  color: var(--tt-forest) !important;
+}
+
+/* ---------- blog/archive title band ----------
+   Both .page-header AND the h1.entry-title inside it carry their own
+   dark-teal background from the theme; without this, the blanket
+   heading-color rule above put dark forest text on a dark teal band
+   with barely any contrast. Recolor the band to match the new palette
+   instead of just fixing the symptom. */
+body .page-header,
+body .page-header .entry-title {
+  background-color: var(--tt-forest) !important;
+}
+body .page-header h1,
+body .page-header .entry-title {
+  color: var(--tt-parchment) !important;
+}
+
+/* ---------- global newsletter-signup band (element 2221eea8) ----------
+   Appears near the bottom of every page with its own bright teal
+   background; same contrast problem as the title band above. */
+body .elementor-element-2221eea8 {
+  background-color: var(--tt-forest) !important;
+}
+body .elementor-element-2221eea8 .elementor-heading-title,
+body .elementor-element-2221eea8 p {
+  color: var(--tt-parchment) !important;
+}
+
+/* ---------- buttons: one consistent style ---------- */
+body .elementor-button,
+body button.button,
+body a.button,
+body input[type="submit"],
+body .cli_action_button {
+  background-color: var(--tt-forest) !important;
+  border-color: var(--tt-forest) !important;
+  color: var(--tt-parchment) !important;
+  border-radius: 3px !important;
+  font-family: 'DM Sans', sans-serif !important;
+  font-weight: 700 !important;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+body .elementor-button:hover,
+body button.button:hover,
+body a.button:hover,
+body input[type="submit"]:hover,
+body .cli_action_button:hover {
+  background-color: var(--tt-forest-deep) !important;
+  border-color: var(--tt-forest-deep) !important;
+  color: var(--tt-parchment) !important;
+  transform: translateY(-1px);
+}
+body .elementor-button .elementor-button-text {
+  color: var(--tt-parchment) !important;
+}
+/* the cookie banner's "Reject" link is deliberately the lower-emphasis
+   action - keep it visually secondary rather than matching Accept */
+body .wt-cli-reject-btn {
+  background-color: transparent !important;
+  border: 1.5px solid var(--tt-forest) !important;
+  color: var(--tt-forest) !important;
+}
+body .wt-cli-reject-btn:hover {
+  background-color: rgba(31, 77, 56, 0.08) !important;
+  color: var(--tt-forest) !important;
+}
+
+/* ---------- form fields: consistent input/select/textarea style ----------
+   Today every field on the site (checkout, my-account, contact) is an
+   unstyled browser default. One shape, one focus state, everywhere. */
+body input[type="text"],
+body input[type="email"],
+body input[type="tel"],
+body input[type="password"],
+body input[type="number"],
+body input[type="search"],
+body select,
+body textarea,
+body input.wpcf7-form-control,
+body textarea.wpcf7-form-control,
+body .wpcf7-form input[type="text"],
+body .wpcf7-form input[type="email"],
+body .wpcf7-form input[type="tel"],
+body .wpcf7-form select,
+body .wpcf7-form textarea {
+  font-family: 'DM Sans', sans-serif !important;
+  border: 1.5px solid rgba(31, 77, 56, 0.25) !important;
+  border-radius: 3px !important;
+  background-color: var(--tt-parchment) !important;
+  color: var(--tt-ink) !important;
+  padding: 10px 12px !important;
+}
+body input[type="text"]:focus,
+body input[type="email"]:focus,
+body input[type="tel"]:focus,
+body input[type="password"]:focus,
+body input[type="number"]:focus,
+body input[type="search"]:focus,
+body select:focus,
+body textarea:focus {
+  outline: none !important;
+  border-color: var(--tt-forest) !important;
+  box-shadow: 0 0 0 3px rgba(31, 77, 56, 0.18) !important;
+}
+
+/* ---------- native radio/checkbox tint ---------- */
+body input[type="radio"],
+body input[type="checkbox"] {
+  accent-color: var(--tt-forest) !important;
+}
+
+/* ---------- content image frame: homepage "how our subscription works" icons ----------
+   Scoped to specific element IDs, not a blanket image rule, so the sticker
+   illustrations and logo (kept exactly as-is per explicit feedback) are
+   never touched. Harmless no-op on pages where these IDs don't exist. */
+body .elementor-element-5f5dcd78 img,
+body .elementor-element-222a9495 img,
+body .elementor-element-3373525 img {
+  padding: 10px !important;
+  background: var(--tt-parchment) !important;
+  border: 1px solid rgba(31, 77, 56, 0.3) !important;
+  box-shadow: 0 14px 30px -20px rgba(22, 48, 42, 0.35) !important;
+}
+
+/* ---------- scroll reveal ---------- */
+body .tt-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s cubic-bezier(.2,.7,.2,1), transform 0.7s cubic-bezier(.2,.7,.2,1);
+}
+body .tt-reveal.tt-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  body .tt-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}

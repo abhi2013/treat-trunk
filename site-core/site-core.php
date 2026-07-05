@@ -239,6 +239,7 @@ add_action( 'wp_enqueue_scripts', function () {
  */
 add_filter( 'rocket_delay_js_exclusions', function ( $excluded ) {
 	$excluded[] = 'tt-a11y-link-labels';
+	$excluded[] = 'site-modernize';
 	return $excluded;
 } );
 
@@ -304,4 +305,28 @@ add_action( 'wp_footer', function () {
 	})();
 	</script>
 	<?php
+}, 20 );
+
+/**
+ * Site-wide brand-direction pilot (staging trial).
+ *
+ * Extends the corporate-orders page's palette (forest green, parchment/
+ * cream, gold, terracotta) and typography (DM Sans, already self-hosted -
+ * see custom.css - dropped to one family instead of the current mix)
+ * to the rest of the site. Deliberately does NOT touch the sticker
+ * illustrations or the logo - kept exactly as-is per explicit feedback.
+ * Excludes the corporate-orders page itself (ID 36634): it already has
+ * its own complete, hand-built design system and this is a blanket
+ * !important override, so letting the two overlap risks fighting each
+ * other rather than agreeing. Image framing is scoped to specific
+ * element IDs (the homepage's "how our subscription works" icons) rather
+ * than a blanket image rule, so it can never accidentally catch the
+ * stickers/logo. Reversible by removing this one enqueue call.
+ */
+add_action( 'wp_enqueue_scripts', function () {
+	if ( is_page( 36634 ) ) {
+		return;
+	}
+	wp_enqueue_style( 'tt-site-modernize', plugins_url( 'assets/site-modernize.css', __FILE__ ), array(), '1.0.1' );
+	wp_enqueue_script( 'tt-site-modernize', plugins_url( 'assets/site-modernize.js', __FILE__ ), array(), '1.0.1', true );
 }, 20 );
