@@ -152,6 +152,7 @@ add_filter( 'style_loader_tag', function ( $html, $handle ) {
 			'elementor-gf-local-knewave',
 			'elementor-gf-local-fredokaone',
 			'elementor-gf-local-damion',
+			'jetpack-forms-layout',
 		) );
 	}
 
