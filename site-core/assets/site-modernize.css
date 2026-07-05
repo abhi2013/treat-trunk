@@ -422,3 +422,70 @@ body.single-post .page-header .elementor-icon {
 body table.extra-options tr.option_is_gift td.label {
   display: none !important;
 }
+
+/* ---------- homepage: Instagram reels section ---------- */
+.tt-ig-section {
+  background: var(--tt-cream);
+  padding: 56px 20px 44px;
+  text-align: center;
+}
+.tt-ig-head {
+  max-width: 480px;
+  margin: 0 auto 28px;
+}
+.tt-ig-eyebrow {
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--tt-sage);
+  margin-bottom: 8px;
+}
+.tt-ig-title {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 800;
+  font-size: 2rem;
+  color: var(--tt-forest);
+  margin: 0 0 8px;
+}
+.tt-ig-sub {
+  color: var(--tt-ink);
+  opacity: 0.75;
+  margin: 0;
+  font-size: 0.98rem;
+}
+.tt-ig-hero {
+  max-width: 360px;
+  margin: 0 auto 32px;
+}
+.tt-ig-hero blockquote.instagram-media {
+  margin: 0 auto !important;
+}
+.tt-ig-strip {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 4px 4px 12px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  justify-content: flex-start;
+}
+.tt-ig-strip blockquote.instagram-media {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  margin: 0 !important;
+}
+.tt-ig-hint {
+  font-size: 0.8rem;
+  color: var(--tt-sage);
+  margin-top: 6px;
+}
+@media (min-width: 900px) {
+  .tt-ig-strip {
+    justify-content: center;
+  }
+  .tt-ig-hint {
+    display: none;
+  }
+}

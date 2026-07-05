@@ -35,8 +35,8 @@
    plain class rather than relying only on :has(), since that selector
    isn't supported in older browsers still in real-world use. */
 ( function () {
-	var table = document.querySelector( 'table.extra-options' );
-	if ( ! table ) {
+	var tables = document.querySelectorAll( 'table.extra-options' );
+	if ( ! tables.length ) {
 		return;
 	}
 
@@ -58,8 +58,6 @@
 			}
 		}
 	}
-	relabel( table.querySelector( '#option_is_gift_1' ), 'Yes, it’s a gift' );
-	relabel( table.querySelector( '#option_is_gift_No' ), 'No, just for me' );
 
 	function syncPill( input ) {
 		var name = input.name;
@@ -70,75 +68,97 @@
 			}
 		} );
 	}
-	table.querySelectorAll( 'input[type="radio"]' ).forEach( function ( input ) {
-		syncPill( input );
-		input.addEventListener( 'change', function () {
-			syncPill( input );
-		} );
-	} );
 
-	/* The plugin's own conditional show/hide (e.g. gift_to/gift_from only
-	   when "Is this a gift?" is Yes) never ran on initial page load - only
-	   on a real user interaction - so every conditional field showed
-	   regardless of the actual (pre-checked) default selection. Dispatching
-	   a synthetic "change" event didn't trigger the plugin's own handler
-	   (it likely binds some other way), so this reads each row's own
-	   data-rules attribute and evaluates it directly instead. */
-	function fieldValue( name ) {
-		var checkedRadio = table.querySelector( 'input[type="radio"][name="' + name + '"]:checked' );
-		if ( checkedRadio ) {
-			return checkedRadio.value;
-		}
-		var checkbox = table.querySelector( 'input[type="checkbox"][name="' + name + '"]' );
-		if ( checkbox ) {
-			return checkbox.checked ? '1' : '';
-		}
-		var other = table.querySelector( '[name="' + name + '"]' );
-		return other ? other.value : null;
-	}
-	function flattenConditions( node, out ) {
-		if ( Array.isArray( node ) ) {
-			node.forEach( function ( n ) {
-				flattenConditions( n, out );
+	/* querySelectorAll, not querySelector: this page has two separate
+	   tables (gift options, and a second "personalisation" one holding
+	   who-are-the-snacks-for/name/allergy fields) - only ever handling
+	   the first meant the second table's pills and conditional fields
+	   were never wired up at all. */
+	tables.forEach( function ( table ) {
+		relabel( table.querySelector( '#option_is_gift_1' ), 'Yes, it’s a gift' );
+		relabel( table.querySelector( '#option_is_gift_No' ), 'No, just for me' );
+
+		table.querySelectorAll( 'input[type="radio"]' ).forEach( function ( input ) {
+			syncPill( input );
+			input.addEventListener( 'change', function () {
+				syncPill( input );
 			} );
-		} else if ( node && typeof node === 'object' && node.operator ) {
-			out.push( node );
-		}
-		return out;
-	}
-	function evaluateRow( row ) {
-		var rulesAttr = row.getAttribute( 'data-rules' );
-		var action = row.getAttribute( 'data-rules-action' );
-		if ( ! rulesAttr ) {
-			return;
-		}
-		var rules;
-		try {
-			rules = JSON.parse( rulesAttr );
-		} catch ( e ) {
-			return;
-		}
-		var conditions = flattenConditions( rules, [] );
-		var allMatch = conditions.every( function ( cond ) {
-			var name = cond.operand && cond.operand[ 0 ];
-			if ( ! name ) {
-				return true;
-			}
-			var actual = fieldValue( name );
-			if ( cond.operator === 'value_eq' ) {
-				return actual === cond.value;
-			}
-			return true;
 		} );
-		var shouldShow = action === 'hide' ? ! allMatch : allMatch;
-		row.style.display = shouldShow ? '' : 'none';
-	}
-	function evaluateAllRows() {
-		table.querySelectorAll( 'tr[data-rules]' ).forEach( evaluateRow );
-	}
-	table.addEventListener( 'change', evaluateAllRows );
-	table.addEventListener( 'input', evaluateAllRows );
-	evaluateAllRows();
+
+		/* Most boxes go to adults, and leaving this unset blocked
+		   add-to-basket until a customer picked one - default it, still
+		   changeable with one tap. */
+		var whoForChecked = table.querySelector( 'input[name="who_is_the_box_for"]:checked' );
+		var whoForAdults = table.querySelector( 'input[name="who_is_the_box_for"][value="Adults"]' );
+		if ( whoForAdults && ! whoForChecked ) {
+			whoForAdults.checked = true;
+			syncPill( whoForAdults );
+		}
+
+		/* The plugin's own conditional show/hide (e.g. gift_to/gift_from
+		   only when "Is this a gift?" is Yes) never ran on initial page
+		   load - only on a real user interaction - so every conditional
+		   field showed regardless of the actual (pre-checked) default
+		   selection. Dispatching a synthetic "change" event didn't
+		   trigger the plugin's own handler (it likely binds some other
+		   way), so this reads each row's own data-rules attribute and
+		   evaluates it directly instead. */
+		function fieldValue( name ) {
+			var checkedRadio = table.querySelector( 'input[type="radio"][name="' + name + '"]:checked' );
+			if ( checkedRadio ) {
+				return checkedRadio.value;
+			}
+			var checkbox = table.querySelector( 'input[type="checkbox"][name="' + name + '"]' );
+			if ( checkbox ) {
+				return checkbox.checked ? '1' : '';
+			}
+			var other = table.querySelector( '[name="' + name + '"]' );
+			return other ? other.value : null;
+		}
+		function flattenConditions( node, out ) {
+			if ( Array.isArray( node ) ) {
+				node.forEach( function ( n ) {
+					flattenConditions( n, out );
+				} );
+			} else if ( node && typeof node === 'object' && node.operator ) {
+				out.push( node );
+			}
+			return out;
+		}
+		function evaluateRow( row ) {
+			var rulesAttr = row.getAttribute( 'data-rules' );
+			var action = row.getAttribute( 'data-rules-action' );
+			if ( ! rulesAttr ) {
+				return;
+			}
+			var rules;
+			try {
+				rules = JSON.parse( rulesAttr );
+			} catch ( e ) {
+				return;
+			}
+			var conditions = flattenConditions( rules, [] );
+			var allMatch = conditions.every( function ( cond ) {
+				var name = cond.operand && cond.operand[ 0 ];
+				if ( ! name ) {
+					return true;
+				}
+				var actual = fieldValue( name );
+				if ( cond.operator === 'value_eq' ) {
+					return actual === cond.value;
+				}
+				return true;
+			} );
+			var shouldShow = action === 'hide' ? ! allMatch : allMatch;
+			row.style.display = shouldShow ? '' : 'none';
+		}
+		function evaluateAllRows() {
+			table.querySelectorAll( 'tr[data-rules]' ).forEach( evaluateRow );
+		}
+		table.addEventListener( 'change', evaluateAllRows );
+		table.addEventListener( 'input', evaluateAllRows );
+		evaluateAllRows();
+	} );
 } )();
 
 /* WooCommerce's own variation dropdown (e.g. "Size"): replace with pill
