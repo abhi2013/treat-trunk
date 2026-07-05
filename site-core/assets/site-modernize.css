@@ -705,36 +705,58 @@ body table.extra-options tr.option_is_gift td.label {
 .tt-benefit-list {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 14px;
   width: 100%;
   max-width: 380px;
 }
-/* .tt-benefit-card is an Elementor column whose real content (icon
-   image, heading, text) lives two levels deeper: widget-wrap > an
-   inner-section > two 50/50 inner-columns (icon, text). Elementor's
-   own mobile breakpoint CSS stacks those two columns at this viewport
-   width, which is right for a full-width page section but wrong here -
-   force them into a row regardless, icon narrow and text taking the
-   rest, since this is a compact list item, not a full page column. */
+/* Give each item an actual card boundary - background, border, radius,
+   padding - so heading+icon+text read as one grouped unit instead of
+   three pieces floating in open space with uneven gaps between them. */
+.tt-benefit-list .tt-benefit-card {
+  background: var(--tt-parchment);
+  border: 1px solid rgba(31, 77, 56, 0.12);
+  border-radius: 14px;
+  padding: 18px 20px;
+}
+.tt-benefit-list .tt-benefit-card .elementor-heading-title {
+  font-size: 1.05rem !important;
+  margin-bottom: 10px;
+}
+/* .tt-benefit-card's real icon/text content lives two levels deeper:
+   widget-wrap > an inner-section > two 50/50 inner-columns (icon,
+   text). Elementor's own mobile breakpoint CSS stacks those two
+   columns at this viewport width, which is right for a full-width
+   page section but wrong here - force them into a row regardless,
+   icon fixed-size and text taking the rest. */
 .tt-benefit-list .tt-benefit-card .elementor-inner-section > .elementor-container {
   display: flex !important;
   flex-wrap: nowrap !important;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   text-align: left;
 }
 .tt-benefit-list .tt-benefit-card .elementor-inner-column {
   width: auto !important;
 }
 .tt-benefit-list .tt-benefit-card .elementor-inner-column:first-child {
-  flex: 0 0 56px;
+  flex: 0 0 auto;
 }
 .tt-benefit-list .tt-benefit-card .elementor-inner-column:last-child {
   flex: 1 1 auto;
   min-width: 0;
 }
-.tt-benefit-list .tt-benefit-card .elementor-widget-image {
-  width: 56px;
+/* the source artwork is already a circular badge on transparent-ish
+   background - aspect-ratio:1 stops it being squashed into an oval
+   (the widget wrapper has no fixed height, so the browser was
+   stretching the image to an arbitrary box instead of a clean circle),
+   and object-fit:cover keeps the artwork centred within that circle. */
+.tt-benefit-list .tt-benefit-card .elementor-widget-image img {
+  width: 68px;
+  height: 68px;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
 }
 @media (min-width: 640px) {
   .tt-ig-slides {
