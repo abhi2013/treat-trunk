@@ -619,10 +619,13 @@ body table.extra-options tr.option_is_gift td.label {
   margin: 0;
   font-size: 0.98rem;
 }
-/* carousel (4 reels + 6 benefit icon images) alongside an
+/* carousel (4 reels + 6 real past-box photos) alongside an
    always-visible vertical list of the benefit text - stacked on
    mobile, side by side from tablet width up. No audio control at all:
-   every video stays muted, by design. */
+   every video stays muted, by design. Arrows sit as an overlay on top
+   of the slide frame (not as flex siblings) so the frame keeps its
+   full width instead of being squeezed by two 40px buttons either
+   side of it. */
 .tt-ig-layout {
   display: flex;
   flex-direction: column;
@@ -630,19 +633,12 @@ body table.extra-options tr.option_is_gift td.label {
   align-items: center;
 }
 .tt-ig-player {
-  position: relative;
   max-width: 380px;
   width: 100%;
   margin: 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex: 0 0 auto;
 }
 .tt-ig-slides {
   position: relative;
-  flex: 1;
-  min-width: 0;
   border-radius: 16px;
   overflow: hidden;
   border: 1px solid rgba(31, 77, 56, 0.15);
@@ -662,40 +658,42 @@ body table.extra-options tr.option_is_gift td.label {
   object-fit: cover;
   background: var(--tt-forest-deep);
 }
-/* the 6 benefit-icon image slides sit in the same rotation as the
-   reels, sized the same way (.tt-ig-video handles the base sizing) but
-   with object-fit: contain instead of cover - these are illustrations
-   on their own background, not photography meant to fill the frame. */
-.tt-ig-image-slide {
-  object-fit: contain !important;
-  padding: 30px;
-  box-sizing: border-box;
-}
 .tt-ig-arrow {
-  flex: 0 0 auto;
-  width: 40px;
-  height: 40px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  border: 1px solid rgba(31, 77, 56, 0.2);
-  background: var(--tt-parchment);
+  border: none;
+  background: rgba(251, 248, 242, 0.9);
   color: var(--tt-forest);
   display: grid;
   place-items: center;
   cursor: pointer;
+  box-shadow: 0 6px 16px -6px rgba(22, 48, 42, 0.5);
   transition: background-color 0.15s ease, transform 0.15s ease;
 }
+.tt-ig-arrow--prev {
+  left: 10px;
+}
+.tt-ig-arrow--next {
+  right: 10px;
+}
 .tt-ig-arrow:hover {
-  background: var(--tt-cream);
-  transform: scale(1.06);
+  background: var(--tt-parchment);
+  transform: translateY(-50%) scale(1.08);
 }
 .tt-ig-arrow svg {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
 }
 .tt-ig-counter {
   position: absolute;
   right: 12px;
   bottom: 12px;
+  z-index: 2;
   padding: 4px 10px;
   border-radius: 999px;
   background: rgba(10, 20, 16, 0.5);
@@ -711,19 +709,37 @@ body table.extra-options tr.option_is_gift td.label {
   width: 100%;
   max-width: 380px;
 }
-.tt-benefit-list .tt-benefit-card {
-  display: flex;
+/* .tt-benefit-card is an Elementor column whose real content (icon
+   image, heading, text) lives two levels deeper: widget-wrap > an
+   inner-section > two 50/50 inner-columns (icon, text). Elementor's
+   own mobile breakpoint CSS stacks those two columns at this viewport
+   width, which is right for a full-width page section but wrong here -
+   force them into a row regardless, icon narrow and text taking the
+   rest, since this is a compact list item, not a full page column. */
+.tt-benefit-list .tt-benefit-card .elementor-inner-section > .elementor-container {
+  display: flex !important;
+  flex-wrap: nowrap !important;
   align-items: center;
   gap: 16px;
   text-align: left;
 }
+.tt-benefit-list .tt-benefit-card .elementor-inner-column {
+  width: auto !important;
+}
+.tt-benefit-list .tt-benefit-card .elementor-inner-column:first-child {
+  flex: 0 0 56px;
+}
+.tt-benefit-list .tt-benefit-card .elementor-inner-column:last-child {
+  flex: 1 1 auto;
+  min-width: 0;
+}
 .tt-benefit-list .tt-benefit-card .elementor-widget-image {
-  flex: 0 0 auto;
-  width: 64px;
+  width: 56px;
 }
 @media (min-width: 640px) {
   .tt-ig-slides {
     max-width: 420px;
+    margin: 0 auto;
   }
 }
 @media (min-width: 900px) {

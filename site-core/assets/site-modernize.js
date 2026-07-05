@@ -215,12 +215,13 @@
 	} );
 } )();
 
-/* Homepage "See what's inside" carousel: the 4 reels (self-hosted
-   video) plus a plain image slide for each of the 6 "why subscribe"
-   benefit icons, navigated with shared prev/next arrows. The benefit
-   items' actual text (Great variety, Convenient snack solutions...)
-   lives separately as an always-visible vertical list next to the
-   carousel, rather than being folded into rotating slides - relocated
+/* Homepage "See what's inside" carousel: the 4 reels plus 6 real past-
+   box photos (hardcoded in instagram_section_v7.html - the same 6
+   images that used to live in a separate gallery widget further down
+   the page, now folded in here instead of duplicated) are the slides,
+   navigated with shared prev/next arrows. The "why subscribe" benefit
+   text (Great variety, Convenient snack solutions...) lives separately
+   as an always-visible vertical list next to the carousel - relocated
    here from three separate Elementor sections that otherwise stack
    into one long vertical scroll on mobile. Relocating the existing
    columns (rather than rebuilding that content) keeps them exactly
@@ -244,18 +245,16 @@
 		columns.forEach( function ( col ) {
 			col.classList.add( 'tt-benefit-card' );
 			listWrap.appendChild( col );
-			var icon = col.querySelector( '.elementor-widget-image img' );
-			if ( icon ) {
-				var slide = document.createElement( 'div' );
-				slide.className = 'tt-ig-slide';
-				var clone = icon.cloneNode( true );
-				clone.className = 'tt-ig-video tt-ig-image-slide';
-				slide.appendChild( clone );
-				slidesWrap.appendChild( slide );
-			}
 		} );
 		section.remove();
 	} );
+
+	/* the old standalone gallery of the same 6 past-box photos - now
+	   redundant since they are slides in the carousel above. */
+	var oldGallery = document.querySelector( '.elementor-element-b65a0e6' );
+	if ( oldGallery ) {
+		oldGallery.remove();
+	}
 
 	var slides = Array.prototype.slice.call( slidesWrap.querySelectorAll( '.tt-ig-slide' ) );
 	var counterCurrent = player.querySelector( '.tt-ig-counter-current' );
