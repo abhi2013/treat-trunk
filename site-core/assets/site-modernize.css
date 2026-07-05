@@ -457,10 +457,12 @@ body table.extra-options tr.option_is_gift td.label {
 }
 .tt-ig-hero {
   max-width: 360px;
+  min-height: 480px;
   margin: 0 auto 32px;
 }
 .tt-ig-hero blockquote.instagram-media {
   margin: 0 auto !important;
+  min-height: 480px;
 }
 .tt-ig-strip {
   display: flex;
@@ -475,6 +477,7 @@ body table.extra-options tr.option_is_gift td.label {
   flex: 0 0 auto;
   scroll-snap-align: start;
   margin: 0 !important;
+  min-height: 420px;
 }
 .tt-ig-hint {
   font-size: 0.8rem;
