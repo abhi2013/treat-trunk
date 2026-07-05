@@ -215,106 +215,128 @@
 	} );
 } )();
 
-/* Homepage Instagram reels section: one larger self-hosted <video> at a
-   time (see instagram_section_v4.html), auto-advancing to the next reel
-   when the current one ends, only while the player is scrolled into
-   view. No audio control - everything stays muted. */
+/* Homepage "See what's inside" carousel: the 4 reels (self-hosted
+   video) plus a plain image slide for each of the 6 "why subscribe"
+   benefit icons, navigated with shared prev/next arrows. The benefit
+   items' actual text (Great variety, Convenient snack solutions...)
+   lives separately as an always-visible vertical list next to the
+   carousel, rather than being folded into rotating slides - relocated
+   here from three separate Elementor sections that otherwise stack
+   into one long vertical scroll on mobile. Relocating the existing
+   columns (rather than rebuilding that content) keeps them exactly
+   where an editor would expect to find and edit them in Elementor. */
 ( function () {
 	var player = document.querySelector( '.tt-ig-player' );
-	if ( ! player ) {
+	var slidesWrap = player && player.querySelector( '.tt-ig-slides' );
+	var listWrap = document.querySelector( '.tt-benefit-list' );
+	if ( ! player || ! slidesWrap || ! listWrap ) {
 		return;
 	}
-	var videos = Array.prototype.slice.call( player.querySelectorAll( '.tt-ig-video' ) );
-	var dots = Array.prototype.slice.call( player.querySelectorAll( '.tt-ig-dot' ) );
+
+	var sectionIds = [ '17e28054', '74d434b8', '380fdfd4' ];
+	var benefitSections = sectionIds
+		.map( function ( id ) {
+			return document.querySelector( '.elementor-element-' + id );
+		} )
+		.filter( Boolean );
+	benefitSections.forEach( function ( section ) {
+		var columns = section.querySelectorAll( ':scope > .elementor-container > .elementor-column' );
+		columns.forEach( function ( col ) {
+			col.classList.add( 'tt-benefit-card' );
+			listWrap.appendChild( col );
+			var icon = col.querySelector( '.elementor-widget-image img' );
+			if ( icon ) {
+				var slide = document.createElement( 'div' );
+				slide.className = 'tt-ig-slide';
+				var clone = icon.cloneNode( true );
+				clone.className = 'tt-ig-video tt-ig-image-slide';
+				slide.appendChild( clone );
+				slidesWrap.appendChild( slide );
+			}
+		} );
+		section.remove();
+	} );
+
+	var slides = Array.prototype.slice.call( slidesWrap.querySelectorAll( '.tt-ig-slide' ) );
+	var counterCurrent = player.querySelector( '.tt-ig-counter-current' );
+	var counterTotal = player.querySelector( '.tt-ig-counter-total' );
+	var prevBtn = player.querySelector( '.tt-ig-arrow--prev' );
+	var nextBtn = player.querySelector( '.tt-ig-arrow--next' );
 	var current = 0;
 	var inView = false;
 
-	function showIndex( i ) {
-		videos[ current ].classList.remove( 'tt-ig-active' );
-		videos[ current ].pause();
-		if ( dots[ current ] ) {
-			dots[ current ].classList.remove( 'tt-ig-dot--active' );
+	if ( counterTotal ) {
+		counterTotal.textContent = slides.length;
+	}
+
+	function pauseVideoIn( slide ) {
+		var v = slide.querySelector( 'video' );
+		if ( v ) {
+			v.pause();
 		}
-		current = i;
-		var next = videos[ current ];
-		next.classList.add( 'tt-ig-active' );
-		if ( dots[ current ] ) {
-			dots[ current ].classList.add( 'tt-ig-dot--active' );
+	}
+	function playVideoIn( slide ) {
+		var v = slide.querySelector( 'video' );
+		if ( ! v ) {
+			return;
 		}
-		if ( next.preload === 'none' ) {
-			next.preload = 'auto';
+		if ( v.preload === 'none' ) {
+			v.preload = 'auto';
 		}
-		if ( inView ) {
-			var p = next.play();
-			if ( p && p.catch ) {
-				p.catch( function () {} );
-			}
+		var p = v.play();
+		if ( p && p.catch ) {
+			p.catch( function () {} );
 		}
 	}
 
-	videos.forEach( function ( video, i ) {
-		video.addEventListener( 'ended', function () {
-			showIndex( ( i + 1 ) % videos.length );
-		} );
+	function showIndex( i ) {
+		pauseVideoIn( slides[ current ] );
+		slides[ current ].classList.remove( 'tt-ig-slide--active' );
+		current = ( i + slides.length ) % slides.length;
+		slides[ current ].classList.add( 'tt-ig-slide--active' );
+		if ( counterCurrent ) {
+			counterCurrent.textContent = current + 1;
+		}
+		if ( inView ) {
+			playVideoIn( slides[ current ] );
+		}
+	}
+
+	slides.forEach( function ( slide, i ) {
+		var v = slide.querySelector( 'video' );
+		if ( v ) {
+			v.addEventListener( 'ended', function () {
+				showIndex( i + 1 );
+			} );
+		}
 	} );
-	dots.forEach( function ( dot, i ) {
-		dot.addEventListener( 'click', function () {
-			showIndex( i );
+	if ( prevBtn ) {
+		prevBtn.addEventListener( 'click', function () {
+			showIndex( current - 1 );
 		} );
-	} );
+	}
+	if ( nextBtn ) {
+		nextBtn.addEventListener( 'click', function () {
+			showIndex( current + 1 );
+		} );
+	}
 
 	if ( 'IntersectionObserver' in window ) {
 		var io = new IntersectionObserver( function ( entries ) {
 			entries.forEach( function ( entry ) {
 				inView = entry.isIntersecting;
-				var active = videos[ current ];
 				if ( inView ) {
-					var p = active.play();
-					if ( p && p.catch ) {
-						p.catch( function () {} );
-					}
+					playVideoIn( slides[ current ] );
 				} else {
-					active.pause();
+					pauseVideoIn( slides[ current ] );
 				}
 			} );
 		}, { threshold: 0.6 } );
 		io.observe( player );
 	} else {
 		inView = true;
-		videos[ 0 ].play();
+		playVideoIn( slides[ 0 ] );
 	}
-} )();
-
-/* Homepage "why subscribe" benefits (Great variety, Snacks change
-   monthly, Convenient snack solutions, REAL food, Smaller ethical
-   brands, Predominantly Vegan friendly): six items across three
-   separate Elementor sections, stacking into one long vertical scroll
-   on mobile. Moved into a single horizontal-scroll strip instead,
-   matching the reel player above it - done by relocating the existing
-   columns in the DOM rather than rebuilding the Elementor content, so
-   the six items stay exactly where an editor would expect to find and
-   edit them in Elementor itself. */
-( function () {
-	var sectionIds = [ '17e28054', '74d434b8', '380fdfd4' ];
-	var sections = sectionIds
-		.map( function ( id ) {
-			return document.querySelector( '.elementor-element-' + id );
-		} )
-		.filter( Boolean );
-	if ( sections.length !== sectionIds.length ) {
-		return;
-	}
-	var wrap = document.createElement( 'div' );
-	wrap.className = 'tt-benefits-scroll';
-	sections[ 0 ].parentNode.insertBefore( wrap, sections[ 0 ] );
-	sections.forEach( function ( section ) {
-		var columns = section.querySelectorAll( ':scope > .elementor-container > .elementor-column' );
-		columns.forEach( function ( col ) {
-			col.classList.add( 'tt-benefit-card' );
-			wrap.appendChild( col );
-		} );
-		section.remove();
-	} );
 } )();
 
 /* Testimonial cards: add a small initial-letter avatar before each
@@ -331,5 +353,70 @@
 		avatar.className = 'tt-review-avatar';
 		avatar.textContent = nameEl.textContent.trim().charAt( 0 ).toUpperCase();
 		cite.parentNode.insertBefore( avatar, cite );
+	} );
+} )();
+
+/* Testimonial cards: all the same height with the quote clamped to 6
+   lines (see CSS), plus a "Read more" for reviews long enough to be
+   cut off. Opens the full review in a shared modal rather than
+   expanding the card in place, which pushed every card below it down
+   the page each time one was opened. */
+( function () {
+	var texts = Array.prototype.slice.call( document.querySelectorAll( '.elementor-testimonial__text' ) );
+	var overflowing = texts.filter( function ( text ) {
+		return text.scrollHeight > text.clientHeight + 2;
+	} );
+	if ( ! overflowing.length ) {
+		return;
+	}
+
+	var overlay = document.createElement( 'div' );
+	overlay.className = 'tt-review-modal-overlay';
+	overlay.hidden = true;
+	overlay.innerHTML =
+		'<div class="tt-review-modal" role="dialog" aria-modal="true">' +
+			'<button type="button" class="tt-review-modal-close" aria-label="Close">✕</button>' +
+			'<span class="tt-review-modal-quote">“</span>' +
+			'<div class="tt-review-modal-text"></div>' +
+			'<div class="tt-review-modal-footer"></div>' +
+		'</div>';
+	document.body.appendChild( overlay );
+	var modalText = overlay.querySelector( '.tt-review-modal-text' );
+	var modalFooter = overlay.querySelector( '.tt-review-modal-footer' );
+	var closeBtn = overlay.querySelector( '.tt-review-modal-close' );
+
+	function closeModal() {
+		overlay.hidden = true;
+	}
+	function openModal( text ) {
+		modalText.textContent = text.textContent.trim();
+		var footer = text.closest( '.elementor-testimonial' ).querySelector( '.elementor-testimonial__footer' );
+		modalFooter.innerHTML = '';
+		if ( footer ) {
+			modalFooter.appendChild( footer.cloneNode( true ) );
+		}
+		overlay.hidden = false;
+	}
+	closeBtn.addEventListener( 'click', closeModal );
+	overlay.addEventListener( 'click', function ( e ) {
+		if ( e.target === overlay ) {
+			closeModal();
+		}
+	} );
+	document.addEventListener( 'keydown', function ( e ) {
+		if ( e.key === 'Escape' && ! overlay.hidden ) {
+			closeModal();
+		}
+	} );
+
+	overflowing.forEach( function ( text ) {
+		var btn = document.createElement( 'button' );
+		btn.type = 'button';
+		btn.className = 'tt-review-more';
+		btn.textContent = 'Read more';
+		btn.addEventListener( 'click', function () {
+			openModal( text );
+		} );
+		text.parentNode.insertBefore( btn, text.nextSibling );
 	} );
 } )();

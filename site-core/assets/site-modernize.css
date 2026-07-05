@@ -83,12 +83,36 @@ body .elementor-testimonial {
   box-shadow: 0 16px 34px -24px rgba(22, 48, 42, 0.35);
   max-width: 480px;
   margin: 0 auto;
+  display: flex !important;
+  flex-direction: column;
+  height: 340px;
 }
 body .elementor-testimonial__content {
   position: relative;
+  flex: 1;
+  min-height: 0;
 }
 body .elementor-testimonial__text {
   font-style: normal !important;
+  font-size: 0.9rem !important;
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 6;
+  overflow: hidden;
+}
+.tt-review-more {
+  display: inline-block;
+  margin-top: 10px;
+  border: none;
+  background: none;
+  padding: 0;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--tt-forest);
+  cursor: pointer;
+  text-align: left;
 }
 body .elementor-testimonial__text::before {
   content: '\201C';
@@ -126,6 +150,71 @@ body .elementor-testimonial__name {
   justify-content: center;
   font-weight: 700;
   font-family: 'DM Sans', sans-serif;
+}
+
+/* "Read more" opens the full review in a modal instead of expanding
+   the card in place - expanding in place shifted every card below it
+   on the page each time one was opened. */
+.tt-review-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 20, 16, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 9999;
+}
+.tt-review-modal-overlay[hidden] {
+  display: none;
+}
+.tt-review-modal {
+  position: relative;
+  background: var(--tt-parchment);
+  border-radius: 16px;
+  padding: 40px 28px 28px;
+  max-width: 460px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.45);
+}
+.tt-review-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(31, 77, 56, 0.1);
+  color: var(--tt-forest);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+.tt-review-modal-close:hover {
+  background: rgba(31, 77, 56, 0.18);
+}
+.tt-review-modal-quote {
+  display: block;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 3rem;
+  line-height: 1;
+  color: var(--tt-gold);
+  margin-bottom: 4px;
+}
+.tt-review-modal-text {
+  font-size: 0.98rem;
+  line-height: 1.7;
+  color: var(--tt-ink);
+}
+.tt-review-modal-footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
 }
 
 /* ---------- typography: one family instead of three ---------- */
@@ -530,54 +619,122 @@ body table.extra-options tr.option_is_gift td.label {
   margin: 0;
   font-size: 0.98rem;
 }
-/* single, larger auto-advancing player instead of a hero+strip grid -
-   one reel visible at a time, cycling to the next on its own. No audio
-   control at all: every video stays muted, by design. */
+/* carousel (4 reels + 6 benefit icon images) alongside an
+   always-visible vertical list of the benefit text - stacked on
+   mobile, side by side from tablet width up. No audio control at all:
+   every video stays muted, by design. */
+.tt-ig-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  align-items: center;
+}
 .tt-ig-player {
   position: relative;
   max-width: 380px;
+  width: 100%;
   margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+.tt-ig-slides {
+  position: relative;
+  flex: 1;
+  min-width: 0;
   border-radius: 16px;
   overflow: hidden;
   border: 1px solid rgba(31, 77, 56, 0.15);
   box-shadow: 0 22px 44px -22px rgba(22, 48, 42, 0.45);
-  background: var(--tt-forest-deep);
+  background: var(--tt-parchment);
+}
+.tt-ig-slide {
+  display: none;
+}
+.tt-ig-slide--active {
+  display: block;
 }
 .tt-ig-video {
-  display: none;
+  display: block;
   width: 100%;
   aspect-ratio: 9 / 16;
   object-fit: cover;
+  background: var(--tt-forest-deep);
 }
-.tt-ig-video.tt-ig-active {
-  display: block;
+/* the 6 benefit-icon image slides sit in the same rotation as the
+   reels, sized the same way (.tt-ig-video handles the base sizing) but
+   with object-fit: contain instead of cover - these are illustrations
+   on their own background, not photography meant to fill the frame. */
+.tt-ig-image-slide {
+  object-fit: contain !important;
+  padding: 30px;
+  box-sizing: border-box;
 }
-.tt-ig-dots {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 14px;
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-}
-.tt-ig-dot {
-  width: 8px;
-  height: 8px;
+.tt-ig-arrow {
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  border: none;
-  padding: 0;
-  background: rgba(251, 248, 242, 0.45);
+  border: 1px solid rgba(31, 77, 56, 0.2);
+  background: var(--tt-parchment);
+  color: var(--tt-forest);
+  display: grid;
+  place-items: center;
   cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  transition: background-color 0.15s ease, transform 0.15s ease;
 }
-.tt-ig-dot--active {
-  background: var(--tt-gold);
-  transform: scale(1.25);
+.tt-ig-arrow:hover {
+  background: var(--tt-cream);
+  transform: scale(1.06);
+}
+.tt-ig-arrow svg {
+  width: 20px;
+  height: 20px;
+}
+.tt-ig-counter {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(10, 20, 16, 0.5);
+  color: var(--tt-parchment);
+  font-size: 0.76rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.tt-benefit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 380px;
+}
+.tt-benefit-list .tt-benefit-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-align: left;
+}
+.tt-benefit-list .tt-benefit-card .elementor-widget-image {
+  flex: 0 0 auto;
+  width: 64px;
 }
 @media (min-width: 640px) {
-  .tt-ig-player {
+  .tt-ig-slides {
     max-width: 420px;
+  }
+}
+@media (min-width: 900px) {
+  .tt-ig-layout {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 48px;
+  }
+  .tt-benefit-list {
+    max-width: 340px;
   }
 }
 
@@ -608,26 +765,35 @@ body .elementor-element-bacd323 .elementor-heading-title {
   color: var(--tt-parchment) !important;
 }
 
-/* ---------- homepage: "why subscribe" benefits scroll strip ----------
+/* ---------- homepage: "why subscribe" benefit cards ----------
    Six items relocated here via JS from three separate stacking
-   sections (see site-modernize.js) into one horizontal, swipeable
-   strip - the same interaction as the reel player above it, instead of
-   a very long vertical scroll of near-identical icon+text blocks. */
-.tt-benefits-scroll {
-  display: flex;
-  gap: 20px;
-  overflow-x: auto;
-  padding: 8px 20px 20px;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-}
+   sections (see site-modernize.js) into the always-visible list next
+   to the carousel - see .tt-benefit-list above for the list-specific
+   layout (icon thumbnail + text, left-aligned). */
 .tt-benefit-card {
-  flex: 0 0 auto;
-  width: 240px;
-  scroll-snap-align: start;
   text-align: center;
 }
-.tt-benefit-card .elementor-widget-image {
-  max-width: 160px;
-  margin: 0 auto;
+
+/* ---------- homepage: Monthly / Mini Monthly Treat Trunk row ----------
+   On desktop the decorative image to the left of the two subscription
+   cards did not match their combined height, leaving a visible gap.
+   Stretch the row and let the image fill whatever height the cards
+   set instead of using its own natural height. */
+body .elementor-element-cb7ee5c > .elementor-container {
+  align-items: stretch !important;
+}
+body .elementor-element-5c3a2ca,
+body .elementor-element-5c3a2ca .elementor-widget-container {
+  height: 100% !important;
+}
+body .elementor-element-5c3a2ca img {
+  height: 100% !important;
+  object-fit: cover !important;
+}
+/* "Customise for your dietary needs" repeats identically on both
+   cards with no distinguishing info - redundant next to the box
+   descriptions right above it. */
+body .elementor-element-eb5f079,
+body .elementor-element-de2607b {
+  display: none !important;
 }
