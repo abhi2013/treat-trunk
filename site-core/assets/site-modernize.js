@@ -363,7 +363,16 @@
 ( function () {
 	var texts = Array.prototype.slice.call( document.querySelectorAll( '.elementor-testimonial__text' ) );
 	var overflowing = texts.filter( function ( text ) {
-		return text.scrollHeight > text.clientHeight + 2;
+		/* swiper keeps non-active slides at zero size until they are
+		   scrolled to, so scrollHeight/clientHeight report as equal
+		   (both effectively 0) for any review that was not the
+		   currently-active slide when this ran - which is why some
+		   long reviews got no Read more at all. Fall back to a plain
+		   character-count guess for anything reporting no real size. */
+		if ( text.clientHeight > 0 ) {
+			return text.scrollHeight > text.clientHeight + 2;
+		}
+		return text.textContent.trim().length > 260;
 	} );
 	if ( ! overflowing.length ) {
 		return;

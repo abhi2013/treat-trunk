@@ -633,7 +633,7 @@ body table.extra-options tr.option_is_gift td.label {
   align-items: center;
 }
 .tt-ig-player {
-  max-width: 380px;
+  max-width: 460px;
   width: 100%;
   margin: 0 auto;
 }
@@ -707,12 +707,18 @@ body table.extra-options tr.option_is_gift td.label {
   flex-direction: column;
   gap: 14px;
   width: 100%;
-  max-width: 380px;
+  max-width: 460px;
 }
 /* Give each item an actual card boundary - background, border, radius,
    padding - so heading+icon+text read as one grouped unit instead of
-   three pieces floating in open space with uneven gaps between them. */
+   three pieces floating in open space with uneven gaps between them.
+   width:100% overrides a leftover 50% width these columns carried from
+   their original two-column-per-section layout (Elementor's own
+   generated CSS, not something flex-direction:column resets on its
+   own) - without it every card sat at half the list width with a big
+   empty gap beside it. */
 .tt-benefit-list .tt-benefit-card {
+  width: 100% !important;
   background: var(--tt-parchment);
   border: 1px solid rgba(31, 77, 56, 0.12);
   border-radius: 14px;
@@ -760,7 +766,7 @@ body table.extra-options tr.option_is_gift td.label {
 }
 @media (min-width: 640px) {
   .tt-ig-slides {
-    max-width: 420px;
+    max-width: 480px;
     margin: 0 auto;
   }
 }
@@ -770,9 +776,16 @@ body table.extra-options tr.option_is_gift td.label {
     align-items: flex-start;
     justify-content: center;
     gap: 48px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .tt-ig-player {
+    max-width: 460px;
+    flex: 0 0 auto;
   }
   .tt-benefit-list {
-    max-width: 340px;
+    max-width: 560px;
+    flex: 1 1 auto;
   }
 }
 
