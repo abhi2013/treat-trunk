@@ -414,6 +414,7 @@ body table.extra-options td.label,
 body table.extra-options td.value {
   display: block !important;
   width: 100% !important;
+  max-width: none !important;
   padding: 0 !important;
   text-align: left !important;
 }
