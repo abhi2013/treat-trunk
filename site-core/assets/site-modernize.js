@@ -215,42 +215,8 @@
 	} );
 } )();
 
-/* Homepage Instagram reels section: load Instagram's embed script only
-   once the section scrolls near view. A <script> tag placed inside the
-   section's own HTML (as rendered by the page builder) never executes -
-   scripts inserted via innerHTML are inert by design in every browser -
-   so this has to live here instead, in a normally-enqueued file. */
-( function () {
-	var section = document.querySelector( '.tt-ig-section' );
-	if ( ! section ) {
-		return;
-	}
-	var loaded = false;
-	function loadEmbed() {
-		if ( loaded ) {
-			return;
-		}
-		loaded = true;
-		if ( window.instgrm ) {
-			window.instgrm.Embeds.process();
-			return;
-		}
-		var s = document.createElement( 'script' );
-		s.async = true;
-		s.src = 'https://www.instagram.com/embed.js';
-		document.body.appendChild( s );
-	}
-	if ( 'IntersectionObserver' in window ) {
-		var io = new IntersectionObserver( function ( entries ) {
-			entries.forEach( function ( entry ) {
-				if ( entry.isIntersecting ) {
-					loadEmbed();
-					io.disconnect();
-				}
-			} );
-		}, { rootMargin: '400px' } );
-		io.observe( section );
-	} else {
-		loadEmbed();
-	}
-} )();
+/* Homepage Instagram reels section: the videos are self-hosted (see
+   instagram_section_v2.html) rather than Instagram's embed.js, so there
+   is no third-party script to lazy-load here anymore. preload="none" on
+   each <video> already keeps the initial page load light; the browser's
+   native controls handle play/pause. */

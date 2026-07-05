@@ -456,13 +456,8 @@ body table.extra-options tr.option_is_gift td.label {
   font-size: 0.98rem;
 }
 .tt-ig-hero {
-  max-width: 360px;
-  min-height: 480px;
+  max-width: 300px;
   margin: 0 auto 32px;
-}
-.tt-ig-hero blockquote.instagram-media {
-  margin: 0 auto !important;
-  min-height: 480px;
 }
 .tt-ig-strip {
   display: flex;
@@ -473,11 +468,19 @@ body table.extra-options tr.option_is_gift td.label {
   -webkit-overflow-scrolling: touch;
   justify-content: flex-start;
 }
-.tt-ig-strip blockquote.instagram-media {
+.tt-ig-video {
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid rgba(31, 77, 56, 0.15);
+  box-shadow: 0 14px 30px -22px rgba(22, 48, 42, 0.35);
+  background: var(--tt-forest-deep);
+}
+.tt-ig-strip .tt-ig-video {
   flex: 0 0 auto;
+  width: 200px;
   scroll-snap-align: start;
-  margin: 0 !important;
-  min-height: 420px;
 }
 .tt-ig-hint {
   font-size: 0.8rem;
@@ -491,4 +494,17 @@ body table.extra-options tr.option_is_gift td.label {
   .tt-ig-hint {
     display: none;
   }
+}
+
+/* ---------- our-story page: Subscribe/Gifts banner images ----------
+   Two different source images (one landscape 800x427, one square
+   800x800) rendered at their natural heights side by side, so one
+   looked properly sized and the other looked cropped/oversized by
+   comparison. Same aspect ratio + object-fit:cover for both. */
+body .elementor-element-3c835c9 img,
+body .elementor-element-373e36f img {
+  aspect-ratio: 4 / 3 !important;
+  width: 100% !important;
+  height: auto !important;
+  object-fit: cover !important;
 }
