@@ -76,6 +76,71 @@ add_action( 'woocommerce_single_product_summary', function () {
 }, 25 );
 
 /**
+ * Bulk pricing for the standard-size One-Off Treat Trunk box (variation ID
+ * 7077, "Standard (20-25 Snacks)" of parent product 7076). Same one-click
+ * bulk-to-one-address mechanism as the Letterbox tiers above, for buyers who
+ * want the bigger full-size box in bulk rather than the Letterbox size.
+ * Confirmed by user 2026-07-06:
+ *   1-19 units: full price, £44.99/box
+ *   20-49 units: £37.50/box (20 boxes = £750.00)
+ *   50+ units:   £35.00/box (50 boxes = £1750.00)
+ *
+ * Deliberately scoped to the variation ID, not the parent product, so the
+ * Mini variation (7078) is never discounted by this hook.
+ */
+define( 'TT_BULK_ONEOFF_VARIATION_ID', 7077 );
+
+function tt_bulk_oneoff_unit_price( int $quantity, float $regular_price ): float {
+	if ( $quantity >= 50 ) {
+		return 35.00;
+	}
+	if ( $quantity >= 20 ) {
+		return 37.50;
+	}
+	return $regular_price;
+}
+
+add_action( 'woocommerce_before_calculate_totals', function ( $cart ) {
+	if ( is_admin() && ! defined( 'DOING_AJAX' ) ) {
+		return;
+	}
+	if ( did_action( 'woocommerce_before_calculate_totals' ) >= 2 ) {
+		return;
+	}
+
+	foreach ( $cart->get_cart() as $cart_item ) {
+		if ( (int) ( $cart_item['variation_id'] ?? 0 ) !== TT_BULK_ONEOFF_VARIATION_ID ) {
+			continue;
+		}
+
+		$product    = $cart_item['data'];
+		$quantity   = (int) $cart_item['quantity'];
+		$base_price = (float) $product->get_regular_price();
+		$unit_price = tt_bulk_oneoff_unit_price( $quantity, $base_price );
+
+		if ( $unit_price !== $base_price ) {
+			$product->set_price( $unit_price );
+		}
+	}
+}, 20, 1 );
+
+/**
+ * Show the active discount tier on the product page. Note: on a variable
+ * product page $product is the parent (7076) on initial load, so this shows
+ * for the whole product rather than switching in/out per selected variation
+ * - acceptable since the note calls out "the full-size box" by name.
+ */
+add_action( 'woocommerce_single_product_summary', function () {
+	global $product;
+	if ( ! $product || (int) $product->get_id() !== 7076 ) {
+		return;
+	}
+	echo '<p class="tt-bulk-pricing-note" style="font-size:14px;color:#44543F;margin-top:8px;">'
+		. 'Ordering the full-size box to one address? <strong>20+ boxes: £37.50/box.</strong> <strong>50+ boxes: £35.00/box.</strong> Price updates automatically in your cart.'
+		. '</p>';
+}, 25 );
+
+/**
  * PageSpeed: Total Recipe Generator enqueues its CSS/JS on every single page
  * via the Elementor asset pipeline, with no check for whether the page
  * actually uses its widget. On pages without a recipe card (e.g. the
