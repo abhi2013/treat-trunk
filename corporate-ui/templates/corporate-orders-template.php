@@ -170,7 +170,6 @@ get_header();
 				</div>
 			</div>
 		</div>
-		</div>
 		<p style="text-align: center; font-size: 14px; color: #6A7A64; margin: 26px 0 0;">Bigger team? Mixed dietary needs? <a href="#quote" style="color: #C75B39; font-weight: 700;">Get volume pricing</a> - we&rsquo;ve shipped orders from 5 boxes to 800+.</p>
 	</section>
 
