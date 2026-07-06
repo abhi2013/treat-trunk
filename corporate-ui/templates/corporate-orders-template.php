@@ -100,7 +100,57 @@ get_header();
 				</div>
 			</div>
 
-			<!-- Card 2: Monthly Office Subscription -->
+			<!-- Card 2: Weekly Office Subscription (big box, weekly cadence) -->
+			<div class="tt-corp-card-wrap" style="background: #FFFFFF; border: 1px solid #E8E0D0; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
+				<div style="position: relative;">
+					<img src="https://treattrunk.co.uk/wp-content/uploads/2020/08/Treat-Trunk-August-2020-1200.jpg" alt="Weekly office snack box" style="width: 100%; height: 180px; object-fit: cover; display: block;">
+					<span style="position: absolute; top: 12px; left: 12px; background: #E3EFE2; color: #1F4D38; font-size: 11.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px;">Subscription</span>
+				</div>
+				<div class="tt-corp-card" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
+					<h3 style="font-weight: 700; font-size: 20px; margin: 0; color: #1F3B2C;">Weekly Office Subscription</h3>
+					<p style="font-size: 14.5px; line-height: 1.55; color: #44543F; margin: 0; flex: 1;">Our full-size 20+ snack box, refreshed every week instead of once. Pause or cancel anytime.</p>
+					<div style="font-weight: 700; font-size: 22px; color: #1F4D38;">£39.99<span style="font-size: 14px; font-weight: 600; color: #6A7A64;">/week</span></div>
+					<a href="<?php echo esc_url( home_url( '/product/treat-trunk-weekly-subscription/' ) ); ?>" style="background: #1F4D38; color: #F6EED9; text-align: center; font-weight: 700; font-size: 15.5px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Start a weekly subscription</a>
+				</div>
+			</div>
+
+			<!-- Card 3: Bulk One-Off Boxes (full-size box, variation 7077 of product 7076) -->
+			<div class="tt-corp-card-wrap" style="background: #FFFFFF; border: 1px solid #E8E0D0; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
+				<div style="position: relative;">
+					<img src="https://treattrunk.co.uk/wp-content/uploads/2019/10/Treat-Trunk-Healthy-Snack-Box-1200-scaled.jpg" alt="Bulk full-size office snack boxes" style="width: 100%; height: 180px; object-fit: cover; display: block;">
+					<span style="position: absolute; top: 12px; left: 12px; background: #F2C94C; color: #4A3A08; font-size: 11.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px;">Bulk</span>
+				</div>
+				<div class="tt-corp-card" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
+					<h3 style="font-weight: 700; font-size: 20px; margin: 0; color: #1F3B2C;">Bulk One-Off Boxes</h3>
+					<p style="font-size: 14.5px; line-height: 1.55; color: #44543F; margin: 0; flex: 1;">Our full-size 20+ snack box, ordered in bulk to one address. Volume pricing applies automatically, no code needed.</p>
+					<div style="font-weight: 700; font-size: 22px; color: #1F4D38;">£44.99 <span style="font-size: 13.5px; font-weight: 600; color: #6A7A64;">/box &middot; 20+: £37.50/box &middot; 50+: £35.00/box</span></div>
+
+					<?php
+					// Same one-click bulk mechanism as the Letterbox card, but for a
+					// variable product: the variation ID + its (non-taxonomy)
+					// attribute value both need to be passed for WooCommerce to
+					// resolve the correct variation via the add-to-cart URL.
+					$oneoff_id         = 7076;
+					$oneoff_variation  = 7077;
+					$oneoff_attribute  = 'Standard (20-25 Snacks)';
+					$oneoff_qty20_url  = esc_url( add_query_arg( array( 'add-to-cart' => $oneoff_id, 'quantity' => 20, 'variation_id' => $oneoff_variation, 'attribute_size' => $oneoff_attribute ), home_url( '/' ) ) );
+					$oneoff_qty50_url  = esc_url( add_query_arg( array( 'add-to-cart' => $oneoff_id, 'quantity' => 50, 'variation_id' => $oneoff_variation, 'attribute_size' => $oneoff_attribute ), home_url( '/' ) ) );
+					?>
+					<div style="display: flex; flex-direction: column; gap: 8px;">
+						<a href="<?php echo $oneoff_qty20_url; ?>" style="background: #1F4D38; color: #F6EED9; text-align: center; font-weight: 700; font-size: 15px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Order 20 boxes (£750) &rarr;</a>
+						<a href="<?php echo $oneoff_qty50_url; ?>" style="background: #1F4D38; color: #F6EED9; text-align: center; font-weight: 700; font-size: 15px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Order 50 boxes (£1,750) &rarr;</a>
+						<form method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>" style="display: flex; gap: 6px; margin-top: 2px;">
+							<input type="hidden" name="add-to-cart" value="<?php echo esc_attr( $oneoff_id ); ?>">
+							<input type="hidden" name="variation_id" value="<?php echo esc_attr( $oneoff_variation ); ?>">
+							<input type="hidden" name="attribute_size" value="<?php echo esc_attr( $oneoff_attribute ); ?>">
+							<input type="number" name="quantity" min="1" value="1" aria-label="Custom quantity" style="width: 70px; padding: 10px 8px; border: 1.5px solid #DDD3BE; border-radius: 10px; font-size: 14px;">
+							<button type="submit" style="flex: 1; background: #FFFFFF; color: #1F4D38; border: 2px solid #1F4D38; font-weight: 700; font-size: 14px; padding: 10px 0; border-radius: 999px; cursor: pointer;">Add custom quantity</button>
+						</form>
+					</div>
+				</div>
+			</div>
+
+			<!-- Card 4: Monthly Office Subscription -->
 			<div class="tt-corp-card-wrap" style="background: #FFFFFF; border: 1px solid #E8E0D0; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
 				<div style="position: relative;">
 					<img src="https://treattrunk.co.uk/wp-content/uploads/2020/08/Treat-Trunk-August-2020-1200.jpg" alt="Monthly office snack box" style="width: 100%; height: 180px; object-fit: cover; display: block;">
@@ -114,7 +164,7 @@ get_header();
 				</div>
 			</div>
 
-			<!-- Card 3: Remote Team Boxes - quote/manual for now, no product page yet -->
+			<!-- Card 5: Remote Team Boxes - quote/manual for now, no product page yet -->
 			<div class="tt-corp-card-wrap" style="background: #FFFFFF; border: 1px solid #E8E0D0; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
 				<div style="position: relative;">
 					<img src="https://treattrunk.co.uk/wp-content/uploads/2021/05/Treat-Trunk-Healthy-Vegan-Snack-Box-1200-2.jpg" alt="Snack boxes for remote staff" style="width: 100%; height: 180px; object-fit: cover; display: block;">
@@ -128,7 +178,7 @@ get_header();
 				</div>
 			</div>
 
-			<!-- Card 4: Client & Staff Gifting -->
+			<!-- Card 6: Client & Staff Gifting -->
 			<div class="tt-corp-card-wrap" style="background: #FFFFFF; border: 1px solid #E8E0D0; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
 				<div style="position: relative;">
 					<img src="https://treattrunk.co.uk/wp-content/uploads/2019/10/Treat-Trunk-Healthy-Snack-Box-1200-scaled.jpg" alt="Client gift snack box" style="width: 100%; height: 180px; object-fit: cover; display: block;">
@@ -142,7 +192,7 @@ get_header();
 				</div>
 			</div>
 
-			<!-- Card 5: Deluxe Corporate Snack Box -->
+			<!-- Card 7: Deluxe Corporate Snack Box -->
 			<div class="tt-corp-card-wrap" style="background: #FFFFFF; border: 2px solid #1F4D38; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
 				<div style="position: relative;">
 					<img src="https://treattrunk.co.uk/wp-content/uploads/2021/05/one-off-trunk-1024x1024.jpg" alt="Deluxe corporate snack box with 60+ office snacks" style="width: 100%; height: 180px; object-fit: cover; display: block;">
@@ -156,17 +206,17 @@ get_header();
 				</div>
 			</div>
 
-			<!-- Card 6: Weekly Office Subscription (big box, weekly cadence) -->
-			<div class="tt-corp-card-wrap" style="background: #FFFFFF; border: 1px solid #E8E0D0; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
+			<!-- Card 8: Deluxe Weekly Subscription (biggest box, weekly cadence) -->
+			<div class="tt-corp-card-wrap" style="background: #FFFFFF; border: 2px solid #1F4D38; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
 				<div style="position: relative;">
-					<img src="https://treattrunk.co.uk/wp-content/uploads/2020/08/Treat-Trunk-August-2020-1200.jpg" alt="Weekly office snack box" style="width: 100%; height: 180px; object-fit: cover; display: block;">
-					<span style="position: absolute; top: 12px; left: 12px; background: #E3EFE2; color: #1F4D38; font-size: 11.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px;">Subscription</span>
+					<img src="https://treattrunk.co.uk/wp-content/uploads/2021/05/one-off-trunk-1024x1024.jpg" alt="Deluxe corporate snack box weekly subscription" style="width: 100%; height: 180px; object-fit: cover; display: block;">
+					<span style="position: absolute; top: 12px; left: 12px; background: #1F4D38; color: #F6EED9; font-size: 11.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px;">Biggest box</span>
 				</div>
 				<div class="tt-corp-card" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
-					<h3 style="font-weight: 700; font-size: 20px; margin: 0; color: #1F3B2C;">Weekly Office Subscription</h3>
-					<p style="font-size: 14.5px; line-height: 1.55; color: #44543F; margin: 0; flex: 1;">Our full-size 20+ snack box, refreshed every week instead of once. Pause or cancel anytime.</p>
-					<div style="font-weight: 700; font-size: 22px; color: #1F4D38;">£39.99<span style="font-size: 14px; font-weight: 600; color: #6A7A64;">/week</span></div>
-					<a href="<?php echo esc_url( home_url( '/product/treat-trunk-weekly-subscription/' ) ); ?>" style="background: #1F4D38; color: #F6EED9; text-align: center; font-weight: 700; font-size: 15.5px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Start a weekly subscription</a>
+					<h3 style="font-weight: 700; font-size: 20px; margin: 0; color: #1F3B2C;">Deluxe Weekly Subscription</h3>
+					<p style="font-size: 14.5px; line-height: 1.55; color: #44543F; margin: 0; flex: 1;">Our biggest box - 60+ sugar sensible, predominantly vegan snacks - delivered every week instead of as a one-off. Pause or cancel anytime.</p>
+					<div style="font-weight: 700; font-size: 22px; color: #1F4D38;">£100<span style="font-size: 14px; font-weight: 600; color: #6A7A64;">/week</span></div>
+					<a href="<?php echo esc_url( home_url( '/product/deluxe-corporate-snack-box-weekly-subscription/' ) ); ?>" style="background: #1F4D38; color: #F6EED9; text-align: center; font-weight: 700; font-size: 15.5px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Start a weekly subscription</a>
 				</div>
 			</div>
 		</div>
