@@ -733,6 +733,17 @@ color: #5e5e5e!important;
     	z-index: 300;
 	}
 
+	/* Scoped to the outer panel only - .elementor-nav-menu--dropdown is reused
+	   as a class on nested <ul class="sub-menu"> submenus too (SmartMenus),
+	   so an unscoped background/overflow rule here also hits those and
+	   breaks their inline expand/collapse sizing. */
+	nav.elementor-nav-menu--dropdown.elementor-nav-menu__container {
+		background: #fff;
+		box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+		max-height: calc(100vh - 54px);
+		overflow-y: auto;
+	}
+
 	.mobile-header .logo-menu .elementor-widget,
 	.mobile-header .logo-menu .elementor-widget-wrap,
 	.mobile-header .logo-menu .elementor-column-wrap,
