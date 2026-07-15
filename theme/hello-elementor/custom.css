@@ -416,6 +416,47 @@ header .entry-title {
 	color: #17a299;
 }
 
+/* Bring the Option 1/2 welcome-box-timing picker in line with the green
+   pill buttons used for the actual Mini/Standard Welcome Box choice just
+   below it - this predates the site-wide brand pilot (site-modernize.css)
+   and was never restyled to match, so the two "pick one" controls on the
+   same page looked like two unrelated design systems. Also fixes a typo
+   in the pre-existing rule above (.toption.active never matched anything
+   real - .option.active does) that meant the circle was never actually
+   filled in when selected. */
+.woovr-variations .option.active {
+	border: 2px solid var(--tt-forest, #1F4D38) !important;
+	background: rgba(31, 77, 56, 0.06) !important;
+}
+
+.woovr-variations .option.active .option_header,
+.woovr-variations .option.active .option_header span {
+	color: var(--tt-forest, #1F4D38);
+}
+
+.option.active .option_header .fa-circle:before {
+	color: var(--tt-forest, #1F4D38);
+}
+
+/* The Mini/Standard Welcome Box cards nested inside Option 1 duplicate the
+   exact same choice as the green pill buttons under "Welcome Box" below
+   (both drive the same attribute_welcome-box select) - clicking either
+   picks the same variation. Two selectors for one choice, styled two
+   different ways (teal-bordered cards here vs. the green pills), reads as
+   inconsistent/confusing. The pills already show a clear selected state,
+   so hide this redundant copy rather than restyling both to match. */
+.option .woovr-variation.woovr-variation-radio {
+	display: none !important;
+}
+
+/* The "Clear" link is WooCommerce's standard reset-variations control - it
+   resets a required selection back to an incomplete "Choose an option"
+   state, which doesn't serve a purpose on a subscription product where a
+   welcome box choice is expected before checkout. */
+.reset_variations {
+	display: none !important;
+}
+
 .thwepo-extra-options td {
 	padding-left: 15px!important;
 }
