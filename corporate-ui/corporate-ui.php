@@ -53,3 +53,39 @@ add_action( 'wp_enqueue_scripts', function () {
 		filemtime( TT_CORP_UI_DIR . 'assets/corporate-orders.css' )
 	);
 } );
+
+/**
+ * WeWork free-box claim form: was mailto-only, which silently does nothing
+ * on any device without a configured default mail client (common on
+ * managed office laptops - exactly the audience this form targets). Sends
+ * a real email server-side via wp_mail() instead; the template still keeps
+ * a mailto link as a visible fallback if the AJAX request itself fails
+ * (e.g. the visitor is offline).
+ */
+add_action( 'wp_ajax_tt_wework_claim', 'tt_handle_wework_claim' );
+add_action( 'wp_ajax_nopriv_tt_wework_claim', 'tt_handle_wework_claim' );
+function tt_handle_wework_claim() {
+	check_ajax_referer( 'tt_wework_claim', 'nonce' );
+
+	$name     = isset( $_POST['name'] ) ? sanitize_text_field( wp_unslash( $_POST['name'] ) ) : '';
+	$company  = isset( $_POST['company'] ) ? sanitize_text_field( wp_unslash( $_POST['company'] ) ) : '';
+	$location = isset( $_POST['location'] ) ? sanitize_text_field( wp_unslash( $_POST['location'] ) ) : '';
+	$notes    = isset( $_POST['notes'] ) ? sanitize_textarea_field( wp_unslash( $_POST['notes'] ) ) : '';
+
+	if ( '' === $name || '' === $company || '' === $location ) {
+		wp_send_json_error( array( 'message' => 'Please fill in your name, company, and WeWork building.' ) );
+	}
+
+	$subject = 'WeWork free welcome box - ' . $company;
+	$body    = "Name: {$name}\nCompany: {$company}\nWeWork building: {$location}"
+		. ( '' !== $notes ? "\nNotes: {$notes}" : '' )
+		. "\n\nSubmitted via the corporate-orders WeWork claim form.";
+
+	$sent = wp_mail( 'hello@treattrunk.co.uk', $subject, $body, array( 'Reply-To: ' . $name . ' <hello@treattrunk.co.uk>' ) );
+
+	if ( $sent ) {
+		wp_send_json_success( array( 'message' => "Thanks! We'll be in touch shortly to arrange your free welcome box." ) );
+	} else {
+		wp_send_json_error( array( 'message' => 'Something went wrong sending that - please email hello@treattrunk.co.uk directly, or use the button below to open your email client.' ) );
+	}
+}

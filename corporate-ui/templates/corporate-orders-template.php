@@ -346,8 +346,9 @@ get_header();
 					<option value="Not listed">My WeWork isn&rsquo;t listed</option>
 				</select>
 				<input type="text" id="tt-ww-address" placeholder="Suite/floor or delivery notes (optional)" style="font-size: 15px; padding: 12px 14px; border: 1.5px solid #DDD3BE; border-radius: 12px; width: 100%; box-sizing: border-box;">
-				<button type="submit" style="background: #F2C94C; color: #4A3A08; border: none; font-weight: 700; font-size: 16px; padding: 14px 0; border-radius: 999px; cursor: pointer;">Claim your free welcome box</button>
-				<span style="font-size: 12.5px; color: #6A7A64;">Opens a pre-filled email to hello@treattrunk.co.uk - nothing sends without you pressing send.</span>
+				<button type="submit" id="tt-ww-submit" style="background: #F2C94C; color: #4A3A08; border: none; font-weight: 700; font-size: 16px; padding: 14px 0; border-radius: 999px; cursor: pointer;">Claim your free welcome box</button>
+				<p id="tt-ww-status" role="status" style="font-size: 13.5px; margin: 0; display: none;"></p>
+				<span style="font-size: 12.5px; color: #6A7A64;">We'll email you directly to arrange delivery - no card details, no commitment.</span>
 			</form>
 			<script>
 			document.getElementById('tt-wework-form').addEventListener('submit', function (e) {
@@ -356,10 +357,45 @@ get_header();
 				var company = document.getElementById('tt-ww-company').value;
 				var location = document.getElementById('tt-ww-location').value;
 				var address = document.getElementById('tt-ww-address').value;
+				var submitBtn = document.getElementById('tt-ww-submit');
+				var status = document.getElementById('tt-ww-status');
 				var subject = 'WeWork free welcome box - ' + company;
 				var body = 'Name: ' + name + '\nCompany: ' + company + '\nWeWork building: ' + location
 					+ (address ? '\nNotes: ' + address : '') + '\n\nPlease send our free WeWork welcome box!';
-				window.location.href = 'mailto:hello@treattrunk.co.uk?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+				var mailtoFallback = 'mailto:hello@treattrunk.co.uk?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+
+				function showStatus(message, isError) {
+					status.textContent = message;
+					status.style.display = 'block';
+					status.style.color = isError ? '#B8532F' : '#1F4D38';
+				}
+
+				submitBtn.disabled = true;
+				var formData = new FormData();
+				formData.append('action', 'tt_wework_claim');
+				formData.append('nonce', '<?php echo esc_js( wp_create_nonce( 'tt_wework_claim' ) ); ?>');
+				formData.append('name', name);
+				formData.append('company', company);
+				formData.append('location', location);
+				formData.append('notes', address);
+
+				fetch('<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>', { method: 'POST', body: formData })
+					.then(function (r) { return r.json(); })
+					.then(function (data) {
+						submitBtn.disabled = false;
+						if (data.success) {
+							showStatus(data.data.message, false);
+							document.getElementById('tt-wework-form').reset();
+						} else {
+							showStatus((data.data && data.data.message) || 'Something went wrong - opening your email client instead.', true);
+							window.location.href = mailtoFallback;
+						}
+					})
+					.catch(function () {
+						submitBtn.disabled = false;
+						showStatus('Could not reach our server - opening your email client instead.', true);
+						window.location.href = mailtoFallback;
+					});
 			});
 			</script>
 		</div>
