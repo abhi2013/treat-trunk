@@ -744,6 +744,21 @@ color: #5e5e5e!important;
 		overflow-y: auto;
 	}
 
+	/* Nested <ul class="sub-menu"> submenus (Gift, One Off Boxes) inherit
+	   position:absolute/top:54px from the bare .elementor-nav-menu--dropdown
+	   rule above, which is meant for the outer panel, not an inline submenu -
+	   it also relies on SmartMenus toggling inline display:none/block, which
+	   doesn't happen reliably on this mobile "toggle" layout (see
+	   tt-submenu-toggle script in site-core.php for the display fix). Force
+	   these back into normal document flow so an opened submenu appears
+	   right under its parent item instead of floating near the top of the panel. */
+	.menu-mob .sub-menu.elementor-nav-menu--dropdown {
+		position: static !important;
+		width: 100%;
+		box-shadow: none;
+		background: #f5f5f5;
+	}
+
 	.mobile-header .logo-menu .elementor-widget,
 	.mobile-header .logo-menu .elementor-widget-wrap,
 	.mobile-header .logo-menu .elementor-column-wrap,

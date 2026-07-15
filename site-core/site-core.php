@@ -306,6 +306,7 @@ add_filter( 'rocket_delay_js_exclusions', function ( $excluded ) {
 	$excluded[] = 'tt-a11y-link-labels';
 	$excluded[] = 'site-modernize';
 	$excluded[] = 'tt-mystery-box-toggle';
+	$excluded[] = 'tt-submenu-toggle';
 	return $excluded;
 } );
 
@@ -367,6 +368,35 @@ add_action( 'wp_footer', function () {
 					break;
 				}
 			}
+		} );
+	})();
+	</script>
+	<?php
+}, 20 );
+
+add_action( 'wp_footer', function () {
+	?>
+	<script id="tt-submenu-toggle">
+	(function () {
+		// Mobile off-canvas menu: Elementor's own click handler correctly
+		// toggles aria-expanded on the parent <a>, but SmartMenus' internal
+		// display:none inline style on the nested <ul class="sub-menu"> never
+		// updates to match on this "toggle" layout, so tapping Gift/One Off
+		// Boxes never visually reveals the submenu items. This listens on the
+		// same click (which fires after Elementor's own handler already
+		// updated aria-expanded, since that's bound directly on the element
+		// and runs before a document-level delegated listener during bubble)
+		// and syncs the submenu's visibility to match.
+		document.addEventListener( 'click', function ( e ) {
+			var toggle = e.target.closest( '.menu-mob .elementor-item.has-submenu' );
+			if ( ! toggle ) {
+				return;
+			}
+			var submenu = toggle.parentElement.querySelector( ':scope > .sub-menu' );
+			if ( ! submenu ) {
+				return;
+			}
+			submenu.style.display = toggle.getAttribute( 'aria-expanded' ) === 'true' ? 'block' : 'none';
 		} );
 	})();
 	</script>
