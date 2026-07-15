@@ -447,3 +447,14 @@ add_action( 'wp_enqueue_scripts', function () {
 	wp_enqueue_style( 'tt-site-modernize', plugins_url( 'assets/site-modernize.css', __FILE__ ), array(), '1.0.1' );
 	wp_enqueue_script( 'tt-site-modernize', plugins_url( 'assets/site-modernize.js', __FILE__ ), array(), '1.0.1', true );
 }, 20 );
+
+/**
+ * Footer copyright year - was hardcoded ("© Copyright 2025 Treat Trunk...")
+ * directly in the sitewide Footer Elementor template's _elementor_data
+ * (post 173), so it silently went stale the moment the year changed.
+ * [tt_current_year] is used in that text widget's content instead, so it
+ * never needs a manual edit again.
+ */
+add_shortcode( 'tt_current_year', function () {
+	return date( 'Y' );
+} );
