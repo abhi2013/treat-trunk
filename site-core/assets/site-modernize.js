@@ -174,11 +174,20 @@
 		if ( options.length < 2 || options.length > 6 ) {
 			return;
 		}
+		var groupId = 'tt-pg-' + Math.random().toString( 36 ).slice( 2 );
 		var wrap = document.createElement( 'div' );
 		wrap.className = 'tt-variation-pills';
+		wrap.setAttribute( 'data-pill-group', groupId );
 
 		function syncFromSelect() {
-			Array.prototype.forEach.call( wrap.children, function ( pill, i ) {
+			/* Query live rather than close over wrap.children - a later
+			   script (the welcome-box Option 1/2 grouping) moves these
+			   pills into new containers elsewhere in the DOM, and a stale
+			   reference to the now-empty original wrap would silently stop
+			   updating the checked/highlighted state. data-pill-group ties
+			   a pill back to this select regardless of where it now lives. */
+			var pills = document.querySelectorAll( '[data-pill-group="' + groupId + '"] .tt-variation-pill' );
+			Array.prototype.forEach.call( pills, function ( pill, i ) {
 				pill.classList.toggle( 'tt-pill-checked', options[ i ].value === select.value );
 			} );
 		}
@@ -213,6 +222,59 @@
 		}
 		syncFromSelect();
 	} );
+} )();
+
+/* Welcome-box subscription products only: the Mini/Standard/No Welcome
+   Box pills built above sit in one row below both Option 1/Option 2
+   boxes, disconnected from either - move each pill into the option box
+   it actually belongs to (Mini/Standard -> Option 1, No Welcome Box ->
+   Option 2) so the control that picks a plan sits next to the plan it
+   picks, instead of requiring a scroll back up to match one to the
+   other. A real DOM move (not a clone), so the pill's existing click
+   listener from the block above comes with it unchanged. */
+( function () {
+	function relocate() {
+		var pillsWrap = document.querySelector( 'table.variations .tt-variation-pills' );
+		var options = document.querySelectorAll( '.woovr-variations .option' );
+		if ( ! pillsWrap || ! pillsWrap.children.length || options.length < 2 ) {
+			return false;
+		}
+		var groupId = pillsWrap.getAttribute( 'data-pill-group' );
+		var option1 = options[ 0 ];
+		var option2 = options[ 1 ];
+		var wrap1 = document.createElement( 'div' );
+		wrap1.className = 'tt-variation-pills';
+		wrap1.setAttribute( 'data-pill-group', groupId );
+		option1.appendChild( wrap1 );
+		var wrap2 = document.createElement( 'div' );
+		wrap2.className = 'tt-variation-pills';
+		wrap2.setAttribute( 'data-pill-group', groupId );
+		option2.appendChild( wrap2 );
+
+		Array.prototype.slice.call( pillsWrap.children ).forEach( function ( pill ) {
+			var target = /no welcome box/i.test( pill.textContent ) ? wrap2 : wrap1;
+			target.appendChild( pill );
+		} );
+		return true;
+	}
+
+	/* Both elements are ordinary server-rendered HTML present from initial
+	   load in every manual check, but relocate() reliably found nothing
+	   when run synchronously here on first page load, and reliably
+	   succeeded a moment later when re-run by hand - some other script
+	   on this heavily-plugin-loaded page appears to touch this markup
+	   shortly after DOM ready in a way not fully isolated. Retrying for
+	   up to 2s is cheap and avoids depending on winning that race. */
+	if ( relocate() ) {
+		return;
+	}
+	var attempts = 0;
+	var retry = setInterval( function () {
+		attempts++;
+		if ( relocate() || attempts >= 20 ) {
+			clearInterval( retry );
+		}
+	}, 100 );
 } )();
 
 /* Homepage "See what's inside" carousel: the 4 reels plus 6 real past-

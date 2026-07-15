@@ -52,7 +52,13 @@ if ( ! function_exists( 'woovr_init' ) ) {
 
 				function woovr_enqueue_scripts() {
 					//wp_enqueue_style( 'woovr-frontend', plugin_dir_url( __FILE__ ).'frontend.css' );
-					wp_enqueue_script( 'woovr-frontend', plugin_dir_url( __FILE__ ).'frontend.js', array( 'jquery' ), false, true );
+					/* version was `false` here, which WordPress resolves to the
+					   core WP version rather than anything file-specific - since
+					   that never changes when this file is edited, browsers that
+					   already cached an old frontend.js kept serving it
+					   indefinitely regardless of server-side deploys. Bump this
+					   number by hand whenever frontend.js changes. */
+					wp_enqueue_script( 'woovr-frontend', plugin_dir_url( __FILE__ ).'frontend.js', array( 'jquery' ), '1.1', true );
 				}
 
 				public static function woovr_variations_form( $product ) {
@@ -83,7 +89,7 @@ if ( ! function_exists( 'woovr_init' ) ) {
 									$count++;
 									if (count($woovr_children) > 1 && (count($woovr_children) - $count >= 2 || count($woovr_children) - $count == 0)) {
 										?><div class="option">
-											<div class="option_header"><i class="fas fa-circle"></i> Option <?php echo $option . (isset($headers[$option-1]) ? ': <span>'.$headers[$option-1].'</span>':'');?></div>
+											<div class="option_header">Option <?php echo $option . (isset($headers[$option-1]) ? ': <span>'.$headers[$option-1].'</span>':'');?> <span class="option_toggle_icon" aria-hidden="true">&#9662;</span></div>
 											<?php echo isset($descriptions[$option-1]) ? '<div class="option_description">'.$descriptions[$option-1].'</div>':'';?><?php
 										$option++;
 									}

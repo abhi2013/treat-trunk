@@ -69,11 +69,18 @@ jQuery(document).ready(function($) {
         html(_selected.attr('data-pricehtml'));
   });
   
-  jQuery('.woovr-variations .option').eq(0).find('.option_header').click(function(){
-	 jQuery('.woovr-variations .option').removeClass('active');
-	 jQuery(this).parents('.option').eq(0).addClass('active');
-	 hide_suboptions();
-	 jQuery(this).parent().find('.woovr-variation-radio').eq(0).trigger('click');
+  // Option 1/2 headers used to look like a checkbox/radio (a circle icon)
+  // but only Option 1's was actually clickable, and clicking it silently
+  // picked Mini Welcome Box as a side effect - confusing since it looked
+  // selectable but wasn't really a control for choosing between the two.
+  // Now the headers are purely an expand/collapse toggle for the long
+  // description text (chevron icon, CSS handles the rotation/visibility
+  // via .expanded); actually picking an option happens by clicking the
+  // pill that now lives inside each box (see site-modernize.js), which
+  // auto-expands its own box via the .active class already kept in sync
+  // above.
+  jQuery('.woovr-variations .option_header').on('click', function () {
+    jQuery(this).closest('.option').toggleClass('expanded');
   });
 });
 
