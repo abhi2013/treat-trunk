@@ -45,7 +45,7 @@ get_header();
 		</div>
 		<div style="position: relative;">
 			<?php // TODO: swap for uploads/photos-1783026082440.jpeg once uploaded to the media library ?>
-			<img src="https://treattrunk.co.uk/wp-content/uploads/2022/02/IMG_0413-1-768x1024.jpeg" alt="Corporate snack box order being hand-packed at Treat Trunk HQ" style="width: 100%; height: 460px; object-fit: cover; border-radius: 24px; box-shadow: 0 24px 48px -20px rgba(31, 61, 44, 0.35);">
+			<img src="https://treattrunk.co.uk/wp-content/uploads/2022/02/IMG_0413-1-768x1024.jpeg" data-skip-lazy="1" alt="Corporate snack box order being hand-packed at Treat Trunk HQ" style="width: 100%; height: 460px; object-fit: cover; border-radius: 24px; box-shadow: 0 24px 48px -20px rgba(31, 61, 44, 0.35);">
 		</div>
 	</section>
 

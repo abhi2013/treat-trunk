@@ -971,3 +971,15 @@ function jgreen_product_meta_and_description_tab() { // this is where you indica
 }
 remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_meta', 40);
 add_filter('woocommerce_product_tabs', 'jgreen_add_meta_to_description', 999);
+
+// Preload the homepage hero background image (LCP element on mobile). WP Rocket only
+// auto-preloads <img> LCP elements, not Elementor CSS background-images, so this is added
+// manually. Two variants, gated by media query, matching the responsive override in custom.css.
+function jgreen_preload_homepage_hero() {
+	if ( ! is_front_page() ) {
+		return;
+	}
+	echo '<link rel="preload" as="image" media="(max-width: 767px)" href="https://treattrunk.co.uk/wp-content/uploads/2025/03/Treat-Trunk-Healthy-Snack-Box-Subscrition-Gift-Resize-768x513.webp">' . "\n";
+	echo '<link rel="preload" as="image" media="(min-width: 768px)" href="https://treattrunk.co.uk/wp-content/uploads/2025/03/Treat-Trunk-Healthy-Snack-Box-Subscrition-Gift-Resize.webp">' . "\n";
+}
+add_action('wp_head', 'jgreen_preload_homepage_hero', 1);

@@ -1,0 +1,12 @@
+# Treat Trunk
+
+> Treat Trunk sells healthy snack box subscriptions and one-off snack boxes, shipped UK-wide, plus bulk corporate/office snack orders. Boxes are curated selections of healthier snacks (no artificial additives), with options for letterbox delivery, family boxes, and corporate/office accounts.
+
+## Shop
+- [Shop](https://treattrunk.co.uk/shop/): Browse subscription and one-off snack box options.
+- [Corporate Orders](https://treattrunk.co.uk/corporate-orders/): Bulk snack boxes and recurring office snack subscriptions for businesses.
+
+## Company
+- [FAQ](https://treattrunk.co.uk/faq/): Common questions about subscriptions, delivery, and snacks.
+- [Contact Us](https://treattrunk.co.uk/contact-us/): Get in touch with the Treat Trunk team.
+- [Blog](https://treattrunk.co.uk/blog/): Articles on healthy eating, snacking, and family nutrition.
