@@ -416,26 +416,28 @@ header .entry-title {
 	color: #17a299;
 }
 
-/* Bring the Option 1/2 welcome-box-timing picker in line with the green
-   pill buttons used for the actual Mini/Standard Welcome Box choice just
-   below it - this predates the site-wide brand pilot (site-modernize.css)
-   and was never restyled to match, so the two "pick one" controls on the
-   same page looked like two unrelated design systems. Also fixes a typo
-   in the pre-existing rule above (.toption.active never matched anything
-   real - .option.active does) that meant the circle was never actually
-   filled in when selected. */
+/* Option 1/2 boxes are informational groupings ("here's what this timing
+   choice means"), not themselves a selectable control - the real choice
+   is the pill inside. An earlier version of this styling gave the box a
+   colored border + tinted background when .active, which made each box
+   look like a big selectable card/checkbox that lit up when "checked" -
+   reported confusing twice (looked selectable but wasn't; the box itself
+   can't be clicked to choose, only the pill can). Both boxes now stay a
+   single neutral, unchanging style regardless of which pill is selected -
+   only the pill's own fill color communicates the actual choice made. */
 .woovr-variations .option.active {
-	border: 2px solid var(--tt-forest, #1F4D38) !important;
-	background: rgba(31, 77, 56, 0.06) !important;
+	border: 1px solid #e2e2e2 !important;
+	background: #f5f5f5 !important;
 }
 
 .woovr-variations .option.active .option_header,
 .woovr-variations .option.active .option_header span {
-	color: var(--tt-forest, #1F4D38);
+	color: inherit;
 }
 
-.option.active .option_header .fa-circle:before {
+.woovr-variations .option_header span {
 	color: var(--tt-forest, #1F4D38);
+	font-weight: 700;
 }
 
 /* Option 1/2 headers used to open with a circle icon that read as a
