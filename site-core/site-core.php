@@ -305,6 +305,7 @@ add_action( 'wp_enqueue_scripts', function () {
 add_filter( 'rocket_delay_js_exclusions', function ( $excluded ) {
 	$excluded[] = 'tt-a11y-link-labels';
 	$excluded[] = 'site-modernize';
+	$excluded[] = 'tt-mystery-box-toggle';
 	return $excluded;
 } );
 
