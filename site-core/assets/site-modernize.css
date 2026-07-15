@@ -57,10 +57,10 @@ body .elementor-widget-text-editor h6 {
    class elsewhere in the cascade (0,1,0), so it silently lost to
    .elementor-toggle-title and similar. The [href] attribute selector
    brings it to (0,1,1), matching or beating a single class. */
-body a[href] {
+body a[href]:not(.elementor-item, .elementor-sub-item, .elementor-button, .button) {
   color: var(--tt-forest) !important;
 }
-body a[href]:hover {
+body a[href]:not(.elementor-item, .elementor-sub-item, .elementor-button, .button):hover {
   color: var(--tt-forest-deep) !important;
 }
 /* FAQ accordion triggers: a plain <a class="elementor-toggle-title"> with
