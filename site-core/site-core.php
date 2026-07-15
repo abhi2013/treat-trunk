@@ -307,6 +307,15 @@ add_filter( 'rocket_delay_js_exclusions', function ( $excluded ) {
 	$excluded[] = 'site-modernize';
 	$excluded[] = 'tt-mystery-box-toggle';
 	$excluded[] = 'tt-submenu-toggle';
+	/* WooCommerce's own cart-fragments.js is what corrects the header
+	   basket badge (price/count) after a full-page-cached HTML response -
+	   the cached markup reflects whatever cart state existed when that
+	   page was cached, not the current visitor's actual cart, and
+	   cart-fragments' AJAX refresh on page load is supposed to fix that
+	   up immediately. Delayed, it doesn't run until first interaction,
+	   so every fresh page load shows a stale/empty basket (confirmed:
+	   £0.00/0 items) until the visitor clicks something. */
+	$excluded[] = 'cart-fragments';
 	return $excluded;
 } );
 
