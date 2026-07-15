@@ -78,7 +78,7 @@ if ( ! function_exists( 'woovr_init' ) ) {
 								$option = 1;
 								$headers = array("I don't want to wait!", "I'll wait for the next one");
 								$next_month = '';
-								$descriptions = array('Pay and receive your welcome box now. Your first subscription box will be charged on '.end($shipping_dates).' and posted around the '.date('jS F', strtotime(end($shipping_dates) . ' + 10 day')).'. Any first month offers will be deducted from the first subscription payment, not the welcome box.', 'Create your account now and pay for your first suscription box on '.end($shipping_dates).'. Your first box will be posted around the '.date('jS F', strtotime(end($shipping_dates) . ' + 10 day')).' and around the 10th of each following month.');
+								$descriptions = array('Pay and receive your welcome box now. Your first subscription box will be charged on '.end($shipping_dates).' and posted around the '.date('jS F', strtotime(end($shipping_dates) . ' + 10 day')).'. Any first month offers will be deducted from the first subscription payment, not the welcome box.', 'Create your account now and pay for your first suscription box on '.end($shipping_dates).'. Your first box will be posted around the '.date('jS F', strtotime(end($shipping_dates) . ' + 10 day')).' and around the 10th of each following month. A welcome box is a one-off mystery snack selection sent immediately after signup - choosing this option means skipping it and starting with your first scheduled monthly box instead.');
 								foreach ( $woovr_children as $i => $woovr_child ) {
 									$count++;
 									if (count($woovr_children) > 1 && (count($woovr_children) - $count >= 2 || count($woovr_children) - $count == 0)) {

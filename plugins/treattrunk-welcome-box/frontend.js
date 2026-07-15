@@ -7,16 +7,23 @@ jQuery(document).ready(function($) {
 
   // check default
   $(document).on('found_variation', function(e, t) {
-    if (!woovr_selected) {
-      // default for radio
-      $('.woovr-variation[data-id="' + t.variation_id + '"]').addClass('active').
-          find('input[type="radio"]').
-          prop('checked', true);
-	  $('.woovr-variation[data-id="' + t.variation_id + '"]').parents('.option').eq(0).addClass('active');
+    // Keep the visual active state (and the Option 1/2 grouping) in sync
+    // with whichever variation is actually selected. This used to be
+    // gated behind !woovr_selected (only ran once, before any manual
+    // pick), which left stale .active classes on both Option 1 and
+    // Option 2 at once as soon as a pill selection crossed from one
+    // group to the other (e.g. Mini Welcome Box -> No Welcome Box).
+    $('.woovr-variation').removeClass('active');
+    $('.woovr-variations .option').removeClass('active');
+    $('.woovr-variation[data-id="' + t.variation_id + '"]').addClass('active').
+        find('input[type="radio"]').
+        prop('checked', true);
+    $('.woovr-variation[data-id="' + t.variation_id + '"]').parents('.option').eq(0).addClass('active');
+    update_first_pay_date(t.variation_id);
 
+    if (!woovr_selected) {
       // default for html select
       $('.woovr-variation-select').val(t.variation_id).trigger('change');
-	  update_first_pay_date(t.variation_id);
     }
   });
 
