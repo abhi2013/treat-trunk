@@ -874,3 +874,12 @@ color: #5e5e5e!important;
 		background-image: url(https://treattrunk.co.uk/wp-content/uploads/2025/03/Treat-Trunk-Healthy-Snack-Box-Subscrition-Gift-Resize-768x513.webp) !important;
 	}
 }
+
+/* reCAPTCHA badge (fixed bottom-right, Google sets an extremely high default
+   z-index) sits on top of real page content in that corner - the allergy-info
+   textarea on product pages and the basket totals table on /basket/ in
+   particular. It's a passive attribution badge, not something users need to
+   interact with above other content, so drop it below everything else. */
+.grecaptcha-badge {
+	z-index: 1 !important;
+}
