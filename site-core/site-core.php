@@ -316,6 +316,18 @@ add_filter( 'rocket_delay_js_exclusions', function ( $excluded ) {
 	   so every fresh page load shows a stale/empty basket (confirmed:
 	   £0.00/0 items) until the visitor clicks something. */
 	$excluded[] = 'cart-fragments';
+	/* jQuery itself must also be excluded, or cart-fragments (undelayed
+	   above) runs before window.jQuery exists and throws "jQuery is not
+	   a function" - caught immediately after deploying the cart-fragments
+	   exclusion (2026-07-15/16), present sitewide since jquery-core is a
+	   dependency of nearly everything, not just cart-fragments. */
+	$excluded[] = 'jquery';
+	/* cart-fragments' full WooCommerce-declared dependency list is exactly
+	   ['jquery', 'wc-js-cookie'] (checked directly in WooCommerce core's
+	   class-wc-frontend-scripts.php, not guessed) - js.cookie.min.js was
+	   the second piece still delayed, throwing "Cookies is not defined"
+	   right after the jquery fix above. */
+	$excluded[] = 'js-cookie';
 	return $excluded;
 } );
 
