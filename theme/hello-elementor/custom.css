@@ -449,13 +449,12 @@ header .entry-title {
 	display: none !important;
 }
 
-/* The "Clear" link is WooCommerce's standard reset-variations control - it
-   resets a required selection back to an incomplete "Choose an option"
-   state, which doesn't serve a purpose on a subscription product where a
-   welcome box choice is expected before checkout. */
-.reset_variations {
-	display: none !important;
-}
+/* NOTE: originally hidden here on the assumption it was a redundant
+   reset-to-invalid-state link, but it turned out to be the only way to
+   switch the Option 1/Option 2 display back to Option 2 (there's no other
+   control for that) - restored 2026-07-15 after it broke that. See
+   [[option-1-2-welcome-box-ux]] memory for the open question on what the
+   *right* fix here is before touching this again. */
 
 .thwepo-extra-options td {
 	padding-left: 15px!important;
