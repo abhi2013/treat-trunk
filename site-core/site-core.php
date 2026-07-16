@@ -458,3 +458,303 @@ add_action( 'wp_enqueue_scripts', function () {
 add_shortcode( 'tt_current_year', function () {
 	return date( 'Y' );
 } );
+
+/* =============================================================================
+ * SEO / GEO / AEO audit fixes - 2026-07-16
+ *
+ * Everything below is additive (new wp_head/wp_footer output, new filters)
+ * and deliberately does not touch any _elementor_data - avoids the
+ * multi-cache-clear dance direct Elementor DB edits require, and keeps
+ * every change here reversible by deleting the relevant block.
+ *
+ * Deliberately NOT included in this pass (need real-world input, not code):
+ *   - A new blog post (needs the site's own voice, not fabricated content)
+ *   - Citing an external health authority in existing blog posts (content
+ *     edit that deserves a real source chosen deliberately)
+ *   - B Corp / ISO certification (a business/legal process, not code)
+ *   - A phone number or live chat (needs a real number to publish)
+ *   - A dedicated Halal/allergen product line (a product/sourcing decision)
+ *   - Surfacing the "Share the Meal" charity donation at checkout: the
+ *     donation claim currently only exists in the /our-mission-values/ meta
+ *     description, not the visible page body - the exact mechanic (per box?
+ *     per subscriber-month?) needs confirming before writing customer-facing
+ *     copy about it.
+ * ============================================================================= */
+
+/**
+ * FAQPage schema for /faq/ (page 84) and the "Corporate FAQs" accordion on
+ * /corporate-orders/ (page 36634). Both already have the Q&A content live
+ * on the page in the right shape - this only adds the missing markup, as a
+ * standalone JSON-LD block alongside (not replacing) Yoast's own graph.
+ * Question/answer text below is a faithful, trimmed paraphrase of what's
+ * actually on each page - schema must reflect visible content.
+ */
+add_action( 'wp_head', function () {
+	$faqs = null;
+
+	if ( is_page( 84 ) ) {
+		$faqs = array(
+			array( 'How does the healthy snack box subscription work?', 'Choose Standard (20+ snacks) or Mini (10+ snacks), then decide whether to receive your first box straight away or wait for the next delivery date, posted around the 10th of the month. Subsequent boxes are billed monthly.' ),
+			array( 'Do you sell one off/gift healthy snack boxes?', 'Yes - Standard and Mini sizes are available as one-off purchases, customisable for adults, kids or both, with gift messaging and gift wrap available at checkout. Subscribers get 10% off one-off boxes.' ),
+			array( "What's in my healthy snack box?", 'The Standard box contains 20+ vegan-friendly healthy snacks including premium items and larger pack sizes; the Mini contains 10+. Contents are kept a secret until you open the box.' ),
+			array( 'What is your delivery policy?', 'UK postage is free (first class upgrade available). Delivery is typically 2 working days from posting. Subscriptions post around the 10th of each month. We no longer post to Europe, due to Brexit customs requirements.' ),
+			array( 'Can I cancel, pause or switch my subscription?', 'Yes, any time via your account. Changes are instant, but if payment has already been collected for the coming month, the change applies from the following month.' ),
+			array( "What's your return policy?", 'Faulty items can be returned within 14 days of receipt via tracked delivery. Exchanges are posted within 2 working days of us receiving the return; refunds take 5-10 days to clear.' ),
+			array( 'Are the healthy snack boxes gluten free?', "Boxes aren't labelled gluten free, as some snacks are packaged in a factory that also handles gluten. Very few snacks contain gluten as an ingredient though, so a gluten-conscious box is easy to arrange - just note it in the allergy box at checkout." ),
+			array( 'What is Sugar Sensible?', "Sugar Sensible is Treat Trunk's practical, common-sense approach to nutrition - favouring snacks with balanced macros and lower-GI sugars over a strict refined-sugar-free rule, since some genuinely healthy snacks contain a small amount of natural sugar." ),
+			array( 'Do you cater for allergies?', "We do our best to. Simple requirements can be noted in the allergy box at checkout; more complex allergies should be emailed to hello@treattrunk.co.uk first to confirm we can accommodate them. Customers are responsible for checking each item's ingredients." ),
+			array( "What if we don't like something in our healthy snack box?", "Let us know - feedback shapes future boxes. Trying new things is part of the fun, and if a snack isn't for you, it's often one a friend or family member will enjoy." ),
+			array( "What's your ethical policy?", 'Treat Trunk works with small, ethical UK businesses, using recyclable, acid-free and biodegradable packaging materials wherever the packaging technology allows it, while keeping healthy snacking affordable and accessible.' ),
+			array( 'How can I contact you about your healthy snack boxes?', 'Email hello@treattrunk.co.uk or use the contact form on the Contact Us page.' ),
+		);
+	} elseif ( is_page( 36634 ) ) {
+		$faqs = array(
+			array( 'What is a corporate snack box?', 'A curated selection of office snacks delivered to your workplace or straight to staff at home - ideal for office kitchens, client visits, staff wellbeing and team perks. Boxes are predominantly vegan, sugar sensible and sourced from independent UK brands.' ),
+			array( 'How much do office snacks cost for a team?', 'The Letterbox snack box is £15.99/box, dropping automatically to £13.75/box on 20+ box orders and £13.00/box on 50+ box orders to one address. A one-off Deluxe Corporate Snack Box (60+ snacks) is £125. No minimum order, no discount code needed.' ),
+			array( 'Can you deliver to lots of individual home addresses?', "Yes - this is a speciality. Send a spreadsheet of names and addresses and we'll post a tracked, letterbox-friendly box to each one. We've handled orders of 800+ boxes." ),
+			array( 'Do the bulk discounts need a code?', 'No - order 20 or more Letterbox boxes to one address and the discount applies automatically in the cart.' ),
+			array( 'Can you handle dietary requirements and allergies?', 'All boxes are vegetarian (mostly vegan), low sugar and health-conscious throughout. Individual boxes within a single bulk order can be tailored for gluten-free, nut-free and other requirements.' ),
+		);
+	}
+
+	if ( ! $faqs ) {
+		return;
+	}
+
+	$schema = array(
+		'@context'   => 'https://schema.org',
+		'@type'      => 'FAQPage',
+		'mainEntity' => array_map( function ( $qa ) {
+			return array(
+				'@type'          => 'Question',
+				'name'           => $qa[0],
+				'acceptedAnswer' => array(
+					'@type' => 'Answer',
+					'text'  => $qa[1],
+				),
+			);
+		}, $faqs ),
+	);
+
+	echo '<script type="application/ld+json" class="tt-faqpage-schema">' . wp_json_encode( $schema ) . '</script>' . "\n";
+}, 5 );
+
+/**
+ * HowTo schema for /how-it-works/ (page 34) - the page already documents a
+ * clear 3-step process, just never marked it up.
+ */
+add_action( 'wp_head', function () {
+	if ( ! is_page( 34 ) ) {
+		return;
+	}
+
+	$schema = array(
+		'@context'    => 'https://schema.org',
+		'@type'       => 'HowTo',
+		'name'        => 'How the Treat Trunk healthy snack box subscription works',
+		'description' => 'How to set up a Treat Trunk healthy snack box subscription, from choosing a plan to receiving your first box.',
+		'step'        => array(
+			array(
+				'@type' => 'HowToStep',
+				'name'  => 'Select your plan and box type',
+				'text'  => 'Choose from full-size (Standard) or Mini, and customise to your personal dietary needs.',
+			),
+			array(
+				'@type' => 'HowToStep',
+				'name'  => 'Choose your delivery',
+				'text'  => 'Receive your first box straight away, or wait until the next shipment date on the 10th of the following month.',
+			),
+			array(
+				'@type' => 'HowToStep',
+				'name'  => 'Enjoy fun, healthy snacks, delivered',
+				'text'  => 'A range of healthy, delicious snacks arrives at your door every month, fully sorted.',
+			),
+		),
+	);
+
+	echo '<script type="application/ld+json" class="tt-howto-schema">' . wp_json_encode( $schema ) . '</script>' . "\n";
+}, 5 );
+
+/**
+ * Person schema for both named founders on /our-story/ (page 37), plus
+ * Review schema for the real, named on-page testimonials (Anni; Julie
+ * Baker of Julie Clark Nutrition; Jenny Tschiesche of LunchboxDoctor.com -
+ * all shown at 5 stars on the page itself). Deliberately does NOT add an
+ * AggregateRating - that needs a live, verifiable count/average (e.g. from
+ * the Trustpilot integration already active on the site) rather than a
+ * number invented here.
+ */
+add_action( 'wp_head', function () {
+	if ( ! is_page( 37 ) ) {
+		return;
+	}
+
+	$schema = array(
+		'@context' => 'https://schema.org',
+		'@graph'   => array(
+			array(
+				'@type'       => 'Person',
+				'name'        => 'Sally',
+				'jobTitle'    => 'Creator, Treat Trunk',
+				'description' => 'Founded Treat Trunk while pregnant with her first child, sharing her journey of overcoming sugar addiction through real-food snacking.',
+				'worksFor'    => array( '@id' => 'https://treattrunk.co.uk/#organization' ),
+			),
+			array(
+				'@type'       => 'Person',
+				'name'        => 'Abhi',
+				'jobTitle'    => 'Treat Trunk',
+				'description' => 'Leads Treat Trunk today, with a background in mobile app development and The Meal Prep Market.',
+				'worksFor'    => array( '@id' => 'https://treattrunk.co.uk/#organization' ),
+			),
+			array(
+				'@type'         => 'Review',
+				'reviewRating'  => array( '@type' => 'Rating', 'ratingValue' => '5', 'bestRating' => '5' ),
+				'author'        => array( '@type' => 'Person', 'name' => 'Anni' ),
+				'reviewBody'    => "Great treats and great customer service, I've tried a dozen different snack/treat boxes in the last few months and if I could only recommend one, it would be Treat Trunk.",
+				'itemReviewed'  => array( '@id' => 'https://treattrunk.co.uk/#organization' ),
+			),
+			array(
+				'@type'         => 'Review',
+				'reviewRating'  => array( '@type' => 'Rating', 'ratingValue' => '5', 'bestRating' => '5' ),
+				'author'        => array( '@type' => 'Person', 'name' => 'Julie Baker, Julie Clark Nutrition' ),
+				'reviewBody'    => 'As a Nutritionist who works with kids and young families I was so delighted to be introduced to Treat Trunk. Ideal for those times when you need to grab and go or as an after school snack or for the packed lunches. Brilliant company ethos and great value boxes.',
+				'itemReviewed'  => array( '@id' => 'https://treattrunk.co.uk/#organization' ),
+			),
+			array(
+				'@type'         => 'Review',
+				'reviewRating'  => array( '@type' => 'Rating', 'ratingValue' => '5', 'bestRating' => '5' ),
+				'author'        => array( '@type' => 'Person', 'name' => 'Jenny Tschiesche, LunchboxDoctor.com' ),
+				'reviewBody'    => "There are so many brands that I recommend to my clients already in this box. It's a great deal pricewise and we love having these options in the house.",
+				'itemReviewed'  => array( '@id' => 'https://treattrunk.co.uk/#organization' ),
+			),
+		),
+	);
+
+	echo '<script type="application/ld+json" class="tt-person-review-schema">' . wp_json_encode( $schema ) . '</script>' . "\n";
+}, 5 );
+
+/**
+ * H1 fix for /blog/ (page 7001, a "posts page" archive - not a singular
+ * post, so `the_content` never fires for it) and /affiliates/ (page 32607,
+ * a static page whose hero text was never actually wrapped in a heading
+ * tag). Both currently render zero <h1> elements.
+ *
+ * Implemented via output buffering rather than `the_content` because the
+ * blog archive's markup comes from Elementor's Theme Builder archive
+ * template, not a single post's filtered content - `the_content` simply
+ * never runs for it. Anchors on the Yoast breadcrumb block
+ * (`id="breadcrumbs"`), confirmed present in the rendered HTML of both
+ * pages, and is a no-op (page renders unchanged) if that anchor is ever
+ * not found, so this can't break the page even if the breadcrumb markup
+ * changes later.
+ */
+add_action( 'template_redirect', function () {
+	if ( is_page( 7001 ) || is_page( 32607 ) ) {
+		ob_start( function ( $html ) {
+			$anchor = '<p style="margin-top:8px;" id="breadcrumbs">';
+			$pos    = strpos( $html, $anchor );
+			if ( false === $pos ) {
+				return $html;
+			}
+			$end = strpos( $html, '</p>', $pos );
+			if ( false === $end ) {
+				return $html;
+			}
+			$end += strlen( '</p>' );
+
+			$title = is_page( 7001 ) ? 'Blog' : 'Brand Rep & Affiliate Programme';
+			$h1    = '<h1 class="elementor-heading-title elementor-size-xl" style="margin:16px 0 8px;">' . esc_html( $title ) . '</h1>';
+
+			return substr( $html, 0, $end ) . $h1 . substr( $html, $end );
+		} );
+	}
+}, 1 );
+
+/**
+ * Trim the HTTP -> HTTPS redirect to a permanent 301. Bitnami/Apache
+ * appears to be issuing a 302 for this today (confirmed via `curl -I
+ * http://treattrunk.co.uk/`) - if that redirect is happening at the Apache
+ * vhost level, this WP-level hook never actually runs (Apache answers
+ * before PHP loads) and the real fix is a one-line change to the vhost's
+ * mod_rewrite rule, not this file. Left in as a safe, no-op-if-unreachable
+ * defensive fix in case WP/a plugin controls it instead.
+ */
+add_action( 'template_redirect', function () {
+	if ( ! is_ssl() && ! is_admin() ) {
+		$redirect_url = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+		wp_safe_redirect( $redirect_url, 301 );
+		exit;
+	}
+}, 0 );
+
+/**
+ * noindex,follow the thin monthly "what's in this month's box" recap posts
+ * (2019-2023) - near-duplicate content that dilutes topical authority
+ * without adding unique value. `follow` is kept so internal link equity
+ * still flows; this only removes them from the index, doesn't block
+ * crawling. Genuinely useful posts (recipes, interviews, "10 tips"
+ * listicles) are deliberately NOT in this list.
+ */
+add_filter( 'wpseo_robots_array', function ( $robots ) {
+	static $thin_recap_slugs = array(
+		'july2020', 'june2020-2', 'may2020', 'april2020', 'march2020', 'february2020',
+		'january-2020', 'december-2019-treat-trunk', 'november2019', 'october2019',
+		'september2019', 'august2020', 'september2020', 'october2020', 'november2020',
+		'december2020', 'jan21', 'feb21', 'march21', 'april21', 'may21', 'june21',
+		'july21', 'aug21', 'sep21', 'nov21', 'oct21', 'dec21', 'jan22', 'feb22',
+		'march22', 'april22', 'may22', 'june22', 'july22', 'aug22', 'sept22', 'oct22',
+		'nov22', 'dec22', 'jan23', 'feb23', 'mar23', 'apr23', 'may23', 'june23',
+		'july23', 'aug23', 'jan25',
+	);
+
+	if ( is_singular( 'post' ) && in_array( get_post_field( 'post_name' ), $thin_recap_slugs, true ) ) {
+		$robots['index']  = 'noindex';
+		$robots['follow'] = 'follow';
+	}
+
+	return $robots;
+} );
+
+/**
+ * Company registration line - a standard UK ecommerce trust signal that
+ * was missing entirely. Real details confirmed live on Companies House
+ * (company 15624707) 2026-07-16. Echoed via wp_footer rather than added to
+ * the Elementor-built global Footer template (post 173), to avoid another
+ * direct _elementor_data edit - same reasoning as the copyright-year fix
+ * above.
+ */
+add_action( 'wp_footer', function () {
+	echo '<p style="text-align:center;font-size:12px;color:#8a8a8a;padding:10px 20px;margin:0;">'
+		. 'Treat Trunk Ltd &middot; Company No. 15624707 &middot; Registered office: 86-90 Paul Street, London, EC2A 4NE'
+		. '</p>';
+}, 30 );
+
+/**
+ * [tt_box_comparison] - Mini vs Standard box comparison table. Not
+ * auto-injected anywhere: /subscribe/ and /shop/ sit right at the top of
+ * the checkout funnel, and per the standing safety rules that's not a page
+ * to blind-inject markup into via output buffering the way the H1 fix
+ * above does for lower-stakes pages. Drop this shortcode into place via an
+ * Elementor Shortcode widget on staging once reviewed.
+ */
+add_shortcode( 'tt_box_comparison', function () {
+	ob_start();
+	?>
+	<table class="tt-box-comparison" style="width:100%;border-collapse:collapse;margin:24px 0;font-size:15px;">
+		<thead>
+			<tr style="background:#f4f5f3;">
+				<th style="text-align:left;padding:12px 14px;border:1px solid #e0e0e0;">&nbsp;</th>
+				<th style="text-align:left;padding:12px 14px;border:1px solid #e0e0e0;">Mini</th>
+				<th style="text-align:left;padding:12px 14px;border:1px solid #e0e0e0;">Standard</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr><td style="padding:12px 14px;border:1px solid #e0e0e0;font-weight:600;">Snacks per box</td><td style="padding:12px 14px;border:1px solid #e0e0e0;">10+</td><td style="padding:12px 14px;border:1px solid #e0e0e0;">20+, including premium items and larger pack sizes</td></tr>
+			<tr><td style="padding:12px 14px;border:1px solid #e0e0e0;font-weight:600;">Price</td><td style="padding:12px 14px;border:1px solid #e0e0e0;">From £24.99/month</td><td style="padding:12px 14px;border:1px solid #e0e0e0;">From £39.99/month</td></tr>
+			<tr><td style="padding:12px 14px;border:1px solid #e0e0e0;font-weight:600;">Best for</td><td style="padding:12px 14px;border:1px solid #e0e0e0;">Trying Treat Trunk, or snacking for one</td><td style="padding:12px 14px;border:1px solid #e0e0e0;">Families, or anyone who wants more variety each month</td></tr>
+			<tr><td style="padding:12px 14px;border:1px solid #e0e0e0;font-weight:600;">Customisable for adults/kids</td><td style="padding:12px 14px;border:1px solid #e0e0e0;">Yes</td><td style="padding:12px 14px;border:1px solid #e0e0e0;">Yes</td></tr>
+		</tbody>
+	</table>
+	<?php
+	return ob_get_clean();
+} );
