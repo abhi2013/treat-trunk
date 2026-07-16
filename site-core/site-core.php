@@ -474,11 +474,12 @@ add_shortcode( 'tt_current_year', function () {
  *   - B Corp / ISO certification (a business/legal process, not code)
  *   - A phone number or live chat (needs a real number to publish)
  *   - A dedicated Halal/allergen product line (a product/sourcing decision)
- *   - Surfacing the "Share the Meal" charity donation at checkout: the
- *     donation claim currently only exists in the /our-mission-values/ meta
- *     description, not the visible page body - the exact mechanic (per box?
- *     per subscriber-month?) needs confirming before writing customer-facing
- *     copy about it.
+ *
+ * The "Share the Meal" charity donation checklist item from the audit was
+ * dropped entirely, not deferred: the claim only ever existed in the
+ * /our-mission-values/ meta description (never the visible page), and the
+ * user confirmed 2026-07-16 it isn't a real feature - see
+ * scripts/fix-oversized-meta-descriptions.sh for the correction.
  * ============================================================================= */
 
 /**
