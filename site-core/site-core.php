@@ -635,6 +635,49 @@ add_action( 'wp_head', function () {
 }, 5 );
 
 /**
+ * AggregateRating schema + a small visible trust badge, tied to the real
+ * Trustpilot profile (uk.trustpilot.com/review/treattrunk.co.uk). Numbers
+ * below are read directly from Trustpilot's own embedded schema.org markup
+ * on a saved copy of that page (2026-07-16) - not scraped, not guessed via
+ * search (an earlier search attempt returned self-contradictory numbers
+ * that were rightly not trusted). This is a point-in-time snapshot, not a
+ * live API pull - the trustpilot-reviews plugin already active on the site
+ * has a business key (of71tqWFPb9BPSru) but no TrustBox widget currently
+ * placed anywhere (its stored settings show an empty trustboxes array), so
+ * there's no live-synced number to read from instead. Re-verify and update
+ * these two constants periodically rather than leaving them to go stale.
+ */
+define( 'TT_TRUSTPILOT_RATING', '3.8' );
+define( 'TT_TRUSTPILOT_REVIEW_COUNT', '114' );
+define( 'TT_TRUSTPILOT_URL', 'https://uk.trustpilot.com/review/treattrunk.co.uk' );
+
+add_action( 'wp_head', function () {
+	if ( ! is_front_page() ) {
+		return;
+	}
+	$schema = array(
+		'@context'        => 'https://schema.org',
+		'@type'           => 'Organization',
+		'@id'             => 'https://treattrunk.co.uk/#organization',
+		'aggregateRating' => array(
+			'@type'       => 'AggregateRating',
+			'ratingValue' => TT_TRUSTPILOT_RATING,
+			'bestRating'  => '5',
+			'worstRating' => '1',
+			'reviewCount' => TT_TRUSTPILOT_REVIEW_COUNT,
+		),
+	);
+	echo '<script type="application/ld+json" class="tt-aggregate-rating-schema">' . wp_json_encode( $schema ) . '</script>' . "\n";
+}, 5 );
+
+add_action( 'wp_footer', function () {
+	echo '<p style="text-align:center;font-size:12px;color:#8a8a8a;padding:0 20px 10px;margin:0;">'
+		. 'Rated <strong>' . esc_html( TT_TRUSTPILOT_RATING ) . ' out of 5</strong> from '
+		. esc_html( TT_TRUSTPILOT_REVIEW_COUNT ) . ' reviews on <a href="' . esc_url( TT_TRUSTPILOT_URL ) . '" target="_blank" rel="noopener nofollow" style="color:inherit;">Trustpilot</a>'
+		. '</p>';
+}, 29 );
+
+/**
  * H1 fix for /blog/ (page 7001, a "posts page" archive - not a singular
  * post, so `the_content` never fires for it) and /affiliates/ (page 32607,
  * a static page whose hero text was never actually wrapped in a heading
