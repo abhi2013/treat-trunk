@@ -647,10 +647,18 @@ add_action( 'wp_head', function () {
  * pages, and is a no-op (page renders unchanged) if that anchor is ever
  * not found, so this can't break the page even if the breadcrumb markup
  * changes later.
+ *
+ * /blog/ (page 7001) is configured as the site's "Posts page" (Settings ->
+ * Reading) - WordPress's own conditional-tags behaviour means `is_page()`
+ * always returns false for whatever page is set as the Posts page, even
+ * though it unambiguously is one (confirmed via the "blog" body class,
+ * which core only adds for `is_home() && ! is_front_page()`). `is_home()`
+ * is the correct check here, not `is_page( 7001 )`.
  */
 add_action( 'template_redirect', function () {
-	if ( is_page( 7001 ) || is_page( 32607 ) ) {
-		ob_start( function ( $html ) {
+	if ( ( is_home() && ! is_front_page() ) || is_page( 32607 ) ) {
+		$is_blog = is_home() && ! is_front_page();
+		ob_start( function ( $html ) use ( $is_blog ) {
 			$anchor = '<p style="margin-top:8px;" id="breadcrumbs">';
 			$pos    = strpos( $html, $anchor );
 			if ( false === $pos ) {
@@ -662,7 +670,7 @@ add_action( 'template_redirect', function () {
 			}
 			$end += strlen( '</p>' );
 
-			$title = is_page( 7001 ) ? 'Blog' : 'Brand Rep & Affiliate Programme';
+			$title = $is_blog ? 'Blog' : 'Brand Rep & Affiliate Programme';
 			$h1    = '<h1 class="elementor-heading-title elementor-size-xl" style="margin:16px 0 8px;">' . esc_html( $title ) . '</h1>';
 
 			return substr( $html, 0, $end ) . $h1 . substr( $html, $end );
