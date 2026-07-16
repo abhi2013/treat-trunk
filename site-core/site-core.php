@@ -425,7 +425,7 @@ add_action( 'wp_footer', function () {
 }, 20 );
 
 /**
- * Site-wide brand-direction pilot (staging trial).
+ * Site-wide brand-direction pilot.
  *
  * Extends the corporate-orders page's palette (forest green, parchment/
  * cream, gold, terracotta) and typography (DM Sans, already self-hosted -
@@ -439,13 +439,20 @@ add_action( 'wp_footer', function () {
  * element IDs (the homepage's "how our subscription works" icons) rather
  * than a blanket image rule, so it can never accidentally catch the
  * stickers/logo. Reversible by removing this one enqueue call.
+ *
+ * Deployed to production 2026-07-15 after a staging audit found and fixed
+ * three bugs: nav-dropdown contrast, sitewide invisible button text (both
+ * caused by this file's !important link-color rules outranking
+ * Elementor/WooCommerce button styles), and a nav z-index/stacking bug
+ * (site-modernize.js was giving the header a permanent transform via the
+ * scroll-reveal system, trapping the dropdown in a new stacking context).
  */
 add_action( 'wp_enqueue_scripts', function () {
 	if ( is_page( 36634 ) ) {
 		return;
 	}
-	wp_enqueue_style( 'tt-site-modernize', plugins_url( 'assets/site-modernize.css', __FILE__ ), array(), '1.0.1' );
-	wp_enqueue_script( 'tt-site-modernize', plugins_url( 'assets/site-modernize.js', __FILE__ ), array(), '1.0.1', true );
+	wp_enqueue_style( 'tt-site-modernize', plugins_url( 'assets/site-modernize.css', __FILE__ ), array(), '1.0.2' );
+	wp_enqueue_script( 'tt-site-modernize', plugins_url( 'assets/site-modernize.js', __FILE__ ), array(), '1.0.2', true );
 }, 20 );
 
 /**
@@ -468,7 +475,6 @@ add_shortcode( 'tt_current_year', function () {
  * every change here reversible by deleting the relevant block.
  *
  * Deliberately NOT included in this pass (need real-world input, not code):
- *   - A new blog post (needs the site's own voice, not fabricated content)
  *   - Citing an external health authority in existing blog posts (content
  *     edit that deserves a real source chosen deliberately)
  *   - B Corp / ISO certification (a business/legal process, not code)
@@ -580,10 +586,7 @@ add_action( 'wp_head', function () {
  * Person schema for both named founders on /our-story/ (page 37), plus
  * Review schema for the real, named on-page testimonials (Anni; Julie
  * Baker of Julie Clark Nutrition; Jenny Tschiesche of LunchboxDoctor.com -
- * all shown at 5 stars on the page itself). Deliberately does NOT add an
- * AggregateRating - that needs a live, verifiable count/average (e.g. from
- * the Trustpilot integration already active on the site) rather than a
- * number invented here.
+ * all shown at 5 stars on the page itself).
  */
 add_action( 'wp_head', function () {
 	if ( ! is_page( 37 ) ) {
