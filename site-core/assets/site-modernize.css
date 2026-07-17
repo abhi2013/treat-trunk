@@ -940,18 +940,14 @@ body table.woocommerce-grouped-product-list .woocommerce-grouped-product-list-it
   white-space: nowrap;
 }
 
-/* ---------- homepage long bullet lists ----------
-   "Who can benefit from our snack boxes?" (9 items) and "What's inside
-   your box?" (6 items) were plain browser-default <ul><li> bullets inside
-   a text-editor widget - the exact ">5 items in a bare list" case that
-   reads as unfinished. Grouped into a two-column grid on wider screens
-   instead (still a plain single column on mobile), each item getting a
-   small teal tick instead of a browser bullet. Scoped to these two
-   sections' own element IDs, not a blanket <ul> rule, so it can't affect
-   FAQ accordions, blog post content, or anywhere else a plain list is the
-   right choice. */
-body .elementor-element-c7e2f79 .elementor-widget-text-editor ul,
-body .elementor-element-b2df1f3 .elementor-widget-text-editor ul {
+/* ---------- homepage: "Who can benefit from our snack boxes?" ----------
+   9 plain browser-default <ul><li> bullets inside a text-editor widget -
+   the exact ">5 items in a bare list" case that reads as unfinished.
+   Grouped into a two-column grid on wider screens (still single-column
+   on mobile), each item getting a small teal tick instead of a browser
+   bullet. Scoped to this section's own element ID, not a blanket <ul>
+   rule, so it can't affect FAQ accordions, blog content, etc. */
+body .elementor-element-c7e2f79 .elementor-widget-text-editor ul {
   display: grid;
   grid-template-columns: 1fr;
   gap: 4px 28px;
@@ -960,20 +956,17 @@ body .elementor-element-b2df1f3 .elementor-widget-text-editor ul {
   padding: 0;
 }
 @media (min-width: 700px) {
-  body .elementor-element-c7e2f79 .elementor-widget-text-editor ul,
-  body .elementor-element-b2df1f3 .elementor-widget-text-editor ul {
+  body .elementor-element-c7e2f79 .elementor-widget-text-editor ul {
     grid-template-columns: 1fr 1fr;
   }
 }
-body .elementor-element-c7e2f79 .elementor-widget-text-editor li,
-body .elementor-element-b2df1f3 .elementor-widget-text-editor li {
+body .elementor-element-c7e2f79 .elementor-widget-text-editor li {
   position: relative;
   padding: 10px 0 10px 30px;
   border-bottom: 1px solid rgba(18, 120, 108, 0.12);
   text-align: left;
 }
-body .elementor-element-c7e2f79 .elementor-widget-text-editor li::before,
-body .elementor-element-b2df1f3 .elementor-widget-text-editor li::before {
+body .elementor-element-c7e2f79 .elementor-widget-text-editor li::before {
   content: '';
   position: absolute;
   left: 0;
@@ -985,6 +978,39 @@ body .elementor-element-b2df1f3 .elementor-widget-text-editor li::before {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-6.5' fill='none' stroke='%2312786C' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: center;
+}
+
+/* ---------- homepage: "What's inside your box?" ----------
+   Only 6 short items - originally shared the same two-column tick-list
+   treatment as "Who can benefit" above, but that meant the exact same
+   layout family appeared twice on one page (Section-Layout-Repetition
+   Ban: a family should read once per page). Wrapped pill row instead -
+   different silhouette, still scannable, appropriate for short phrases
+   rather than full sentences.
+   This section's column is full-width (elementor-col-100); the circular
+   product photo on the right is a separately-positioned sibling that
+   visually overlaps the right ~40% of that column. The heading/button
+   above are short enough to never reach that zone, but a wrapping flex
+   row of pills fills available width greedily and collided with the
+   photo - a max-width alone didn't fix it either, since flex-wrap still
+   packs two shorter pills onto one row whenever they fit, and that
+   combined pair still reached into the photo. One pill per row instead:
+   the longest single item is safely narrower than the photo's left edge
+   regardless of viewport width, no width guess needed. */
+body .elementor-element-b2df1f3 .elementor-widget-text-editor ul {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+body .elementor-element-b2df1f3 .elementor-widget-text-editor li {
+  border: 1.5px solid rgba(18, 120, 108, 0.3);
+  border-radius: 999px;
+  padding: 9px 18px 9px 16px;
+  font-size: 0.9rem;
 }
 
 /* ---------- WooCommerce shop grid / archive product cards ----------
@@ -1060,4 +1086,47 @@ body .elementor-search-form__submit {
 }
 body .elementor-search-form__submit:hover {
   background-color: var(--tt-teal-deep) !important;
+}
+
+/* ---------- homepage: "How our subscription works" step row ----------
+   3 equal-width icon+heading+text columns - the exact "three identical
+   feature cards" AI-tell. Kept as 3 columns (this is a genuine 3-step
+   sequence, already marked up with HowTo schema in site-core.php), but
+   numbered and rhythmically offset instead of reading as three
+   disconnected, identical cards. Middle column is deliberately not
+   centered with the other two - a small vertical offset is enough to
+   break the too-perfect grid without needing to touch the underlying
+   Elementor column data. */
+.elementor-element-6b803ead > .elementor-container {
+  counter-reset: tt-step;
+}
+.elementor-element-6b803ead > .elementor-container > .elementor-column {
+  counter-increment: tt-step;
+}
+.elementor-element-6b803ead > .elementor-container > .elementor-column .elementor-widget-image {
+  position: relative;
+  display: inline-block;
+}
+.elementor-element-6b803ead > .elementor-container > .elementor-column .elementor-widget-image::after {
+  content: counter(tt-step);
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--tt-teal);
+  color: var(--tt-canvas);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 800;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px -4px rgba(11, 89, 81, 0.6);
+}
+@media (min-width: 768px) {
+  .elementor-element-6b803ead > .elementor-container > .elementor-column:nth-child(2) {
+    margin-top: -18px;
+  }
 }
