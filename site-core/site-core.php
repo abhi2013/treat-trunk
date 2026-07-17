@@ -307,6 +307,7 @@ add_filter( 'rocket_delay_js_exclusions', function ( $excluded ) {
 	$excluded[] = 'site-modernize';
 	$excluded[] = 'tt-mystery-box-toggle';
 	$excluded[] = 'tt-submenu-toggle';
+	$excluded[] = 'tt-desktop-submenu-hover';
 	/* WooCommerce's own cart-fragments.js is what corrects the header
 	   basket badge (price/count) after a full-page-cached HTML response -
 	   the cached markup reflects whatever cart state existed when that
@@ -328,6 +329,31 @@ add_filter( 'rocket_delay_js_exclusions', function ( $excluded ) {
 	   the second piece still delayed, throwing "Cookies is not defined"
 	   right after the jquery fix above. */
 	$excluded[] = 'js-cookie';
+	/* Nav menu "Gift"/"One Off Boxes" dropdowns stopped opening on hover
+	   after Elementor/Elementor Pro were updated 3.x -> 4.1.x (a version
+	   gap the original site-inventory audit explicitly flagged as a
+	   "treat as planned, tested activity" risk - this is that risk
+	   materializing). Root cause has nothing to do with the earlier
+	   nav z-index/stacking fix (still fine, header transform confirmed
+	   "none"): the actual SmartMenus dropdown-open code lives inside
+	   Elementor Pro's 'pro-elements-handlers' bundle, which WP Rocket
+	   delays until a real user-interaction event fires - so a visitor's
+	   very first hover on a dropdown item does nothing, because the code
+	   that would open it hasn't loaded yet. The 'smartmenus' library
+	   itself was never delayed, only the code that calls it.
+	   Full dependency chain confirmed by reading the exact
+	   wp_register_script() calls in elementor/includes/frontend.php and
+	   elementor-pro/plugin.php (not guessed): pro-elements-handlers ->
+	   elementor-frontend -> elementor-frontend-modules ->
+	   elementor-webpack-runtime (+jquery, already excluded above), and
+	   elementor-frontend also depends on jquery-ui-position (a small
+	   WP-core-bundled script, safe to exclude). */
+	$excluded[] = 'pro-elements-handlers';
+	$excluded[] = 'elementor-frontend';
+	$excluded[] = 'elementor-frontend-modules';
+	$excluded[] = 'elementor-webpack-runtime';
+	$excluded[] = 'jquery-ui-position';
+	$excluded[] = 'smartmenus';
 	return $excluded;
 } );
 
@@ -418,6 +444,53 @@ add_action( 'wp_footer', function () {
 				return;
 			}
 			submenu.style.display = toggle.getAttribute( 'aria-expanded' ) === 'true' ? 'block' : 'none';
+		} );
+	})();
+	</script>
+	<?php
+}, 20 );
+
+/**
+ * Desktop nav dropdowns ("Gift", "One Off Boxes") stopped opening on hover
+ * after Elementor/Elementor Pro were updated 3.x -> 4.1.x (the version gap
+ * the original site-inventory audit explicitly flagged as a "treat as
+ * planned, tested activity" risk - this is that risk materializing).
+ * Root cause confirmed directly in devtools, not guessed: calling
+ * jQuery('.elementor-nav-menu--main').smartmenus() by hand throws
+ * "Cannot read properties of null (reading 'parentNode')" inside
+ * SmartMenus' own menuInit() (elementor-pro/assets/lib/smartmenus/
+ * jquery.smartmenus.min.js) - the exact library Elementor Pro bundles to
+ * drive these dropdowns. Something about this site's nav markup under
+ * Elementor Pro 4.1.x no longer matches what this bundled SmartMenus
+ * 1.2.1 build expects, so it never successfully attaches, and the
+ * sub-menu's default display:none is never overridden by anything.
+ * Unrelated to the earlier nav z-index/stacking fix (still fine - header
+ * transform confirmed "none").
+ *
+ * Hand-patching Elementor Pro's own vendored copy of SmartMenus would be
+ * overwritten on the next plugin update, so instead of that: plain
+ * hover-driven show/hide, bypassing SmartMenus entirely. Scoped to
+ * '.elementor-nav-menu--main' specifically - excludes '.menu-mob' (the
+ * separate mobile nav instance, which already has its own working
+ * click-based fix above) and excludes the corporate-orders page (its own
+ * template doesn't use this nav-menu widget's dropdown layout).
+ */
+add_action( 'wp_footer', function () {
+	?>
+	<script id="tt-desktop-submenu-hover">
+	(function () {
+		var items = document.querySelectorAll( '.elementor-nav-menu--main li.menu-item-has-children' );
+		items.forEach( function ( li ) {
+			var submenu = li.querySelector( ':scope > .sub-menu' );
+			if ( ! submenu ) {
+				return;
+			}
+			li.addEventListener( 'mouseenter', function () {
+				submenu.style.display = 'block';
+			} );
+			li.addEventListener( 'mouseleave', function () {
+				submenu.style.display = 'none';
+			} );
 		} );
 	})();
 	</script>
