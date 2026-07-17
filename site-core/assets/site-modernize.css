@@ -846,6 +846,21 @@ body .elementor-element-bacd323 .elementor-heading-title {
   color: var(--tt-canvas) !important;
 }
 
+/* ---------- /subscribe/ page: same Monthly/Mini Monthly title-band bug ----------
+   Same pattern as above, but a separate pair of Elementor widgets (own
+   page, own element IDs) - found during the mobile audit. "Mini Monthly
+   Treat Trunk" (5e50cfa5) had the old dark-teal #0f6277 background with
+   the sitewide heading rule also coloring its text teal, making the
+   heading almost unreadable against its own card. "Monthly Treat Trunk"
+   (581086a2) already has a pink background so its teal text already had
+   good contrast - left alone. */
+body .elementor-element-5e50cfa5 {
+  background-color: var(--tt-teal) !important;
+}
+body .elementor-element-5e50cfa5 .elementor-heading-title {
+  color: var(--tt-canvas) !important;
+}
+
 /* ---------- homepage: "why subscribe" benefit cards ----------
    Six items relocated here via JS from three separate stacking
    sections (see site-modernize.js) into the always-visible list next
@@ -1185,12 +1200,18 @@ body #address-change-message {
    roughly center-bottom, permanently overlapping whatever page content
    happens to sit there through the entire scroll (confirmed: it covered
    part of the homepage's step-carousel pagination dots and icon
-   illustration). Pinned to the corner instead, out of the way of centred
-   content, matching the same max-width:767px breakpoint used elsewhere
-   in this file for mobile-specific rules. */
+   illustration). Pinned to bottom-left instead of bottom-right - found
+   during the mobile audit that Google's reCAPTCHA v3 badge (a separate,
+   fixed-position, always-on-top element required by Google's terms) also
+   permanently occupies the bottom-right corner on every page that loads
+   it, and the two were overlapping each other there. Opposite corner
+   avoids both that collision and the original centered-content overlap,
+   matching the same max-width:767px breakpoint used elsewhere in this
+   file for mobile-specific rules. */
 @media (max-width: 767px) {
   body #cookie-law-info-again {
-    right: 8px !important;
+    left: 8px !important;
+    right: auto !important;
     bottom: 8px !important;
     font-size: 11px !important;
     padding: 4px 8px !important;
