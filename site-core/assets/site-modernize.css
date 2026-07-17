@@ -1150,3 +1150,37 @@ body .elementor-search-form__submit:hover {
 .elementor-element-a245429 .elementor-slide-description {
   color: var(--tt-canvas) !important;
 }
+
+/* ---------- unstyled theme/plugin defaults: salmon/pink notice boxes ----------
+   Four separate, unrelated sources (Cookie Law Info's main consent bar
+   and its persistent "reopen" widget; ActiveCampaign for WooCommerce's
+   marketing-consent checkbox on checkout; the theme's own WooCommerce
+   Subscriptions "address changes take effect next order" notice on My
+   Account > Addresses) all share the exact same unstyled default
+   salmon/pink background (rgb(240,181,178)) - a generic notice-box
+   convention somewhere in the theme's own custom.css, never themed to
+   match the site at all, on every single page (the cookie bar is
+   sitewide) plus checkout and My Account specifically. Recoloring only -
+   no consent copy, links, or opt-in logic touched. */
+body #cookie-law-info-bar,
+body #cookie-law-info-again,
+body #activecampaign_for_woocommerce_accepts_marketing_field,
+body #address-change-message {
+  background-color: var(--tt-teal-light) !important;
+  color: var(--tt-ink) !important;
+}
+
+/* ---------- My Account sidebar nav ----------
+   The theme's own custom.css gives every .woocommerce-MyAccount-navigation
+   link (Dashboard, Orders, Subscriptions, Addresses, etc.) the same
+   rgb(222,212,194) tan background as the old footer/tab-bar defaults
+   fixed elsewhere - this one was simply never targeted before, since it
+   only ever shows once logged in. Text color was already correctly teal
+   from the sitewide link rule; only the background needed to change. */
+body .woocommerce-MyAccount-navigation a {
+  background-color: var(--tt-canvas) !important;
+}
+body .woocommerce-MyAccount-navigation-link.is-active a,
+body .woocommerce-MyAccount-navigation a:hover {
+  background-color: var(--tt-teal-light) !important;
+}
