@@ -1,19 +1,30 @@
 /*
- * Site-wide brand-direction pilot (staging trial).
- * Palette and typography extend the corporate-orders page (deep forest
- * green, parchment/cream, gold, terracotta, DM Sans) to the rest of the
- * site. Deliberately does NOT touch the sticker illustrations, the logo,
+ * Site-wide brand-direction pilot (staging trial) - v2, "fresh direction".
+ * Replaces the v1 forest-green/gold/terracotta/parchment palette with one
+ * locked accent - the brand's own logo teal (sampled directly from the
+ * live logo mark, deepened slightly for AA text contrast on white) - on a
+ * clean warm-white canvas, so the UI chrome recedes and the already-vivid
+ * illustrated product packaging (teal/coral/mustard box art) does the
+ * color work instead of competing with it. v1 had three accents fighting
+ * each other (teal nav button, forest-green body/buttons, gold+tan
+ * footer/badges); this locks one hue family everywhere, including the
+ * footer/newsletter "dark band" treatment.
+ * Variable names below were renamed from v1 (--tt-forest -> --tt-teal,
+ * --tt-forest-deep -> --tt-teal-deep, --tt-sage -> --tt-mist,
+ * --tt-parchment -> --tt-canvas, --tt-gold -> --tt-teal-light) so every
+ * existing rule in this file keeps working unchanged; only the hex values
+ * and comments below are new. --tt-cream and --tt-terracotta were declared
+ * in v1 but never actually used anywhere in this file - dropped.
+ * Still deliberately does NOT touch the sticker illustrations, the logo,
  * or the corporate-orders page itself (excluded at the PHP enqueue level -
  * it already has its own complete, hand-built design system).
  */
 body {
-  --tt-forest: #1F4D38;
-  --tt-forest-deep: #16302A;
-  --tt-sage: #6A7A64;
-  --tt-parchment: #FBF8F2;
-  --tt-cream: #F2E9D3;
-  --tt-gold: #E3B23C;
-  --tt-terracotta: #B8532F;
+  --tt-teal: #12786C;
+  --tt-teal-deep: #0B5951;
+  --tt-teal-light: #DCEFEC;
+  --tt-mist: #5B6B68;
+  --tt-canvas: #FAFAF8;
   --tt-ink: #1B2420;
 }
 
@@ -49,7 +60,7 @@ body .elementor-widget-text-editor h3,
 body .elementor-widget-text-editor h4,
 body .elementor-widget-text-editor h5,
 body .elementor-widget-text-editor h6 {
-  color: var(--tt-forest) !important;
+  color: var(--tt-teal) !important;
 }
 
 /* ---------- links and nav ----------
@@ -58,29 +69,29 @@ body .elementor-widget-text-editor h6 {
    .elementor-toggle-title and similar. The [href] attribute selector
    brings it to (0,1,1), matching or beating a single class. */
 body a[href]:not(.elementor-item, .elementor-sub-item, .elementor-button, .button) {
-  color: var(--tt-forest) !important;
+  color: var(--tt-teal) !important;
 }
 body a[href]:not(.elementor-item, .elementor-sub-item, .elementor-button, .button):hover {
-  color: var(--tt-forest-deep) !important;
+  color: var(--tt-teal-deep) !important;
 }
 /* FAQ accordion triggers: a plain <a class="elementor-toggle-title"> with
    no href, so the [href] rule above never matches it. */
 body .elementor-toggle-title {
-  color: var(--tt-forest) !important;
+  color: var(--tt-teal) !important;
 }
 
 /* ---------- testimonials ----------
    Previously floated as bare centered text with no card, no quote
    mark, no avatar - just a paragraph that happened to be italic. */
 body .elementor-testimonial__title {
-  color: var(--tt-sage) !important;
+  color: var(--tt-mist) !important;
 }
 body .elementor-testimonial {
-  background: var(--tt-parchment) !important;
-  border: 1px solid rgba(31, 77, 56, 0.15) !important;
+  background: var(--tt-canvas) !important;
+  border: 1px solid rgba(18, 120, 108, 0.15) !important;
   border-radius: 14px !important;
   padding: 36px 28px 28px !important;
-  box-shadow: 0 16px 34px -24px rgba(22, 48, 42, 0.35);
+  box-shadow: 0 16px 34px -24px rgba(11, 89, 81, 0.35);
   max-width: 480px;
   margin: 0 auto;
   display: flex !important;
@@ -110,7 +121,7 @@ body .elementor-testimonial__text {
   font-family: 'DM Sans', sans-serif;
   font-size: 0.82rem;
   font-weight: 700;
-  color: var(--tt-forest);
+  color: var(--tt-teal);
   cursor: pointer;
   text-align: left;
 }
@@ -123,7 +134,8 @@ body .elementor-testimonial__text::before {
   font-family: Georgia, 'Times New Roman', serif;
   font-size: 3.4rem;
   line-height: 1;
-  color: var(--tt-gold);
+  color: var(--tt-teal);
+  opacity: 0.35;
   margin-bottom: -6px;
 }
 body .elementor-testimonial__footer {
@@ -139,15 +151,15 @@ body .elementor-testimonial__cite {
 }
 body .elementor-testimonial__name {
   font-weight: 700 !important;
-  color: var(--tt-forest) !important;
+  color: var(--tt-teal) !important;
 }
 .tt-review-avatar {
   flex: 0 0 auto;
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background: var(--tt-forest);
-  color: var(--tt-parchment);
+  background: var(--tt-teal);
+  color: var(--tt-canvas);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -173,7 +185,7 @@ body .elementor-testimonial__name {
 }
 .tt-review-modal {
   position: relative;
-  background: var(--tt-parchment);
+  background: var(--tt-canvas);
   border-radius: 16px;
   padding: 40px 28px 28px;
   max-width: 460px;
@@ -191,8 +203,8 @@ body .elementor-testimonial__name {
   margin: 0;
   border-radius: 50%;
   border: none;
-  background: rgba(31, 77, 56, 0.1);
-  color: var(--tt-forest);
+  background: rgba(18, 120, 108, 0.1);
+  color: var(--tt-teal);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -205,14 +217,15 @@ body .elementor-testimonial__name {
   flex: none;
 }
 .tt-review-modal-close:hover {
-  background: rgba(31, 77, 56, 0.18);
+  background: rgba(18, 120, 108, 0.18);
 }
 .tt-review-modal-quote {
   display: block;
   font-family: Georgia, 'Times New Roman', serif;
   font-size: 3rem;
   line-height: 1;
-  color: var(--tt-gold);
+  color: var(--tt-teal);
+  opacity: 0.35;
   margin-bottom: 4px;
 }
 .tt-review-modal-text {
@@ -238,7 +251,7 @@ body .elementor-heading-title {
   font-family: 'DM Sans', sans-serif !important;
   font-weight: 800 !important;
   letter-spacing: -0.01em;
-  color: var(--tt-forest) !important;
+  color: var(--tt-teal) !important;
 }
 
 /* ---------- blog/archive title band ----------
@@ -249,22 +262,22 @@ body .elementor-heading-title {
    instead of just fixing the symptom. */
 body .page-header,
 body .page-header .entry-title {
-  background-color: var(--tt-forest) !important;
+  background-color: var(--tt-teal) !important;
 }
 body .page-header h1,
 body .page-header .entry-title {
-  color: var(--tt-parchment) !important;
+  color: var(--tt-canvas) !important;
 }
 
 /* ---------- global newsletter-signup band (element 2221eea8) ----------
    Appears near the bottom of every page with its own bright teal
    background; same contrast problem as the title band above. */
 body .elementor-element-2221eea8 {
-  background-color: var(--tt-forest) !important;
+  background-color: var(--tt-teal) !important;
 }
 body .elementor-element-2221eea8 .elementor-heading-title,
 body .elementor-element-2221eea8 p {
-  color: var(--tt-parchment) !important;
+  color: var(--tt-canvas) !important;
 }
 
 /* ---------- buttons: one consistent style ---------- */
@@ -273,9 +286,9 @@ body button.button,
 body a.button,
 body input[type="submit"],
 body .cli_action_button {
-  background-color: var(--tt-forest) !important;
-  border-color: var(--tt-forest) !important;
-  color: var(--tt-parchment) !important;
+  background-color: var(--tt-teal) !important;
+  border-color: var(--tt-teal) !important;
+  color: var(--tt-canvas) !important;
   border-radius: 11px !important;
   font-family: 'DM Sans', sans-serif !important;
   font-weight: 700 !important;
@@ -286,24 +299,24 @@ body button.button:hover,
 body a.button:hover,
 body input[type="submit"]:hover,
 body .cli_action_button:hover {
-  background-color: var(--tt-forest-deep) !important;
-  border-color: var(--tt-forest-deep) !important;
-  color: var(--tt-parchment) !important;
+  background-color: var(--tt-teal-deep) !important;
+  border-color: var(--tt-teal-deep) !important;
+  color: var(--tt-canvas) !important;
   transform: translateY(-1px);
 }
 body .elementor-button .elementor-button-text {
-  color: var(--tt-parchment) !important;
+  color: var(--tt-canvas) !important;
 }
 /* the cookie banner's "Reject" link is deliberately the lower-emphasis
    action - keep it visually secondary rather than matching Accept */
 body .wt-cli-reject-btn {
   background-color: transparent !important;
-  border: 1.5px solid var(--tt-forest) !important;
-  color: var(--tt-forest) !important;
+  border: 1.5px solid var(--tt-teal) !important;
+  color: var(--tt-teal) !important;
 }
 body .wt-cli-reject-btn:hover {
-  background-color: rgba(31, 77, 56, 0.08) !important;
-  color: var(--tt-forest) !important;
+  background-color: rgba(18, 120, 108, 0.08) !important;
+  color: var(--tt-teal) !important;
 }
 
 /* ---------- form fields: consistent input/select/textarea style ----------
@@ -325,9 +338,9 @@ body .wpcf7-form input[type="tel"],
 body .wpcf7-form select,
 body .wpcf7-form textarea {
   font-family: 'DM Sans', sans-serif !important;
-  border: 1.5px solid rgba(31, 77, 56, 0.25) !important;
+  border: 1.5px solid rgba(18, 120, 108, 0.25) !important;
   border-radius: 3px !important;
-  background-color: var(--tt-parchment) !important;
+  background-color: var(--tt-canvas) !important;
   color: var(--tt-ink) !important;
   padding: 10px 12px !important;
 }
@@ -340,14 +353,14 @@ body input[type="search"]:focus,
 body select:focus,
 body textarea:focus {
   outline: none !important;
-  border-color: var(--tt-forest) !important;
-  box-shadow: 0 0 0 3px rgba(31, 77, 56, 0.18) !important;
+  border-color: var(--tt-teal) !important;
+  box-shadow: 0 0 0 3px rgba(18, 120, 108, 0.18) !important;
 }
 
 /* ---------- native radio/checkbox tint ---------- */
 body input[type="radio"],
 body input[type="checkbox"] {
-  accent-color: var(--tt-forest) !important;
+  accent-color: var(--tt-teal) !important;
 }
 
 /* ---------- homepage "how our subscription works" icons ----------
@@ -421,7 +434,7 @@ body table.extra-options td.value {
 body table.extra-options td.section-title {
   padding-bottom: 10px !important;
   margin-bottom: 6px !important;
-  border-bottom: 1.5px solid rgba(31, 77, 56, 0.15) !important;
+  border-bottom: 1.5px solid rgba(18, 120, 108, 0.15) !important;
 }
 body table.extra-options td.section-title h4 {
   margin: 0 !important;
@@ -440,7 +453,7 @@ body table.extra-options .label-tag {
 body table.extra-options .sublabel-tag {
   display: block !important;
   margin-top: 4px !important;
-  color: var(--tt-sage) !important;
+  color: var(--tt-mist) !important;
   font-weight: 400 !important;
 }
 
@@ -453,7 +466,7 @@ body table.extra-options tr[data-type="radio"] td.value {
 body table.extra-options label.radio.thwepo-inline {
   margin: 0 !important;
   padding: 10px 18px !important;
-  border: 1.5px solid rgba(31, 77, 56, 0.3) !important;
+  border: 1.5px solid rgba(18, 120, 108, 0.3) !important;
   border-radius: 999px !important;
   display: inline-flex !important;
   align-items: center;
@@ -462,15 +475,15 @@ body table.extra-options label.radio.thwepo-inline {
   transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 body table.extra-options label.radio.thwepo-inline.tt-pill-checked {
-  background-color: var(--tt-forest) !important;
-  border-color: var(--tt-forest) !important;
-  color: var(--tt-parchment) !important;
+  background-color: var(--tt-teal) !important;
+  border-color: var(--tt-teal) !important;
+  color: var(--tt-canvas) !important;
 }
 
 /* gift-wrap style checkbox row */
 body table.extra-options tr[data-type="checkbox"] td.value {
   padding: 12px 16px !important;
-  border: 1.5px solid rgba(31, 77, 56, 0.2) !important;
+  border: 1.5px solid rgba(18, 120, 108, 0.2) !important;
   border-radius: 6px !important;
 }
 body table.extra-options .label-wrapper-checkbox {
@@ -513,7 +526,7 @@ body table.variations .reset_variations {
   display: inline-block;
   margin-top: 10px;
   font-size: 0.85rem;
-  color: var(--tt-forest) !important;
+  color: var(--tt-teal) !important;
 }
 body select.tt-pillified {
   position: absolute !important;
@@ -530,7 +543,7 @@ body select.tt-pillified {
 .tt-variation-pill {
   margin: 0;
   padding: 10px 18px;
-  border: 1.5px solid rgba(31, 77, 56, 0.3);
+  border: 1.5px solid rgba(18, 120, 108, 0.3);
   border-radius: 999px;
   background: transparent;
   font-family: 'DM Sans', sans-serif;
@@ -540,22 +553,22 @@ body select.tt-pillified {
   transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 .tt-variation-pill.tt-pill-checked {
-  background-color: var(--tt-forest);
-  border-color: var(--tt-forest);
-  color: var(--tt-parchment);
+  background-color: var(--tt-teal);
+  border-color: var(--tt-teal);
+  color: var(--tt-canvas);
 }
 
 /* ---------- blog archive cards ---------- */
 body .elementor-post__card {
-  border: 1px solid rgba(31, 77, 56, 0.15) !important;
+  border: 1px solid rgba(18, 120, 108, 0.15) !important;
   border-radius: 8px !important;
   overflow: hidden;
-  box-shadow: 0 14px 30px -22px rgba(22, 48, 42, 0.35) !important;
-  background: var(--tt-parchment) !important;
+  box-shadow: 0 14px 30px -22px rgba(11, 89, 81, 0.35) !important;
+  background: var(--tt-canvas) !important;
 }
 body .elementor-post__badge {
-  background-color: var(--tt-gold) !important;
-  color: var(--tt-forest-deep) !important;
+  background-color: var(--tt-teal-light) !important;
+  color: var(--tt-teal-deep) !important;
   font-weight: 700 !important;
 }
 body .elementor-post__title {
@@ -566,7 +579,7 @@ body .elementor-post__excerpt p {
   opacity: 0.85;
 }
 body .elementor-post__meta-data {
-  color: var(--tt-sage) !important;
+  color: var(--tt-mist) !important;
   font-size: 0.82rem !important;
 }
 body .elementor-post__read-more {
@@ -578,14 +591,14 @@ body .elementor-post__read-more {
    elsewhere on the site (those live on the homepage/shop, not on post
    pages). */
 body.single-post .elementor-widget-image img {
-  border: 1px solid rgba(31, 77, 56, 0.15) !important;
+  border: 1px solid rgba(18, 120, 108, 0.15) !important;
   border-radius: 4px !important;
-  box-shadow: 0 18px 40px -24px rgba(22, 48, 42, 0.35) !important;
+  box-shadow: 0 18px 40px -24px rgba(11, 89, 81, 0.35) !important;
 }
 body.single-post .page-header .elementor-post-avatar,
 body.single-post .page-header .elementor-post-date,
 body.single-post .page-header .elementor-icon {
-  color: var(--tt-parchment) !important;
+  color: var(--tt-canvas) !important;
   opacity: 0.9;
 }
 
@@ -627,9 +640,9 @@ body table.extra-options tr.option_is_gift td.label {
   position: relative;
   border-radius: 16px;
   overflow: hidden;
-  border: 1px solid rgba(31, 77, 56, 0.15);
-  box-shadow: 0 22px 44px -22px rgba(22, 48, 42, 0.45);
-  background: var(--tt-parchment);
+  border: 1px solid rgba(18, 120, 108, 0.15);
+  box-shadow: 0 22px 44px -22px rgba(11, 89, 81, 0.45);
+  background: var(--tt-canvas);
 }
 .tt-ig-slide {
   display: none;
@@ -642,7 +655,7 @@ body table.extra-options tr.option_is_gift td.label {
   width: 100%;
   aspect-ratio: 9 / 16;
   object-fit: cover;
-  background: var(--tt-forest-deep);
+  background: var(--tt-teal-deep);
 }
 .tt-ig-arrow {
   position: absolute;
@@ -657,13 +670,13 @@ body table.extra-options tr.option_is_gift td.label {
   font-size: 0;
   border-radius: 50%;
   border: none;
-  background: rgba(251, 248, 242, 0.9);
-  color: var(--tt-forest);
+  background: rgba(250, 250, 248, 0.9);
+  color: var(--tt-teal);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 6px 16px -6px rgba(22, 48, 42, 0.5);
+  box-shadow: 0 6px 16px -6px rgba(11, 89, 81, 0.5);
   transition: background-color 0.15s ease, transform 0.15s ease;
 }
 .tt-ig-arrow--prev {
@@ -673,7 +686,7 @@ body table.extra-options tr.option_is_gift td.label {
   right: 10px;
 }
 .tt-ig-arrow:hover {
-  background: var(--tt-parchment);
+  background: var(--tt-canvas);
   transform: translateY(-50%) scale(1.08);
 }
 .tt-ig-arrow svg {
@@ -691,7 +704,7 @@ body table.extra-options tr.option_is_gift td.label {
   padding: 4px 10px;
   border-radius: 999px;
   background: rgba(10, 20, 16, 0.5);
-  color: var(--tt-parchment);
+  color: var(--tt-canvas);
   font-size: 0.76rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
@@ -714,7 +727,7 @@ body table.extra-options tr.option_is_gift td.label {
 .tt-benefit-list .tt-benefit-card {
   width: 100% !important;
   padding: 10px 0;
-  border-bottom: 1px solid rgba(31, 77, 56, 0.12);
+  border-bottom: 1px solid rgba(18, 120, 108, 0.12);
 }
 .tt-benefit-list .tt-benefit-card:last-child {
   border-bottom: none;
@@ -808,11 +821,11 @@ body .elementor-element-373e36f img {
    band as the blog title/newsletter sections elsewhere on the site. */
 body .elementor-element-02e713f,
 body .elementor-element-bacd323 {
-  background-color: var(--tt-forest) !important;
+  background-color: var(--tt-teal) !important;
 }
 body .elementor-element-02e713f .elementor-heading-title,
 body .elementor-element-bacd323 .elementor-heading-title {
-  color: var(--tt-parchment) !important;
+  color: var(--tt-canvas) !important;
 }
 
 /* ---------- homepage: "why subscribe" benefit cards ----------
@@ -851,4 +864,151 @@ body .elementor-element-de2607b {
    works with no real content of its own. */
 body .elementor-element-74968cf {
   display: none !important;
+}
+
+/* ---------- global footer: drop the tan/cream background ----------
+   The footer widget area (Our Products / Discover columns) carries its
+   own background-color from the global Footer template's own Elementor
+   section settings (post 173, generated CSS - not something this file
+   previously touched), a warm tan (~#ded4c2) that reads as part of the
+   same beige-family palette the rest of the site just moved away from.
+   Swapped to the new clean canvas so the whole page (not just the body)
+   shares one neutral. Left as a light background rather than inverting
+   to a dark teal band: the copyright/Trustpilot/company-registration
+   lines directly below this section are injected separately (site-
+   core.php wp_footer hooks, inline #8a8a8a text) and were only ever
+   tuned for contrast against a light background. */
+body .elementor-element-2505bfb6,
+body .elementor-element-409157e {
+  background-color: var(--tt-canvas) !important;
+}
+
+/* ---------- WooCommerce grouped-product table (e.g. subscription plan
+   switcher on /product/treat-trunk-subscription/) ----------
+   A separate WooCommerce core pattern from table.variations/extra-options
+   above - plain <table class="woocommerce-grouped-product-list">, one row
+   per child product (name, price, "Select options"). Was completely
+   unstyled (default browser table borders/shading), the one real gap the
+   v1 pilot's WooCommerce work never covered. Same "stacked rows, one
+   button, one hairline divider" treatment as the rest of the site rather
+   than a bordered grid. */
+body table.woocommerce-grouped-product-list {
+  border-collapse: collapse;
+  width: 100%;
+}
+body table.woocommerce-grouped-product-list tr.woocommerce-grouped-product-list-item {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(18, 120, 108, 0.15);
+}
+body table.woocommerce-grouped-product-list tr.woocommerce-grouped-product-list-item:last-child {
+  border-bottom: none;
+}
+body table.woocommerce-grouped-product-list .woocommerce-grouped-product-list-item__label {
+  order: 1;
+  flex: 1 1 220px;
+  padding: 0 !important;
+  font-weight: 600;
+}
+body table.woocommerce-grouped-product-list .woocommerce-grouped-product-list-item__label a {
+  color: var(--tt-ink) !important;
+}
+body table.woocommerce-grouped-product-list .woocommerce-grouped-product-list-item__price {
+  order: 2;
+  padding: 0 !important;
+  color: var(--tt-mist);
+  font-size: 0.92rem;
+}
+body table.woocommerce-grouped-product-list .woocommerce-grouped-product-list-item__quantity {
+  order: 3;
+  margin-left: auto;
+  padding: 0 !important;
+}
+body table.woocommerce-grouped-product-list .woocommerce-grouped-product-list-item__quantity .button {
+  white-space: nowrap;
+}
+
+/* ---------- homepage long bullet lists ----------
+   "Who can benefit from our snack boxes?" (9 items) and "What's inside
+   your box?" (6 items) were plain browser-default <ul><li> bullets inside
+   a text-editor widget - the exact ">5 items in a bare list" case that
+   reads as unfinished. Grouped into a two-column grid on wider screens
+   instead (still a plain single column on mobile), each item getting a
+   small teal tick instead of a browser bullet. Scoped to these two
+   sections' own element IDs, not a blanket <ul> rule, so it can't affect
+   FAQ accordions, blog post content, or anywhere else a plain list is the
+   right choice. */
+body .elementor-element-c7e2f79 .elementor-widget-text-editor ul,
+body .elementor-element-b2df1f3 .elementor-widget-text-editor ul {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px 28px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+@media (min-width: 700px) {
+  body .elementor-element-c7e2f79 .elementor-widget-text-editor ul,
+  body .elementor-element-b2df1f3 .elementor-widget-text-editor ul {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+body .elementor-element-c7e2f79 .elementor-widget-text-editor li,
+body .elementor-element-b2df1f3 .elementor-widget-text-editor li {
+  position: relative;
+  padding: 10px 0 10px 30px;
+  border-bottom: 1px solid rgba(18, 120, 108, 0.12);
+  text-align: left;
+}
+body .elementor-element-c7e2f79 .elementor-widget-text-editor li::before,
+body .elementor-element-b2df1f3 .elementor-widget-text-editor li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 14px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: var(--tt-teal-light);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-6.5' fill='none' stroke='%2312786C' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* ---------- WooCommerce shop grid / archive product cards ----------
+   Default WooCommerce loop cards: flat white, no hover state, no shadow -
+   the one visual home the vivid illustrated box-art photography has to
+   itself, and it was getting zero polish. Border/shadow only (never the
+   product image itself), consistent radius with the rest of the site,
+   small lift on hover. */
+body ul.products li.product {
+  border-radius: 12px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+body ul.products li.product:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 34px -22px rgba(11, 89, 81, 0.4);
+}
+body ul.products li.product img {
+  border-radius: 10px;
+}
+body ul.products li.product .price {
+  color: var(--tt-ink) !important;
+}
+body ul.products li.product .button {
+  border-radius: 999px !important;
+}
+
+/* ---------- WooCommerce product tabs (Description, etc.) ----------
+   The theme's own custom.css gives the active tab a hardcoded tan
+   background - same family as the footer fix above, missed since it's a
+   product-page element rather than a homepage/shop one. */
+body .woocommerce-tabs ul.tabs li {
+  background-color: var(--tt-teal) !important;
+}
+body .woocommerce-tabs ul.tabs li a {
+  color: var(--tt-canvas) !important;
 }

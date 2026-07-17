@@ -446,13 +446,19 @@ add_action( 'wp_footer', function () {
  * Elementor/WooCommerce button styles), and a nav z-index/stacking bug
  * (site-modernize.js was giving the header a permanent transform via the
  * scroll-reveal system, trapping the dropdown in a new stacking context).
+ *
+ * v2 (staging trial, not yet on production): palette moved from forest
+ * green/gold/terracotta/parchment to one locked accent - the brand's own
+ * logo teal - on a clean warm-white canvas. See the header comment in
+ * site-modernize.css for the full rationale and the old->new CSS variable
+ * name mapping.
  */
 add_action( 'wp_enqueue_scripts', function () {
 	if ( is_page( 36634 ) ) {
 		return;
 	}
-	wp_enqueue_style( 'tt-site-modernize', plugins_url( 'assets/site-modernize.css', __FILE__ ), array(), '1.0.2' );
-	wp_enqueue_script( 'tt-site-modernize', plugins_url( 'assets/site-modernize.js', __FILE__ ), array(), '1.0.2', true );
+	wp_enqueue_style( 'tt-site-modernize', plugins_url( 'assets/site-modernize.css', __FILE__ ), array(), '1.1.2' );
+	wp_enqueue_script( 'tt-site-modernize', plugins_url( 'assets/site-modernize.js', __FILE__ ), array(), '1.1.2', true );
 }, 20 );
 
 /**
