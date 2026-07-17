@@ -1268,3 +1268,30 @@ body .elementor-menu-cart__toggle_button .woocommerce-Price-amount {
     width: 100% !important;
   }
 }
+
+/* ---------- homepage: "What's inside your box?" section hidden on mobile ----------
+   This section (heading + copy + "View Past Boxes" button, over a
+   background image) carries Elementor's own elementor-hidden-phone
+   class, which sets display:none below 768px - it was invisible on
+   mobile entirely, not a styling bug. Restoring it surfaces a second
+   issue: the theme's custom.css has a hardcoded, unconditional
+   min-height:100vh !important on this section's inner container
+   (added at some point to force a true full-viewport hero on desktop),
+   which isn't scoped to desktop only. At 100vh on a phone that's the
+   entire screen height for three lines of text and a button - almost
+   certainly why it was hidden on mobile in the first place rather than
+   fixed. Restored here with a mobile-appropriate height instead of
+   inheriting the desktop 100vh. */
+@media (max-width: 767px) {
+  body .elementor-element-b2df1f3.elementor-hidden-phone {
+    display: block !important;
+  }
+  /* custom.css's override for this element is
+     `.elementor-6 .elementor-element.elementor-element-b2df1f3 > .elementor-container`
+     - 4 classes of specificity, both rules !important. Matching that
+     class-count (via body.home + .elementor-element) so this actually wins. */
+  body.home .elementor-element.elementor-element-b2df1f3 > .elementor-container {
+    min-height: auto !important;
+    padding: 56px 24px !important;
+  }
+}
