@@ -66,6 +66,23 @@
 	}
 }
 
+/* ---------- comparison table: real horizontal scroll on mobile ----------
+   Found during the mobile audit: the table's inline style is
+   width:100%, so on a narrow viewport it shrinks to fit rather than
+   keeping its 3 columns at a readable width - the "Competitor" column
+   ends up clipped, and there's nothing to scroll to because the table
+   itself never exceeds the viewport width in the first place (its
+   parent div's overflow-x:auto has no wider content to scroll). Giving
+   the table a real min-width lets it overflow its container as
+   intended, so that wrapper div's horizontal scroll actually reveals
+   the rest of it. */
+@media (max-width: 767px) {
+	.tt-corp-page table {
+		width: auto !important;
+		min-width: 640px !important;
+	}
+}
+
 /* ---------- shared footer, on this page only ----------
    This page's own template only wraps the content between get_header()
    and get_footer() - the header/nav/footer themselves are the same
