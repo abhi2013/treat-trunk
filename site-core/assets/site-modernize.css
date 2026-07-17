@@ -1130,3 +1130,23 @@ body .elementor-search-form__submit:hover {
     margin-top: -18px;
   }
 }
+
+/* ---------- /press-page/: "What the media say..." quote carousel ----------
+   An Elementor Slides widget (not the .elementor-testimonial widget styled
+   earlier - different markup, .elementor-slide-heading/-description) with
+   3 slides. None of the 3 ever had a background image set - each just
+   carries Elementor's own flat placeholder color, and all three are
+   different (purple, blue, teal-ish), which on its own already breaks the
+   sitewide Color Consistency Lock. Made worse by the sitewide heading/link
+   color rule painting the quote text teal regardless of which of those
+   backgrounds is showing - illegible on the purple and blue slides. Locked
+   all 3 slides to the one accent (teal-deep) with canvas text, matching
+   the same "dark quote/announcement band" treatment used elsewhere
+   (newsletter band, page-header). */
+.elementor-element-a245429 .swiper-slide-bg {
+  background: var(--tt-teal-deep) !important;
+}
+.elementor-element-a245429 .elementor-slide-heading,
+.elementor-element-a245429 .elementor-slide-description {
+  color: var(--tt-canvas) !important;
+}

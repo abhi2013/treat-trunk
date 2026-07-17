@@ -1,6 +1,10 @@
-/* Corporate Orders page polish: webfonts, crisp text rendering, breathing room, mobile breakpoints.
-   Scoped to .tt-corp-page so it never touches the rest of the site. */
-
+/* Corporate Orders page polish: crisp text rendering, breathing room, mobile breakpoints.
+   Scoped to .tt-corp-page so it never touches the rest of the site.
+   Typography was Quicksand/Nunito Sans (its own separate Google Fonts
+   load) - switched to DM Sans, matching the rest of the site now that
+   this page is being brought in line with the sitewide teal direction.
+   DM Sans is already self-hosted and loaded theme-wide (see custom.css),
+   so this page no longer needs its own font request at all. */
 .tt-corp-page {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -10,7 +14,8 @@
 .tt-corp-page h1,
 .tt-corp-page h2,
 .tt-corp-page h3 {
-	font-family: 'Quicksand', -apple-system, sans-serif;
+	font-family: 'DM Sans', -apple-system, sans-serif;
+	font-weight: 800;
 	letter-spacing: -0.01em;
 }
 
@@ -19,7 +24,7 @@
 .tt-corp-page input,
 .tt-corp-page select,
 .tt-corp-page textarea {
-	font-family: 'Nunito Sans', -apple-system, sans-serif;
+	font-family: 'DM Sans', -apple-system, sans-serif;
 }
 
 /* Slightly more generous section rhythm than the first pass */
@@ -59,4 +64,19 @@
 	.tt-corp-page h1 {
 		font-size: 28px !important;
 	}
+}
+
+/* ---------- shared footer, on this page only ----------
+   This page's own template only wraps the content between get_header()
+   and get_footer() - the header/nav/footer themselves are the same
+   shared Elementor templates every other page uses. The sitewide
+   site-modernize.css deliberately never loads on this page at all (its
+   broad !important heading/button rules would fight this page's own
+   carefully-tuned ink/teal hierarchy), so this page never picked up the
+   footer's teal-direction fix made there. Just the footer background,
+   scoped by the same two element IDs used sitewide, without pulling in
+   anything else. */
+body .elementor-element-2505bfb6,
+body .elementor-element-409157e {
+	background-color: #FAFAF8 !important;
 }
