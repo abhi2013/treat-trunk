@@ -253,6 +253,15 @@ body .elementor-heading-title {
   letter-spacing: -0.01em;
   color: var(--tt-teal) !important;
 }
+/* Some headings (e.g. "Fuel your body and mind") carry a stray nested
+   <p> - a copy-paste artifact from pasting formatted text into the
+   heading widget - and the sitewide "body p is ink" rule below matches
+   that inner <p> directly, winning over the heading's own teal color for
+   the actual visible text (same class of bug as the text-editor-nested
+   heading fix above, just the reverse nesting). */
+body .elementor-heading-title p {
+  color: inherit !important;
+}
 
 /* ---------- blog/archive title band ----------
    Both .page-header AND the h1.entry-title inside it carry their own
@@ -1170,6 +1179,24 @@ body #address-change-message {
   color: var(--tt-ink) !important;
 }
 
+/* ---------- cookie "reopen" widget: mobile position ----------
+   The plugin's own inline style fixes this at bottom:0/right:100px
+   regardless of viewport width. On a ~390px-wide screen that lands it
+   roughly center-bottom, permanently overlapping whatever page content
+   happens to sit there through the entire scroll (confirmed: it covered
+   part of the homepage's step-carousel pagination dots and icon
+   illustration). Pinned to the corner instead, out of the way of centred
+   content, matching the same max-width:767px breakpoint used elsewhere
+   in this file for mobile-specific rules. */
+@media (max-width: 767px) {
+  body #cookie-law-info-again {
+    right: 8px !important;
+    bottom: 8px !important;
+    font-size: 11px !important;
+    padding: 4px 8px !important;
+  }
+}
+
 /* ---------- My Account sidebar nav ----------
    The theme's own custom.css gives every .woocommerce-MyAccount-navigation
    link (Dashboard, Orders, Subscriptions, Addresses, etc.) the same
@@ -1183,4 +1210,61 @@ body .woocommerce-MyAccount-navigation a {
 body .woocommerce-MyAccount-navigation-link.is-active a,
 body .woocommerce-MyAccount-navigation a:hover {
   background-color: var(--tt-teal-light) !important;
+}
+
+/* ---------- header cart toggle: price-text contrast ----------
+   The cart toggle button (.elementor-menu-cart__toggle_button) is a
+   generic .elementor-button, which the sitewide button rule correctly
+   colors teal-bg/canvas-text - but the price amount inside it
+   (.woocommerce-Price-amount) also matches the sitewide "body text is
+   ink" rule, and that direct-class match on the span itself wins over
+   the button's own inherited color regardless of which rule loads
+   later. Result: dark ink price text on a teal button, poor contrast
+   ("£0.00" was hard to read against the teal background). Scoped
+   override, specific to price text inside this one button only. */
+body .elementor-menu-cart__toggle_button .woocommerce-Price-amount {
+  color: var(--tt-canvas) !important;
+}
+
+/* ---------- mobile header: decluttering cart price + Login ----------
+   On narrow viewports the header already carries logo + hamburger on
+   one row, then the full "£0.00 [cart icon+count badge]" and a
+   standalone "Login" text link on a second row - four separate things
+   before any real page content, on a screen with the least room to
+   spare. Neither element lives inside the hamburger drawer itself (both
+   are separate Elementor widgets positioned alongside it, not nested in
+   it), so moving them into the drawer would mean restructuring the
+   Elementor template rather than a CSS-only fix. Simpler and lower-risk:
+   the cart toggle already has its own icon + item-count badge
+   (.elementor-button-icon-qty) independent of the price text, so
+   dropping just the price text on mobile still leaves a fully
+   functional, readable cart indicator; the rarely-used "Login" text
+   link is hidden entirely (still reachable via the checkout/My Account
+   flow for anyone who needs it). Matches the same max-width:767px
+   breakpoint the theme's own custom.css already uses for
+   .mobile-header. */
+@media (max-width: 767px) {
+  body .elementor-menu-cart__toggle_button .elementor-button-text {
+    display: none !important;
+  }
+  body a.login-link {
+    display: none !important;
+  }
+}
+
+/* ---------- homepage: 3-image product teaser row on mobile ----------
+   The "one-off-trunk / Letterbox / New Mum" row (3 equal elementor-col-33
+   columns on desktop) stacks inconsistently on mobile: the middle column
+   correctly collapses to 100% width, but the first and third stay at 50%
+   - all three share the exact same classes, so this is a per-column
+   custom mobile-width value baked into this page's own Elementor data,
+   not a class/CSS difference. Visually this reads as one large image
+   with a big blank gap where the other two, half-width, never got wide
+   enough to stack cleanly underneath. Forced to match the one column
+   that was already behaving correctly, rather than editing
+   _elementor_data directly. */
+@media (max-width: 767px) {
+  .elementor-element-2664632 > .elementor-container > .elementor-column {
+    width: 100% !important;
+  }
 }
