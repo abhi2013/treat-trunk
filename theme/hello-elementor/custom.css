@@ -2,31 +2,31 @@
 	font-family: 'Fredoka One';
 	font-style: normal;
 	font-weight: normal;
-	src: url('https://treattrunk.co.uk/wp-content/uploads/2019/08/FredokaOne-Regular.ttf') format('truetype');
+	src: url('/wp-content/uploads/2019/08/FredokaOne-Regular.ttf') format('truetype');
 	font-display:swap;
 }
 @font-face {
 	font-family: 'DM Sans';
 	font-style: normal;
 	font-weight: normal;
-	src: url('https://treattrunk.co.uk/wp-content/uploads/2019/08/DMSans-Regular.woff2') format('woff2'),
-	     url('https://treattrunk.co.uk/wp-content/uploads/2019/08/DMSans-Regular.ttf') format('truetype');
+	src: url('/wp-content/uploads/2019/08/DMSans-Regular.woff2') format('woff2'),
+	     url('/wp-content/uploads/2019/08/DMSans-Regular.ttf') format('truetype');
 	font-display:swap;
 }
 @font-face {
 	font-family: 'DM Sans';
 	font-style: normal;
 	font-weight: 600;
-	src: url('https://treattrunk.co.uk/wp-content/uploads/2019/08/DMSans-Medium.woff2') format('woff2'),
-	     url('https://treattrunk.co.uk/wp-content/uploads/2019/08/DMSans-Medium.ttf') format('truetype');
+	src: url('/wp-content/uploads/2019/08/DMSans-Medium.woff2') format('woff2'),
+	     url('/wp-content/uploads/2019/08/DMSans-Medium.ttf') format('truetype');
 	font-display:swap;
 }
 @font-face {
 	font-family: 'DM Sans';
 	font-style: normal;
 	font-weight: 800;
-	src: url('https://treattrunk.co.uk/wp-content/uploads/2019/08/DMSans-Bold.woff2') format('woff2'),
-	     url('https://treattrunk.co.uk/wp-content/uploads/2019/08/DMSans-Bold.ttf') format('truetype');
+	src: url('/wp-content/uploads/2019/08/DMSans-Bold.woff2') format('woff2'),
+	     url('/wp-content/uploads/2019/08/DMSans-Bold.ttf') format('truetype');
 	font-display:swap;
 }
 
@@ -989,7 +989,7 @@ color: #5e5e5e!important;
    1500x1000 original, since Elementor has no per-breakpoint background image set here. */
 @media (max-width: 767px) {
 	.elementor-element-22aea114:not(.elementor-motion-effects-element-type-background) {
-		background-image: url(https://treattrunk.co.uk/wp-content/uploads/2025/03/Treat-Trunk-Healthy-Snack-Box-Subscrition-Gift-Resize-768x513.webp) !important;
+		background-image: url(/wp-content/uploads/2025/03/Treat-Trunk-Healthy-Snack-Box-Subscrition-Gift-Resize-768x513.webp) !important;
 	}
 }
 
