@@ -259,10 +259,19 @@ body .elementor-heading-title {
    dark-teal background from the theme; without this, the blanket
    heading-color rule above put dark forest text on a dark teal band
    with barely any contrast. Recolor the band to match the new palette
-   instead of just fixing the symptom. */
+   instead of just fixing the symptom.
+   Found in this pass: on single blog posts, .entry-title also carries a
+   theme-set background-image (wp-content/uploads/2019/09/header-bg.png),
+   a fully opaque light-grey PNG. background-image always paints over
+   background-color for the same box, so that image was silently
+   overriding the color above and leaving the H1 as near-invisible white
+   text on light grey - a real, pre-existing contrast bug on every single
+   post, not something this rename introduced. Killing the image lets the
+   color show. */
 body .page-header,
 body .page-header .entry-title {
   background-color: var(--tt-teal) !important;
+  background-image: none !important;
 }
 body .page-header h1,
 body .page-header .entry-title {
@@ -1011,4 +1020,44 @@ body .woocommerce-tabs ul.tabs li {
 }
 body .woocommerce-tabs ul.tabs li a {
   color: var(--tt-canvas) !important;
+}
+
+/* ---------- Contact Form 7 submit button ----------
+   Real bug, not just cosmetic: input.wpcf7-submit is both an
+   input[type="submit"] (targeted by the button rule above) AND carries
+   class wpcf7-form-control (targeted by the "form fields" rule further
+   up, which comes later in the cascade and has identical specificity to
+   the button rule - same tag + one class/attribute each). On a tie the
+   later rule wins, so every CF7 form's submit button silently rendered
+   as a plain light input field instead of a button - indistinguishable
+   from the empty fields above it, on Contact Us and any other CF7 form
+   on the site. Higher-specificity, unambiguous override. */
+body input.wpcf7-form-control.wpcf7-submit {
+  background-color: var(--tt-teal) !important;
+  border-color: var(--tt-teal) !important;
+  color: var(--tt-canvas) !important;
+  border-radius: 11px !important;
+  font-weight: 700 !important;
+  cursor: pointer;
+}
+body input.wpcf7-form-control.wpcf7-submit:hover {
+  background-color: var(--tt-teal-deep) !important;
+  border-color: var(--tt-teal-deep) !important;
+}
+
+/* ---------- blog search widget ----------
+   The theme's own grey container + grey submit button (Elementor's
+   Search widget) didn't pick up the new accent since neither element is
+   a plain input/button the sitewide rules already cover. Icon SVG is
+   already white via the theme, so only the button/container backgrounds
+   need to change. */
+body .elementor-search-form__container {
+  background-color: var(--tt-canvas) !important;
+}
+body .elementor-search-form__submit {
+  background-color: var(--tt-teal) !important;
+  border-radius: 0 3px 3px 0 !important;
+}
+body .elementor-search-form__submit:hover {
+  background-color: var(--tt-teal-deep) !important;
 }
