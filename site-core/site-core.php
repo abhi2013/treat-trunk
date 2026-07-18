@@ -309,6 +309,8 @@ add_filter( 'rocket_delay_js_exclusions', function ( $excluded ) {
 	$excluded[] = 'tt-submenu-toggle';
 	$excluded[] = 'tt-desktop-submenu-hover';
 	$excluded[] = 'tt-mobile-menu-toggle-fallback';
+	$excluded[] = 'tt-basket-toggle-fallback';
+	$excluded[] = 'tt-popup-action-fallback';
 	/* WooCommerce's own cart-fragments.js is what corrects the header
 	   basket badge (price/count) after a full-page-cached HTML response -
 	   the cached markup reflects whatever cart state existed when that
@@ -514,6 +516,111 @@ add_action( 'wp_footer', function () {
 			setTimeout( function () {
 				if ( isOpen() === wasOpen ) {
 					setOpen( ! wasOpen );
+				}
+			}, 50 );
+		}, true );
+	})();
+	</script>
+	<?php
+}, 20 );
+
+/**
+ * Same real-device symptom as the hamburger toggle above, reported on the
+ * same visit: tapping the header basket icon (Elementor Pro's WooCommerce
+ * Menu Cart widget, side-cart type) does nothing on a real iPhone. Its
+ * open/closed state is driven by an "elementor-menu-cart--shown" class on
+ * the widget root (toggled alongside aria-hidden on the slide-out panel
+ * and aria-expanded on the toggle button) - confirmed directly by clicking
+ * the button and diffing the widget's className before/after, not guessed.
+ * Same fallback shape as the hamburger fix: capture-phase listener records
+ * the open state before anything else can react, and forces the same
+ * result itself only if nothing changed one macrotask later.
+ */
+add_action( 'wp_footer', function () {
+	?>
+	<script id="tt-basket-toggle-fallback">
+	(function () {
+		var toggle = document.querySelector( '.elementor-menu-cart__toggle_button' );
+		var widget = toggle ? toggle.closest( '.elementor-widget-woocommerce-menu-cart' ) : null;
+		var container = document.querySelector( '.elementor-menu-cart__container' );
+		if ( ! toggle || ! widget || ! container ) {
+			return;
+		}
+		function isOpen() {
+			return widget.classList.contains( 'elementor-menu-cart--shown' );
+		}
+		function setOpen( open ) {
+			widget.classList.toggle( 'elementor-menu-cart--shown', open );
+			toggle.setAttribute( 'aria-expanded', open ? 'true' : 'false' );
+			container.setAttribute( 'aria-hidden', open ? 'false' : 'true' );
+		}
+		toggle.addEventListener( 'click', function () {
+			var wasOpen = isOpen();
+			setTimeout( function () {
+				if ( isOpen() === wasOpen ) {
+					setOpen( ! wasOpen );
+				}
+			}, 50 );
+		}, true );
+	})();
+	</script>
+	<?php
+}, 20 );
+
+/**
+ * Same real-device symptom again, this time on the "Grab your 10% discount
+ * code" header banner: it's an Elementor "action link"
+ * (#elementor-action:action=popup:open&settings=...), the same generic
+ * mechanism the footer's "Signup for newsletter" button uses (see the
+ * newsletter popup work above) - not specific to one widget, so this fix
+ * is scoped to the href pattern rather than one element, and covers both.
+ * Elementor Pro's own frontend JS decodes the base64 "settings" segment of
+ * the href to get the popup ID and calls its popup module to show it -
+ * rather than reimplement that (and its focus-trap/overlay markup) by
+ * hand, the fallback decodes the exact same href and calls Elementor
+ * Pro's own already-loaded popup module directly
+ * (elementorProFrontend.modules.popup.showPopup), confirmed working when
+ * called this way directly in the console. Only acts if no popup became
+ * visible at all after a real tap.
+ */
+add_action( 'wp_footer', function () {
+	?>
+	<script id="tt-popup-action-fallback">
+	(function () {
+		function popupIdFromHref( href ) {
+			var decoded;
+			try {
+				decoded = decodeURIComponent( href );
+			} catch ( e ) {
+				return null;
+			}
+			var match = decoded.match( /action=popup:open&settings=([^&]+)/ );
+			if ( ! match ) {
+				return null;
+			}
+			try {
+				return JSON.parse( atob( match[ 1 ] ) ).id;
+			} catch ( e ) {
+				return null;
+			}
+		}
+		function popupVisible( id ) {
+			var popup = document.querySelector( '.elementor-location-popup[data-elementor-id="' + id + '"]' );
+			return !! popup && getComputedStyle( popup ).display !== 'none';
+		}
+		document.addEventListener( 'click', function ( e ) {
+			var link = e.target.closest( 'a[href^="#elementor-action"]' );
+			if ( ! link ) {
+				return;
+			}
+			var id = popupIdFromHref( link.getAttribute( 'href' ) );
+			if ( ! id ) {
+				return;
+			}
+			var wasVisible = popupVisible( id );
+			setTimeout( function () {
+				if ( ! wasVisible && ! popupVisible( id ) && window.elementorProFrontend && window.elementorProFrontend.modules && window.elementorProFrontend.modules.popup ) {
+					window.elementorProFrontend.modules.popup.showPopup( { id: id } );
 				}
 			}, 50 );
 		}, true );
