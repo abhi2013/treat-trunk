@@ -508,3 +508,52 @@
 		}
 	} );
 } )();
+
+/* Welcome-box subscription products: make Option 1 / Option 2 a real
+   single-open accordion. The plugin's own .active (tracks the current
+   selection) and .expanded (tracks manually opening a panel to peek at
+   it) classes are independent - peeking at the non-selected option
+   while a different one is still selected leaves both classes present
+   on different panels at once, and the CSS above (keyed off .active
+   OR .expanded) shows both again, recreating the exact redundant
+   double-panel view this was meant to fix. Tracking panel-open state
+   ourselves in a dedicated class, exclusive across the group, so
+   opening one always closes the other regardless of which is
+   currently selected. */
+( function () {
+	var groups = document.querySelectorAll( '.woovr-variations' );
+	if ( ! groups.length ) {
+		return;
+	}
+	groups.forEach( function ( group ) {
+		var options = group.querySelectorAll( ':scope > .option' );
+		if ( options.length < 2 ) {
+			return;
+		}
+		function openOnly( target ) {
+			options.forEach( function ( opt ) {
+				opt.classList.toggle( 'tt-panel-open', opt === target );
+			} );
+		}
+		// Start with whichever option matches the default selection.
+		var initiallyActive = group.querySelector( ':scope > .option.active' ) || options[ 0 ];
+		openOnly( initiallyActive );
+
+		options.forEach( function ( opt ) {
+			var header = opt.querySelector( ':scope > .option_header' );
+			if ( header ) {
+				header.addEventListener( 'click', function () {
+					openOnly( opt );
+				} );
+			}
+			// Selecting a pill/radio inside a panel keeps that panel open
+			// and closes any other, even if it was opened via a plain click
+			// rather than the header.
+			opt.addEventListener( 'click', function ( e ) {
+				if ( e.target.closest( '.tt-variation-pill, .woovr-variation-radio' ) ) {
+					openOnly( opt );
+				}
+			} );
+		} );
+	} );
+} )();

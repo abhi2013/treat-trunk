@@ -1319,3 +1319,28 @@ body .elementor-menu-cart__toggle_button .woocommerce-Price-amount {
     padding: 56px 24px !important;
   }
 }
+
+/* ---------- subscription products: Welcome Box "Option 1 / Option 2" accordion ----------
+   The plugin (WooCommerce variation swatches, .woovr-variations/.option
+   markup) toggles real .active (matches current selection) and
+   .expanded (manually opened via clicking the header) classes on
+   click, but its own CSS never actually collapses the *other*
+   option's panel based on either class, and the two classes can land
+   on different panels at once (peek at Option 2 while Option 1 is
+   still the actual selection) - both options - Option 1's Mini/
+   Standard pills and Option 2's No-Welcome-Box pill plus its long
+   description - could sit fully expanded simultaneously, with a ▾/▴
+   toggle icon that looked interactive but didn't actually show/hide
+   anything. Keying visibility off tt-panel-open instead - a class
+   site-modernize.js manages exclusively across the group (see the
+   accordion IIFE there), independent of the plugin's own selection-
+   tracking - so exactly one panel is ever open, matching what the
+   header's own toggle icon implies. */
+.woovr-variations .option:not(.tt-panel-open) .option_description,
+.woovr-variations .option:not(.tt-panel-open) .woovr-variation,
+.woovr-variations .option:not(.tt-panel-open) .tt-variation-pills {
+  display: none !important;
+}
+.woovr-variations .option_header {
+  cursor: pointer;
+}
