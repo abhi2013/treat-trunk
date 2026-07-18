@@ -530,8 +530,8 @@ add_action( 'wp_enqueue_scripts', function () {
 	if ( is_page( 36634 ) ) {
 		return;
 	}
-	wp_enqueue_style( 'tt-site-modernize', plugins_url( 'assets/site-modernize.css', __FILE__ ), array(), '1.5.4' );
-	wp_enqueue_script( 'tt-site-modernize', plugins_url( 'assets/site-modernize.js', __FILE__ ), array(), '1.5.4', true );
+	wp_enqueue_style( 'tt-site-modernize', plugins_url( 'assets/site-modernize.css', __FILE__ ), array(), '1.5.5' );
+	wp_enqueue_script( 'tt-site-modernize', plugins_url( 'assets/site-modernize.js', __FILE__ ), array(), '1.5.5', true );
 }, 20 );
 
 /**

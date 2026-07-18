@@ -206,7 +206,18 @@
 		} );
 
 		select.classList.add( 'tt-pillified' );
-		select.insertAdjacentElement( 'afterend', wrap );
+		/* Inserted after the whole <table class="variations">, not just
+		   after the select - custom.css hides that table entirely
+		   (position:absolute + clip:rect(0,0,0,0), a standard visually-
+		   hidden pattern) once its pills exist, on the assumption pills
+		   always get moved out of it. That's only true for welcome-box
+		   subscription products (see the relocate() IIFE below); on every
+		   other variable product, the pills were staying inside the same
+		   table cell as the select and getting clipped into invisibility
+		   right along with it - a real "select works, but nothing visible
+		   to click" bug on every regular variation dropdown site-wide. */
+		var table = select.closest( 'table.variations' );
+		( table || select ).insertAdjacentElement( 'afterend', wrap );
 		select.addEventListener( 'change', syncFromSelect );
 
 		/* Default to the "Standard" size where one exists, rather than
@@ -234,7 +245,10 @@
    listener from the block above comes with it unchanged. */
 ( function () {
 	function relocate() {
-		var pillsWrap = document.querySelector( 'table.variations .tt-variation-pills' );
+		/* The pills wrap now lands right after table.variations (see the
+		   IIFE above), not inside it - matches where it's actually
+		   inserted now. */
+		var pillsWrap = document.querySelector( 'table.variations + .tt-variation-pills' );
 		var options = document.querySelectorAll( '.woovr-variations .option' );
 		if ( ! pillsWrap || ! pillsWrap.children.length || options.length < 2 ) {
 			return false;
