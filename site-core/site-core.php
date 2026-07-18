@@ -308,6 +308,7 @@ add_filter( 'rocket_delay_js_exclusions', function ( $excluded ) {
 	$excluded[] = 'tt-mystery-box-toggle';
 	$excluded[] = 'tt-submenu-toggle';
 	$excluded[] = 'tt-desktop-submenu-hover';
+	$excluded[] = 'tt-mobile-menu-toggle-fallback';
 	/* WooCommerce's own cart-fragments.js is what corrects the header
 	   basket badge (price/count) after a full-page-cached HTML response -
 	   the cached markup reflects whatever cart state existed when that
@@ -460,6 +461,62 @@ add_action( 'wp_footer', function () {
 			}
 			submenu.style.display = toggle.getAttribute( 'aria-expanded' ) === 'true' ? 'block' : 'none';
 		} );
+	})();
+	</script>
+	<?php
+}, 20 );
+
+/**
+ * Mobile hamburger toggle (.elementor-menu-toggle) reported completely
+ * unresponsive on a real iPhone in both Safari and Chrome (both WebKit -
+ * Apple requires every iOS browser to use it) - not a visibility/contrast
+ * bug, the icon never even swaps to the close (X) state, meaning the tap
+ * never registers as a click at all. Every Chromium/Playwright diagnostic
+ * came back clean on this same markup: element is visible, correctly
+ * hit-testable at its own coordinates (elementFromPoint returns the
+ * button's own icon, not some overlapping element), touch-action/
+ * pointer-events are "auto" all the way up the ancestor chain, and a
+ * plain btn.click() immediately and correctly flips aria-expanded and
+ * reveals .elementor-nav-menu--dropdown. So the click handler Elementor
+ * Pro binds to this element does exist and works - it's specifically the
+ * real-device tap-to-click delivery that's failing, something Chromium's
+ * touch emulation (CDP) has no fidelity to reproduce or debug directly.
+ *
+ * Rather than keep guessing at a WebKit-only touch bug blind, this adds a
+ * self-healing fallback: capture the dropdown's open/closed state before
+ * anything else can react (capture-phase listener always runs before
+ * Elementor's own target/bubble-phase handler, regardless of registration
+ * order), then check one macrotask later whether anything actually
+ * changed. If Elementor's own handler fired normally, nothing to do here.
+ * If nothing changed at all, force the same result ourselves. Safe to
+ * coexist with a working native handler - it only ever acts when the
+ * native one visibly didn't.
+ */
+add_action( 'wp_footer', function () {
+	?>
+	<script id="tt-mobile-menu-toggle-fallback">
+	(function () {
+		var toggle = document.querySelector( '.elementor-menu-toggle' );
+		var dropdown = document.querySelector( '.elementor-nav-menu--dropdown' );
+		if ( ! toggle || ! dropdown ) {
+			return;
+		}
+		function isOpen() {
+			return getComputedStyle( dropdown ).display !== 'none';
+		}
+		function setOpen( open ) {
+			toggle.setAttribute( 'aria-expanded', open ? 'true' : 'false' );
+			toggle.classList.toggle( 'elementor-active', open );
+			dropdown.style.display = open ? 'block' : 'none';
+		}
+		toggle.addEventListener( 'click', function () {
+			var wasOpen = isOpen();
+			setTimeout( function () {
+				if ( isOpen() === wasOpen ) {
+					setOpen( ! wasOpen );
+				}
+			}, 50 );
+		}, true );
 	})();
 	</script>
 	<?php
