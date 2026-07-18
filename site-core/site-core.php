@@ -311,7 +311,6 @@ add_filter( 'rocket_delay_js_exclusions', function ( $excluded ) {
 	$excluded[] = 'tt-mobile-menu-toggle-fallback';
 	$excluded[] = 'tt-basket-toggle-fallback';
 	$excluded[] = 'tt-popup-action-fallback';
-	$excluded[] = 'tt-popup-debug'; // TEMPORARY - remove with the debug panel below.
 	/* WooCommerce's own cart-fragments.js is what corrects the header
 	   basket badge (price/count) after a full-page-cached HTML response -
 	   the cached markup reflects whatever cart state existed when that
@@ -358,6 +357,27 @@ add_filter( 'rocket_delay_js_exclusions', function ( $excluded ) {
 	$excluded[] = 'elementor-webpack-runtime';
 	$excluded[] = 'jquery-ui-position';
 	$excluded[] = 'smartmenus';
+	/* Same bug, same root cause, different Elementor Pro bundle: the header
+	   discount banner and footer newsletter popup-action links stayed
+	   completely dead on real iOS Safari/Chrome (confirmed via an on-page
+	   debug log read directly off a real iPhone, 2026-07-18 - polling for
+	   up to 7.5s after the tap, elementorProFrontend.modules.popup never
+	   became available at all, not just slow). window.elementorProFrontend
+	   itself exists early because print_js_config() inline-prints its
+	   settings object separately, but the actual code that builds
+	   .modules.popup lives in the 'elementor-pro-frontend' script
+	   (assets/js/frontend.js, enqueued in
+	   Plugin::enqueue_frontend_scripts() in elementor-pro/plugin.php) -
+	   still delayed by WP Rocket like pro-elements-handlers was. Its own
+	   declared dependencies (Plugin::get_frontend_depends(), same file):
+	   elementor-pro-webpack-runtime + elementor-frontend-modules (already
+	   excluded above). Without excluding elementor-pro-webpack-runtime too,
+	   elementor-pro-frontend can end up running before its own webpack
+	   runtime exists once WP Rocket's delayed-load trigger fires, throwing
+	   and never finishing module registration - a permanent failure, not
+	   a timing one, which matches what was observed on the real device. */
+	$excluded[] = 'elementor-pro-frontend';
+	$excluded[] = 'elementor-pro-webpack-runtime';
 	/* Same class of bug as the smartmenus one above, this time hitting the
 	   homepage testimonial carousel: wp_register_script( 'swiper', ..., [],
 	   ... ) in elementor/includes/frontend.php has no dependencies of its
@@ -680,88 +700,6 @@ add_action( 'wp_footer', function () {
 	</script>
 	<?php
 }, 20 );
-
-/**
- * TEMPORARY diagnostic panel for the still-broken popup-action links
- * (discount banner / newsletter signup) on real iOS Safari/Chrome. Renders
- * an on-page, on-screen log instead of console.log so it can be read from a
- * plain screenshot (iOS Simulator or a real device), with no devtools/Web
- * Inspector connection required. Remove this whole block (and its
- * rocket_delay_js_exclusions entry above) once the real fix is confirmed.
- */
-add_action( 'wp_footer', function () {
-	?>
-	<script id="tt-popup-debug">
-	(function () {
-		var panel = document.createElement( 'div' );
-		panel.id = 'tt-debug-panel';
-		panel.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:2147483647;background:rgba(0,0,0,0.92);color:#0f0;font:11px/1.4 monospace;padding:6px;max-height:45vh;overflow:auto;white-space:pre-wrap;';
-		document.documentElement.appendChild( panel );
-		function log( msg ) {
-			var line = document.createElement( 'div' );
-			line.textContent = msg;
-			panel.appendChild( line );
-		}
-		function popupIdFromHref( href ) {
-			var decoded;
-			try {
-				decoded = decodeURIComponent( href );
-			} catch ( e ) {
-				return null;
-			}
-			var match = decoded.match( /action=popup:open&settings=([^&]+)/ );
-			if ( ! match ) {
-				return null;
-			}
-			try {
-				return JSON.parse( atob( match[ 1 ] ) ).id;
-			} catch ( e ) {
-				return null;
-			}
-		}
-		function popupVisible( id ) {
-			var popup = document.querySelector( '.elementor-location-popup[data-elementor-id="' + id + '"]' );
-			return !! popup && getComputedStyle( popup ).display !== 'none';
-		}
-		var links = document.querySelectorAll( 'a[href^="#elementor-action"]' );
-		log( 'links found: ' + links.length );
-		log( 'elementorProFrontend at load: ' + ( window.elementorProFrontend ? 'yes' : 'no' ) );
-		for ( var i = 0; i < links.length; i++ ) {
-			( function ( link, idx ) {
-				var id = popupIdFromHref( link.getAttribute( 'href' ) );
-				log( 'link[' + idx + '] id=' + id + ' text="' + link.textContent.trim().slice( 0, 30 ) + '"' );
-				link.addEventListener( 'click', function ( ev ) {
-					log( 'CLICK link[' + idx + '] id=' + id + ' defaultPrevented=' + ev.defaultPrevented );
-					var wasVisible = popupVisible( id );
-					log( '  wasVisible=' + wasVisible + ' hasProFrontend=' + ( !! window.elementorProFrontend ) + ' hasPopupModule=' + ( !! ( window.elementorProFrontend && elementorProFrontend.modules && elementorProFrontend.modules.popup ) ) );
-					var pollCount = 0;
-					var poll = setInterval( function () {
-						pollCount++;
-						var nowVisible = popupVisible( id );
-						var hasModule = !! ( window.elementorProFrontend && elementorProFrontend.modules && elementorProFrontend.modules.popup );
-						if ( nowVisible || hasModule || pollCount >= 30 ) {
-							log( '  +' + ( pollCount * 125 ) + 'ms nowVisible=' + nowVisible + ' hasPopupModule=' + hasModule );
-						}
-						if ( nowVisible || pollCount >= 30 ) {
-							clearInterval( poll );
-						}
-					}, 125 );
-				}, true );
-				link.addEventListener( 'click', function () {
-					log( 'CLICK(bubble) link[' + idx + '] id=' + id );
-				}, false );
-			} )( links[ i ], i );
-		}
-		document.addEventListener( 'click', function ( ev ) {
-			var t = ev.target;
-			if ( t && t.closest && t.closest( 'a[href^="#elementor-action"]' ) ) {
-				log( 'document-level click saw target inside action-link' );
-			}
-		}, true );
-	})();
-	</script>
-	<?php
-}, 21 );
 
 /**
  * Desktop nav dropdowns ("Gift", "One Off Boxes") stopped opening on hover
