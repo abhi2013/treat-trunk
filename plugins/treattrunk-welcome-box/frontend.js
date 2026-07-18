@@ -7,16 +7,23 @@ jQuery(document).ready(function($) {
 
   // check default
   $(document).on('found_variation', function(e, t) {
-    if (!woovr_selected) {
-      // default for radio
-      $('.woovr-variation[data-id="' + t.variation_id + '"]').addClass('active').
-          find('input[type="radio"]').
-          prop('checked', true);
-	  $('.woovr-variation[data-id="' + t.variation_id + '"]').parents('.option').eq(0).addClass('active');
+    // Keep the visual active state (and the Option 1/2 grouping) in sync
+    // with whichever variation is actually selected. This used to be
+    // gated behind !woovr_selected (only ran once, before any manual
+    // pick), which left stale .active classes on both Option 1 and
+    // Option 2 at once as soon as a pill selection crossed from one
+    // group to the other (e.g. Mini Welcome Box -> No Welcome Box).
+    $('.woovr-variation').removeClass('active');
+    $('.woovr-variations .option').removeClass('active');
+    $('.woovr-variation[data-id="' + t.variation_id + '"]').addClass('active').
+        find('input[type="radio"]').
+        prop('checked', true);
+    $('.woovr-variation[data-id="' + t.variation_id + '"]').parents('.option').eq(0).addClass('active');
+    update_first_pay_date(t.variation_id);
 
+    if (!woovr_selected) {
       // default for html select
       $('.woovr-variation-select').val(t.variation_id).trigger('change');
-	  update_first_pay_date(t.variation_id);
     }
   });
 
@@ -62,11 +69,18 @@ jQuery(document).ready(function($) {
         html(_selected.attr('data-pricehtml'));
   });
   
-  jQuery('.woovr-variations .option').eq(0).find('.option_header').click(function(){
-	 jQuery('.woovr-variations .option').removeClass('active');
-	 jQuery(this).parents('.option').eq(0).addClass('active');
-	 hide_suboptions();
-	 jQuery(this).parent().find('.woovr-variation-radio').eq(0).trigger('click');
+  // Option 1/2 headers used to look like a checkbox/radio (a circle icon)
+  // but only Option 1's was actually clickable, and clicking it silently
+  // picked Mini Welcome Box as a side effect - confusing since it looked
+  // selectable but wasn't really a control for choosing between the two.
+  // Now the headers are purely an expand/collapse toggle for the long
+  // description text (chevron icon, CSS handles the rotation/visibility
+  // via .expanded); actually picking an option happens by clicking the
+  // pill that now lives inside each box (see site-modernize.js), which
+  // auto-expands its own box via the .active class already kept in sync
+  // above.
+  jQuery('.woovr-variations .option_header').on('click', function () {
+    jQuery(this).closest('.option').toggleClass('expanded');
   });
 });
 

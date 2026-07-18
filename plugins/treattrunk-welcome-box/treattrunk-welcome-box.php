@@ -52,7 +52,13 @@ if ( ! function_exists( 'woovr_init' ) ) {
 
 				function woovr_enqueue_scripts() {
 					//wp_enqueue_style( 'woovr-frontend', plugin_dir_url( __FILE__ ).'frontend.css' );
-					wp_enqueue_script( 'woovr-frontend', plugin_dir_url( __FILE__ ).'frontend.js', array( 'jquery' ), false, true );
+					/* version was `false` here, which WordPress resolves to the
+					   core WP version rather than anything file-specific - since
+					   that never changes when this file is edited, browsers that
+					   already cached an old frontend.js kept serving it
+					   indefinitely regardless of server-side deploys. Bump this
+					   number by hand whenever frontend.js changes. */
+					wp_enqueue_script( 'woovr-frontend', plugin_dir_url( __FILE__ ).'frontend.js', array( 'jquery' ), '1.1', true );
 				}
 
 				public static function woovr_variations_form( $product ) {
@@ -78,12 +84,12 @@ if ( ! function_exists( 'woovr_init' ) ) {
 								$option = 1;
 								$headers = array("I don't want to wait!", "I'll wait for the next one");
 								$next_month = '';
-								$descriptions = array('Pay and receive your welcome box now. Your first subscription box will be charged on '.end($shipping_dates).' and posted around the '.date('jS F', strtotime(end($shipping_dates) . ' + 10 day')).'. Any first month offers will be deducted from the first subscription payment, not the welcome box.', 'Create your account now and pay for your first suscription box on '.end($shipping_dates).'. Your first box will be posted around the '.date('jS F', strtotime(end($shipping_dates) . ' + 10 day')).' and around the 10th of each following month.');
+								$descriptions = array('Pay and receive your welcome box now. Your first subscription box will be charged on '.end($shipping_dates).' and posted around the '.date('jS F', strtotime(end($shipping_dates) . ' + 10 day')).'. Any first month offers will be deducted from the first subscription payment, not the welcome box.', 'Create your account now and pay for your first suscription box on '.end($shipping_dates).'. Your first box will be posted around the '.date('jS F', strtotime(end($shipping_dates) . ' + 10 day')).' and around the 10th of each following month. A welcome box is a one-off mystery snack selection sent immediately after signup - choosing this option means skipping it and starting with your first scheduled monthly box instead.');
 								foreach ( $woovr_children as $i => $woovr_child ) {
 									$count++;
 									if (count($woovr_children) > 1 && (count($woovr_children) - $count >= 2 || count($woovr_children) - $count == 0)) {
 										?><div class="option">
-											<div class="option_header"><i class="fas fa-circle"></i> Option <?php echo $option . (isset($headers[$option-1]) ? ': <span>'.$headers[$option-1].'</span>':'');?></div>
+											<div class="option_header">Option <?php echo $option . (isset($headers[$option-1]) ? ': <span>'.$headers[$option-1].'</span>':'');?> <span class="option_toggle_icon" aria-hidden="true">&#9662;</span></div>
 											<?php echo isset($descriptions[$option-1]) ? '<div class="option_description">'.$descriptions[$option-1].'</div>':'';?><?php
 										$option++;
 									}

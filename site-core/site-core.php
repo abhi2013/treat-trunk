@@ -307,6 +307,10 @@ add_filter( 'rocket_delay_js_exclusions', function ( $excluded ) {
 	$excluded[] = 'site-modernize';
 	$excluded[] = 'tt-mystery-box-toggle';
 	$excluded[] = 'tt-submenu-toggle';
+	$excluded[] = 'tt-desktop-submenu-hover';
+	$excluded[] = 'tt-mobile-menu-toggle-fallback';
+	$excluded[] = 'tt-basket-toggle-fallback';
+	$excluded[] = 'tt-popup-action-fallback';
 	/* WooCommerce's own cart-fragments.js is what corrects the header
 	   basket badge (price/count) after a full-page-cached HTML response -
 	   the cached markup reflects whatever cart state existed when that
@@ -328,6 +332,67 @@ add_filter( 'rocket_delay_js_exclusions', function ( $excluded ) {
 	   the second piece still delayed, throwing "Cookies is not defined"
 	   right after the jquery fix above. */
 	$excluded[] = 'js-cookie';
+	/* Nav menu "Gift"/"One Off Boxes" dropdowns stopped opening on hover
+	   after Elementor/Elementor Pro were updated 3.x -> 4.1.x (a version
+	   gap the original site-inventory audit explicitly flagged as a
+	   "treat as planned, tested activity" risk - this is that risk
+	   materializing). Root cause has nothing to do with the earlier
+	   nav z-index/stacking fix (still fine, header transform confirmed
+	   "none"): the actual SmartMenus dropdown-open code lives inside
+	   Elementor Pro's 'pro-elements-handlers' bundle, which WP Rocket
+	   delays until a real user-interaction event fires - so a visitor's
+	   very first hover on a dropdown item does nothing, because the code
+	   that would open it hasn't loaded yet. The 'smartmenus' library
+	   itself was never delayed, only the code that calls it.
+	   Full dependency chain confirmed by reading the exact
+	   wp_register_script() calls in elementor/includes/frontend.php and
+	   elementor-pro/plugin.php (not guessed): pro-elements-handlers ->
+	   elementor-frontend -> elementor-frontend-modules ->
+	   elementor-webpack-runtime (+jquery, already excluded above), and
+	   elementor-frontend also depends on jquery-ui-position (a small
+	   WP-core-bundled script, safe to exclude). */
+	$excluded[] = 'pro-elements-handlers';
+	$excluded[] = 'elementor-frontend';
+	$excluded[] = 'elementor-frontend-modules';
+	$excluded[] = 'elementor-webpack-runtime';
+	$excluded[] = 'jquery-ui-position';
+	$excluded[] = 'smartmenus';
+	/* Same bug, same root cause, different Elementor Pro bundle: the header
+	   discount banner and footer newsletter popup-action links stayed
+	   completely dead on real iOS Safari/Chrome (confirmed via an on-page
+	   debug log read directly off a real iPhone, 2026-07-18 - polling for
+	   up to 7.5s after the tap, elementorProFrontend.modules.popup never
+	   became available at all, not just slow). window.elementorProFrontend
+	   itself exists early because print_js_config() inline-prints its
+	   settings object separately, but the actual code that builds
+	   .modules.popup lives in the 'elementor-pro-frontend' script
+	   (assets/js/frontend.js, enqueued in
+	   Plugin::enqueue_frontend_scripts() in elementor-pro/plugin.php) -
+	   still delayed by WP Rocket like pro-elements-handlers was. Its own
+	   declared dependencies (Plugin::get_frontend_depends(), same file):
+	   elementor-pro-webpack-runtime + elementor-frontend-modules (already
+	   excluded above). Without excluding elementor-pro-webpack-runtime too,
+	   elementor-pro-frontend can end up running before its own webpack
+	   runtime exists once WP Rocket's delayed-load trigger fires, throwing
+	   and never finishing module registration - a permanent failure, not
+	   a timing one, which matches what was observed on the real device. */
+	$excluded[] = 'elementor-pro-frontend';
+	$excluded[] = 'elementor-pro-webpack-runtime';
+	/* Same class of bug as the smartmenus one above, this time hitting the
+	   homepage testimonial carousel: wp_register_script( 'swiper', ..., [],
+	   ... ) in elementor/includes/frontend.php has no dependencies of its
+	   own, so nothing else pulls it into the excluded chain automatically,
+	   but pro-elements-handlers (already excluded, loads immediately) calls
+	   `new Swiper(...)` on it as soon as the page loads. With 'swiper'
+	   itself still delayed, that init either fails silently or runs late
+	   against a library that only finishes loading once the visitor's
+	   first real interaction fires the delay-JS trigger - by then the
+	   pagination dots end up wired up, but the very touch gesture that
+	   triggered the delayed load is the one that gets missed, so swiping
+	   didn't reliably advance the carousel. Confirmed via CDP-dispatched
+	   touch events on a fresh load: dot clicks worked, real touch swipes
+	   did not. */
+	$excluded[] = 'swiper';
 	return $excluded;
 } );
 
@@ -425,6 +490,280 @@ add_action( 'wp_footer', function () {
 }, 20 );
 
 /**
+ * Mobile hamburger toggle (.elementor-menu-toggle) reported completely
+ * unresponsive on a real iPhone in both Safari and Chrome (both WebKit -
+ * Apple requires every iOS browser to use it) - not a visibility/contrast
+ * bug, the icon never even swaps to the close (X) state, meaning the tap
+ * never registers as a click at all. Every Chromium/Playwright diagnostic
+ * came back clean on this same markup: element is visible, correctly
+ * hit-testable at its own coordinates (elementFromPoint returns the
+ * button's own icon, not some overlapping element), touch-action/
+ * pointer-events are "auto" all the way up the ancestor chain, and a
+ * plain btn.click() immediately and correctly flips aria-expanded and
+ * reveals .elementor-nav-menu--dropdown. So the click handler Elementor
+ * Pro binds to this element does exist and works - it's specifically the
+ * real-device tap-to-click delivery that's failing, something Chromium's
+ * touch emulation (CDP) has no fidelity to reproduce or debug directly.
+ *
+ * Rather than keep guessing at a WebKit-only touch bug blind, this adds a
+ * self-healing fallback: capture the dropdown's open/closed state before
+ * anything else can react (capture-phase listener always runs before
+ * Elementor's own target/bubble-phase handler, regardless of registration
+ * order), then check one macrotask later whether anything actually
+ * changed. If Elementor's own handler fired normally, nothing to do here.
+ * If nothing changed at all, force the same result ourselves. Safe to
+ * coexist with a working native handler - it only ever acts when the
+ * native one visibly didn't.
+ */
+add_action( 'wp_footer', function () {
+	?>
+	<script id="tt-mobile-menu-toggle-fallback">
+	(function () {
+		var toggle = document.querySelector( '.elementor-menu-toggle' );
+		var dropdown = document.querySelector( '.elementor-nav-menu--dropdown' );
+		if ( ! toggle || ! dropdown ) {
+			return;
+		}
+		function isOpen() {
+			return getComputedStyle( dropdown ).display !== 'none';
+		}
+		function setOpen( open ) {
+			toggle.setAttribute( 'aria-expanded', open ? 'true' : 'false' );
+			toggle.classList.toggle( 'elementor-active', open );
+			dropdown.style.display = open ? 'block' : 'none';
+		}
+		toggle.addEventListener( 'click', function () {
+			var wasOpen = isOpen();
+			setTimeout( function () {
+				if ( isOpen() === wasOpen ) {
+					setOpen( ! wasOpen );
+				}
+			}, 50 );
+		}, true );
+	})();
+	</script>
+	<?php
+}, 20 );
+
+/**
+ * Same real-device symptom as the hamburger toggle above, reported on the
+ * same visit: tapping the header basket icon (Elementor Pro's WooCommerce
+ * Menu Cart widget, side-cart type) does nothing on a real iPhone. Its
+ * open/closed state is driven by an "elementor-menu-cart--shown" class on
+ * the widget root (toggled alongside aria-hidden on the slide-out panel
+ * and aria-expanded on the toggle button) - confirmed directly by clicking
+ * the button and diffing the widget's className before/after, not guessed.
+ * Same fallback shape as the hamburger fix: capture-phase listener records
+ * the open state before anything else can react, and forces the same
+ * result itself only if nothing changed one macrotask later.
+ *
+ * The panel's own close button (.elementor-menu-cart__close-button) is a
+ * separate plain <div> with no click handling of its own beyond whatever
+ * Elementor Pro binds to it - same real-device failure reported on it
+ * separately once the open side of this fix let people actually reach it.
+ * It only ever closes (never toggles), so it gets the same treatment but
+ * pinned to the "closed" end state rather than a flip.
+ */
+add_action( 'wp_footer', function () {
+	?>
+	<script id="tt-basket-toggle-fallback">
+	(function () {
+		var toggle = document.querySelector( '.elementor-menu-cart__toggle_button' );
+		var widget = toggle ? toggle.closest( '.elementor-widget-woocommerce-menu-cart' ) : null;
+		var container = document.querySelector( '.elementor-menu-cart__container' );
+		var closeBtn = document.querySelector( '.elementor-menu-cart__close-button' );
+		if ( ! toggle || ! widget || ! container ) {
+			return;
+		}
+		function isOpen() {
+			return widget.classList.contains( 'elementor-menu-cart--shown' );
+		}
+		function setOpen( open ) {
+			widget.classList.toggle( 'elementor-menu-cart--shown', open );
+			toggle.setAttribute( 'aria-expanded', open ? 'true' : 'false' );
+			container.setAttribute( 'aria-hidden', open ? 'false' : 'true' );
+		}
+		toggle.addEventListener( 'click', function () {
+			var wasOpen = isOpen();
+			setTimeout( function () {
+				if ( isOpen() === wasOpen ) {
+					setOpen( ! wasOpen );
+				}
+			}, 50 );
+		}, true );
+		if ( closeBtn ) {
+			closeBtn.addEventListener( 'click', function () {
+				setTimeout( function () {
+					if ( isOpen() ) {
+						setOpen( false );
+					}
+				}, 50 );
+			}, true );
+		}
+	})();
+	</script>
+	<?php
+}, 20 );
+
+/**
+ * Same real-device symptom again, this time on the "Grab your 10% discount
+ * code" header banner: it's an Elementor "action link"
+ * (#elementor-action:action=popup:open&settings=...), the same generic
+ * mechanism the footer's "Signup for newsletter" button uses (see the
+ * newsletter popup work above) - not specific to one widget, so this fix
+ * is scoped to the href pattern rather than one element, and covers both.
+ * Elementor Pro's own frontend JS decodes the base64 "settings" segment of
+ * the href to get the popup ID and calls its popup module to show it -
+ * rather than reimplement that (and its focus-trap/overlay markup) by
+ * hand, the fallback decodes the exact same href and calls Elementor
+ * Pro's own already-loaded popup module directly
+ * (elementorProFrontend.modules.popup.showPopup), confirmed working when
+ * called this way directly in the console. Only acts if no popup became
+ * visible at all after a real tap.
+ *
+ * A fixed 50ms check (the first version of this fallback) worked
+ * reliably in testing but was confirmed - via an on-page debug log read
+ * directly off a real iPhone, 2026-07-18 - to fail there specifically
+ * because elementorProFrontend.modules.popup itself doesn't exist yet
+ * 50ms after the tap on that device (window.elementorProFrontend was
+ * present, but .modules.popup was not). This is a real-device JS-init
+ * race, not a caching or delegation issue as first suspected. Polling
+ * for the module to become available (instead of one fixed-delay check)
+ * fixes this regardless of how long that device's Elementor Pro init
+ * actually takes.
+ */
+add_action( 'wp_footer', function () {
+	?>
+	<script id="tt-popup-action-fallback">
+	(function () {
+		function popupIdFromHref( href ) {
+			var decoded;
+			try {
+				decoded = decodeURIComponent( href );
+			} catch ( e ) {
+				return null;
+			}
+			var match = decoded.match( /action=popup:open&settings=([^&]+)/ );
+			if ( ! match ) {
+				return null;
+			}
+			try {
+				return JSON.parse( atob( match[ 1 ] ) ).id;
+			} catch ( e ) {
+				return null;
+			}
+		}
+		function popupVisible( id ) {
+			var popup = document.querySelector( '.elementor-location-popup[data-elementor-id="' + id + '"]' );
+			return !! popup && getComputedStyle( popup ).display !== 'none';
+		}
+		/* Bound directly to each matching link at load time, not delegated
+		   via a single document-level listener - the hamburger and basket
+		   fixes above both needed a listener bound straight to the exact
+		   tapped element to reliably receive a real touch-originated click
+		   on iOS Safari/Chrome, and delegation is one more variable this
+		   doesn't need given those two are now confirmed working on a real
+		   device this way. */
+		var links = document.querySelectorAll( 'a[href^="#elementor-action"]' );
+		for ( var i = 0; i < links.length; i++ ) {
+			( function ( link ) {
+				var id = popupIdFromHref( link.getAttribute( 'href' ) );
+				if ( ! id ) {
+					return;
+				}
+				link.addEventListener( 'click', function () {
+					var wasVisible = popupVisible( id );
+					if ( wasVisible ) {
+						return;
+					}
+					var attempts = 0;
+					var maxAttempts = 60; // 60 * 125ms = 7.5s ceiling.
+					var poll = setInterval( function () {
+						attempts++;
+						if ( popupVisible( id ) ) {
+							clearInterval( poll );
+							return;
+						}
+						if ( window.elementorProFrontend && window.elementorProFrontend.modules && window.elementorProFrontend.modules.popup ) {
+							window.elementorProFrontend.modules.popup.showPopup( { id: id } );
+							clearInterval( poll );
+							return;
+						}
+						if ( attempts >= maxAttempts ) {
+							clearInterval( poll );
+						}
+					}, 125 );
+				}, true );
+			} )( links[ i ] );
+		}
+	})();
+	</script>
+	<?php
+}, 20 );
+
+/**
+ * Desktop nav dropdowns ("Gift", "One Off Boxes") stopped opening on hover
+ * after Elementor/Elementor Pro were updated 3.x -> 4.1.x (the version gap
+ * the original site-inventory audit explicitly flagged as a "treat as
+ * planned, tested activity" risk - this is that risk materializing).
+ * Root cause confirmed directly in devtools, not guessed: calling
+ * jQuery('.elementor-nav-menu--main').smartmenus() by hand throws
+ * "Cannot read properties of null (reading 'parentNode')" inside
+ * SmartMenus' own menuInit() (elementor-pro/assets/lib/smartmenus/
+ * jquery.smartmenus.min.js) - the exact library Elementor Pro bundles to
+ * drive these dropdowns. Something about this site's nav markup under
+ * Elementor Pro 4.1.x no longer matches what this bundled SmartMenus
+ * 1.2.1 build expects, so it never successfully attaches, and the
+ * sub-menu's default display:none is never overridden by anything.
+ * Unrelated to the earlier nav z-index/stacking fix (still fine - header
+ * transform confirmed "none").
+ *
+ * Hand-patching Elementor Pro's own vendored copy of SmartMenus would be
+ * overwritten on the next plugin update, so instead of that: plain
+ * hover-driven show/hide, bypassing SmartMenus entirely. Scoped to
+ * '.elementor-nav-menu--main' specifically - excludes '.menu-mob' (the
+ * separate mobile nav instance, which already has its own working
+ * click-based fix above) and excludes the corporate-orders page (its own
+ * template doesn't use this nav-menu widget's dropdown layout).
+ */
+add_action( 'wp_footer', function () {
+	?>
+	<script id="tt-desktop-submenu-hover">
+	(function () {
+		/* Delegated on the stable nav container rather than attaching
+		   listeners to each <li> directly - SmartMenus' own init still
+		   runs (and still throws, per the note above) but appears to
+		   touch/rebuild parts of this menu's markup before it does,
+		   which could silently orphan listeners bound straight to the
+		   original <li> elements. mouseover/mouseout bubble (mouseenter/
+		   mouseleave don't), so relatedTarget is checked manually to
+		   only fire on a genuine enter/leave of the <li>, not on every
+		   move between its descendants. */
+		var nav = document.querySelector( '.elementor-nav-menu--main' );
+		if ( ! nav ) {
+			return;
+		}
+		function handle( e, show ) {
+			var li = e.target.closest( 'li.menu-item-has-children' );
+			if ( ! li || ! nav.contains( li ) ) {
+				return;
+			}
+			if ( e.relatedTarget && li.contains( e.relatedTarget ) ) {
+				return;
+			}
+			var submenu = li.querySelector( ':scope > .sub-menu' );
+			if ( submenu ) {
+				submenu.style.display = show ? 'block' : 'none';
+			}
+		}
+		nav.addEventListener( 'mouseover', function ( e ) { handle( e, true ); } );
+		nav.addEventListener( 'mouseout', function ( e ) { handle( e, false ); } );
+	})();
+	</script>
+	<?php
+}, 20 );
+
+/**
  * Site-wide brand-direction pilot.
  *
  * Extends the corporate-orders page's palette (forest green, parchment/
@@ -446,13 +785,19 @@ add_action( 'wp_footer', function () {
  * Elementor/WooCommerce button styles), and a nav z-index/stacking bug
  * (site-modernize.js was giving the header a permanent transform via the
  * scroll-reveal system, trapping the dropdown in a new stacking context).
+ *
+ * v2 (staging trial, not yet on production): palette moved from forest
+ * green/gold/terracotta/parchment to one locked accent - the brand's own
+ * logo teal - on a clean warm-white canvas. See the header comment in
+ * site-modernize.css for the full rationale and the old->new CSS variable
+ * name mapping.
  */
 add_action( 'wp_enqueue_scripts', function () {
 	if ( is_page( 36634 ) ) {
 		return;
 	}
-	wp_enqueue_style( 'tt-site-modernize', plugins_url( 'assets/site-modernize.css', __FILE__ ), array(), '1.0.2' );
-	wp_enqueue_script( 'tt-site-modernize', plugins_url( 'assets/site-modernize.js', __FILE__ ), array(), '1.0.2', true );
+	wp_enqueue_style( 'tt-site-modernize', plugins_url( 'assets/site-modernize.css', __FILE__ ), array(), '1.6.1' );
+	wp_enqueue_script( 'tt-site-modernize', plugins_url( 'assets/site-modernize.js', __FILE__ ), array(), '1.6.1', true );
 }, 20 );
 
 /**
@@ -642,9 +987,11 @@ add_action( 'wp_head', function () {
  * Trustpilot profile (uk.trustpilot.com/review/treattrunk.co.uk). Numbers
  * below are read directly from Trustpilot's own embedded schema.org markup
  * on a saved copy of that page (2026-07-16) - not scraped, not guessed via
- * search. This is a point-in-time snapshot, not a live API pull - the
- * trustpilot-reviews plugin already active on the site has a business key
- * (of71tqWFPb9BPSru) but no TrustBox widget currently placed anywhere, so
+ * search (an earlier search attempt returned self-contradictory numbers
+ * that were rightly not trusted). This is a point-in-time snapshot, not a
+ * live API pull - the trustpilot-reviews plugin already active on the site
+ * has a business key (of71tqWFPb9BPSru) but no TrustBox widget currently
+ * placed anywhere (its stored settings show an empty trustboxes array), so
  * there's no live-synced number to read from instead. Re-verify and update
  * these two constants periodically rather than leaving them to go stale.
  */
@@ -725,12 +1072,12 @@ add_action( 'template_redirect', function () {
 
 /**
  * Trim the HTTP -> HTTPS redirect to a permanent 301. Bitnami/Apache
- * appears to be issuing a 302 for this today - if that redirect is
- * happening at the Apache vhost level, this WP-level hook never actually
- * runs (Apache answers before PHP loads) and the real fix is a one-line
- * change to the vhost's mod_rewrite rule, not this file. Left in as a
- * safe, no-op-if-unreachable defensive fix in case WP/a plugin controls
- * it instead.
+ * appears to be issuing a 302 for this today (confirmed via `curl -I
+ * http://treattrunk.co.uk/`) - if that redirect is happening at the Apache
+ * vhost level, this WP-level hook never actually runs (Apache answers
+ * before PHP loads) and the real fix is a one-line change to the vhost's
+ * mod_rewrite rule, not this file. Left in as a safe, no-op-if-unreachable
+ * defensive fix in case WP/a plugin controls it instead.
  */
 add_action( 'template_redirect', function () {
 	if ( ! is_ssl() && ! is_admin() ) {
@@ -773,7 +1120,8 @@ add_filter( 'wpseo_robots_array', function ( $robots ) {
  * was missing entirely. Real details confirmed live on Companies House
  * (company 15624707) 2026-07-16. Echoed via wp_footer rather than added to
  * the Elementor-built global Footer template (post 173), to avoid another
- * direct _elementor_data edit.
+ * direct _elementor_data edit - same reasoning as the copyright-year fix
+ * above.
  */
 add_action( 'wp_footer', function () {
 	echo '<p style="text-align:center;font-size:12px;color:#8a8a8a;padding:10px 20px;margin:0;">'
@@ -787,7 +1135,7 @@ add_action( 'wp_footer', function () {
  * the checkout funnel, and per the standing safety rules that's not a page
  * to blind-inject markup into via output buffering the way the H1 fix
  * above does for lower-stakes pages. Drop this shortcode into place via an
- * Elementor Shortcode widget once reviewed.
+ * Elementor Shortcode widget on staging once reviewed.
  */
 add_shortcode( 'tt_box_comparison', function () {
 	ob_start();

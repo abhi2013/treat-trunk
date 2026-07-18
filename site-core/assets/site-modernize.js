@@ -1,5 +1,21 @@
 (function () {
-	var sections = document.querySelectorAll( '.elementor-top-section' );
+	/* Popups (elementor-location-popup) don't scroll into view - they're
+	   triggered directly by a click - so scroll-reveal doesn't apply and
+	   actively breaks them: this script only ever queries the DOM once,
+	   at page load, but popup content is injected later, the first time
+	   a popup opens. Any section whose HTML already had "tt-reveal"
+	   baked in (Elementor's own caching had captured an earlier render
+	   of this file) got the opacity:0 starting state with nothing left
+	   to ever add "tt-in" - permanently invisible. Excluded here; the
+	   matching CSS rule in site-modernize.css is the real backstop
+	   (covers the class already being present in cached popup HTML
+	   regardless of what this query does). */
+	var sections = Array.prototype.filter.call(
+		document.querySelectorAll( '.elementor-top-section' ),
+		function ( el ) {
+			return ! el.closest( '.elementor-location-popup' );
+		}
+	);
 	if ( ! sections.length ) {
 		return;
 	}
@@ -174,11 +190,20 @@
 		if ( options.length < 2 || options.length > 6 ) {
 			return;
 		}
+		var groupId = 'tt-pg-' + Math.random().toString( 36 ).slice( 2 );
 		var wrap = document.createElement( 'div' );
 		wrap.className = 'tt-variation-pills';
+		wrap.setAttribute( 'data-pill-group', groupId );
 
 		function syncFromSelect() {
-			Array.prototype.forEach.call( wrap.children, function ( pill, i ) {
+			/* Query live rather than close over wrap.children - a later
+			   script (the welcome-box Option 1/2 grouping) moves these
+			   pills into new containers elsewhere in the DOM, and a stale
+			   reference to the now-empty original wrap would silently stop
+			   updating the checked/highlighted state. data-pill-group ties
+			   a pill back to this select regardless of where it now lives. */
+			var pills = document.querySelectorAll( '[data-pill-group="' + groupId + '"] .tt-variation-pill' );
+			Array.prototype.forEach.call( pills, function ( pill, i ) {
 				pill.classList.toggle( 'tt-pill-checked', options[ i ].value === select.value );
 			} );
 		}
@@ -197,7 +222,18 @@
 		} );
 
 		select.classList.add( 'tt-pillified' );
-		select.insertAdjacentElement( 'afterend', wrap );
+		/* Inserted after the whole <table class="variations">, not just
+		   after the select - custom.css hides that table entirely
+		   (position:absolute + clip:rect(0,0,0,0), a standard visually-
+		   hidden pattern) once its pills exist, on the assumption pills
+		   always get moved out of it. That's only true for welcome-box
+		   subscription products (see the relocate() IIFE below); on every
+		   other variable product, the pills were staying inside the same
+		   table cell as the select and getting clipped into invisibility
+		   right along with it - a real "select works, but nothing visible
+		   to click" bug on every regular variation dropdown site-wide. */
+		var table = select.closest( 'table.variations' );
+		( table || select ).insertAdjacentElement( 'afterend', wrap );
 		select.addEventListener( 'change', syncFromSelect );
 
 		/* Default to the "Standard" size where one exists, rather than
@@ -213,6 +249,62 @@
 		}
 		syncFromSelect();
 	} );
+} )();
+
+/* Welcome-box subscription products only: the Mini/Standard/No Welcome
+   Box pills built above sit in one row below both Option 1/Option 2
+   boxes, disconnected from either - move each pill into the option box
+   it actually belongs to (Mini/Standard -> Option 1, No Welcome Box ->
+   Option 2) so the control that picks a plan sits next to the plan it
+   picks, instead of requiring a scroll back up to match one to the
+   other. A real DOM move (not a clone), so the pill's existing click
+   listener from the block above comes with it unchanged. */
+( function () {
+	function relocate() {
+		/* The pills wrap now lands right after table.variations (see the
+		   IIFE above), not inside it - matches where it's actually
+		   inserted now. */
+		var pillsWrap = document.querySelector( 'table.variations + .tt-variation-pills' );
+		var options = document.querySelectorAll( '.woovr-variations .option' );
+		if ( ! pillsWrap || ! pillsWrap.children.length || options.length < 2 ) {
+			return false;
+		}
+		var groupId = pillsWrap.getAttribute( 'data-pill-group' );
+		var option1 = options[ 0 ];
+		var option2 = options[ 1 ];
+		var wrap1 = document.createElement( 'div' );
+		wrap1.className = 'tt-variation-pills';
+		wrap1.setAttribute( 'data-pill-group', groupId );
+		option1.appendChild( wrap1 );
+		var wrap2 = document.createElement( 'div' );
+		wrap2.className = 'tt-variation-pills';
+		wrap2.setAttribute( 'data-pill-group', groupId );
+		option2.appendChild( wrap2 );
+
+		Array.prototype.slice.call( pillsWrap.children ).forEach( function ( pill ) {
+			var target = /no welcome box/i.test( pill.textContent ) ? wrap2 : wrap1;
+			target.appendChild( pill );
+		} );
+		return true;
+	}
+
+	/* Both elements are ordinary server-rendered HTML present from initial
+	   load in every manual check, but relocate() reliably found nothing
+	   when run synchronously here on first page load, and reliably
+	   succeeded a moment later when re-run by hand - some other script
+	   on this heavily-plugin-loaded page appears to touch this markup
+	   shortly after DOM ready in a way not fully isolated. Retrying for
+	   up to 2s is cheap and avoids depending on winning that race. */
+	if ( relocate() ) {
+		return;
+	}
+	var attempts = 0;
+	var retry = setInterval( function () {
+		attempts++;
+		if ( relocate() || attempts >= 20 ) {
+			clearInterval( retry );
+		}
+	}, 100 );
 } )();
 
 /* Homepage "See what's inside" carousel: the 4 reels plus 6 real past-
@@ -339,11 +431,18 @@
 } )();
 
 /* Testimonial cards: add a small initial-letter avatar before each
-   reviewer name, since the widget's own settings have per-review
-   photos that never actually render (a pre-existing Elementor quirk,
-   not something this project's CSS/JS controls). */
+   reviewer name, but only when the review has no real photo set -
+   some reviews in the widget have no image configured at all, and
+   those rendered with no avatar whatsoever. Reviews that DO have a
+   real photo (.elementor-testimonial__image) render it fine; this
+   was previously added unconditionally for every card, which put a
+   duplicate letter-avatar next to the real photo. */
 ( function () {
 	document.querySelectorAll( '.elementor-testimonial__cite' ).forEach( function ( cite ) {
+		var card = cite.closest( '.elementor-testimonial' );
+		if ( card && card.querySelector( '.elementor-testimonial__image' ) ) {
+			return;
+		}
 		var nameEl = cite.querySelector( '.elementor-testimonial__name' );
 		if ( ! nameEl || ! nameEl.textContent.trim() ) {
 			return;
@@ -437,5 +536,54 @@
 				openModal( text );
 			} );
 		}
+	} );
+} )();
+
+/* Welcome-box subscription products: make Option 1 / Option 2 a real
+   single-open accordion. The plugin's own .active (tracks the current
+   selection) and .expanded (tracks manually opening a panel to peek at
+   it) classes are independent - peeking at the non-selected option
+   while a different one is still selected leaves both classes present
+   on different panels at once, and the CSS above (keyed off .active
+   OR .expanded) shows both again, recreating the exact redundant
+   double-panel view this was meant to fix. Tracking panel-open state
+   ourselves in a dedicated class, exclusive across the group, so
+   opening one always closes the other regardless of which is
+   currently selected. */
+( function () {
+	var groups = document.querySelectorAll( '.woovr-variations' );
+	if ( ! groups.length ) {
+		return;
+	}
+	groups.forEach( function ( group ) {
+		var options = group.querySelectorAll( ':scope > .option' );
+		if ( options.length < 2 ) {
+			return;
+		}
+		function openOnly( target ) {
+			options.forEach( function ( opt ) {
+				opt.classList.toggle( 'tt-panel-open', opt === target );
+			} );
+		}
+		// Start with whichever option matches the default selection.
+		var initiallyActive = group.querySelector( ':scope > .option.active' ) || options[ 0 ];
+		openOnly( initiallyActive );
+
+		options.forEach( function ( opt ) {
+			var header = opt.querySelector( ':scope > .option_header' );
+			if ( header ) {
+				header.addEventListener( 'click', function () {
+					openOnly( opt );
+				} );
+			}
+			// Selecting a pill/radio inside a panel keeps that panel open
+			// and closes any other, even if it was opened via a plain click
+			// rather than the header.
+			opt.addEventListener( 'click', function ( e ) {
+				if ( e.target.closest( '.tt-variation-pill, .woovr-variation-radio' ) ) {
+					openOnly( opt );
+				}
+			} );
+		} );
 	} );
 } )();

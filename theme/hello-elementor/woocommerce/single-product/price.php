@@ -60,7 +60,7 @@ foreach($variations as $variation) {
 
 <p><a href="#" class="hidden_link">What's in the mystery welcome box?</a> <i class="fas fa-caret-down"></i></p>
 <p class="hidden_paragraph">The mystery box contains a suprise selection of 22-25 snacks or 12-15 snacks if you choose the mini!</p>
-<script>
+<script id="tt-mystery-box-toggle">
 	jQuery(function(){
 		jQuery('.hidden_link').click(function(e){
 			e.preventDefault();

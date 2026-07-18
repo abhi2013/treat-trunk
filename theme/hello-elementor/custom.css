@@ -2,31 +2,31 @@
 	font-family: 'Fredoka One';
 	font-style: normal;
 	font-weight: normal;
-	src: url('https://treattrunk.co.uk/wp-content/uploads/2019/08/FredokaOne-Regular.ttf') format('truetype');
+	src: url('/wp-content/uploads/2019/08/FredokaOne-Regular.ttf') format('truetype');
 	font-display:swap;
 }
 @font-face {
 	font-family: 'DM Sans';
 	font-style: normal;
 	font-weight: normal;
-	src: url('https://treattrunk.co.uk/wp-content/uploads/2019/08/DMSans-Regular.woff2') format('woff2'),
-	     url('https://treattrunk.co.uk/wp-content/uploads/2019/08/DMSans-Regular.ttf') format('truetype');
+	src: url('/wp-content/uploads/2019/08/DMSans-Regular.woff2') format('woff2'),
+	     url('/wp-content/uploads/2019/08/DMSans-Regular.ttf') format('truetype');
 	font-display:swap;
 }
 @font-face {
 	font-family: 'DM Sans';
 	font-style: normal;
 	font-weight: 600;
-	src: url('https://treattrunk.co.uk/wp-content/uploads/2019/08/DMSans-Medium.woff2') format('woff2'),
-	     url('https://treattrunk.co.uk/wp-content/uploads/2019/08/DMSans-Medium.ttf') format('truetype');
+	src: url('/wp-content/uploads/2019/08/DMSans-Medium.woff2') format('woff2'),
+	     url('/wp-content/uploads/2019/08/DMSans-Medium.ttf') format('truetype');
 	font-display:swap;
 }
 @font-face {
 	font-family: 'DM Sans';
 	font-style: normal;
 	font-weight: 800;
-	src: url('https://treattrunk.co.uk/wp-content/uploads/2019/08/DMSans-Bold.woff2') format('woff2'),
-	     url('https://treattrunk.co.uk/wp-content/uploads/2019/08/DMSans-Bold.ttf') format('truetype');
+	src: url('/wp-content/uploads/2019/08/DMSans-Bold.woff2') format('woff2'),
+	     url('/wp-content/uploads/2019/08/DMSans-Bold.ttf') format('truetype');
 	font-display:swap;
 }
 
@@ -416,6 +416,109 @@ header .entry-title {
 	color: #17a299;
 }
 
+/* Option 1/2 boxes are informational groupings ("here's what this timing
+   choice means"), not themselves a selectable control - the real choice
+   is the pill inside. An earlier version of this styling gave the box a
+   colored border + tinted background when .active, which made each box
+   look like a big selectable card/checkbox that lit up when "checked" -
+   reported confusing twice (looked selectable but wasn't; the box itself
+   can't be clicked to choose, only the pill can). Both boxes now stay a
+   single neutral, unchanging style regardless of which pill is selected -
+   only the pill's own fill color communicates the actual choice made. */
+.woovr-variations .option.active {
+	border: 1px solid #e2e2e2 !important;
+	background: #f5f5f5 !important;
+}
+
+.woovr-variations .option.active .option_header,
+.woovr-variations .option.active .option_header span {
+	color: inherit;
+}
+
+.woovr-variations .option_header span {
+	color: var(--tt-forest, #1F4D38);
+	font-weight: 700;
+}
+
+/* Option 1/2 headers used to open with a circle icon that read as a
+   checkbox/radio even though only Option 1's was actually clickable (and
+   even that just picked Mini Welcome Box as a side effect rather than
+   being a real "select this option" control) - reported confusing since
+   it looked selectable but wasn't. Replaced with a chevron that purely
+   expands/collapses the long description text, collapsed by default and
+   opened automatically once a pill belonging to that option is picked
+   (.option.active, already kept accurate - see frontend.js), or manually
+   via clicking the header (.expanded). */
+.woovr-variations .option_header {
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 4px 8px;
+}
+
+.option_toggle_icon {
+	margin-left: auto;
+}
+
+.option_toggle_icon {
+	font-size: 13px;
+	color: var(--tt-sage, #6A7A64);
+	transition: transform 0.15s ease;
+}
+
+.option.active .option_toggle_icon,
+.option.expanded .option_toggle_icon {
+	transform: rotate(180deg);
+	color: var(--tt-forest, #1F4D38);
+}
+
+.woovr-variations .option .option_description {
+	display: none;
+}
+
+.woovr-variations .option.active .option_description,
+.woovr-variations .option.expanded .option_description {
+	display: block;
+}
+
+/* Pills relocated here from the shared row below (see site-modernize.js)
+   so each option visually owns the control that actually picks it. */
+.option .tt-variation-pills {
+	margin-top: 12px;
+}
+
+/* The pills' original home (the native "Welcome Box" label + select row)
+   is now empty once site-modernize.js moves them - the select itself
+   must stay in the DOM and functional (WooCommerce's price/stock logic
+   listens for its change event), just visually hidden. */
+table.variations {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+}
+
+/* The Mini/Standard Welcome Box cards nested inside Option 1 duplicate the
+   exact same choice as the green pill buttons under "Welcome Box" below
+   (both drive the same attribute_welcome-box select) - clicking either
+   picks the same variation. Two selectors for one choice, styled two
+   different ways (teal-bordered cards here vs. the green pills), reads as
+   inconsistent/confusing. The pills already show a clear selected state,
+   so hide this redundant copy rather than restyling both to match. */
+.option .woovr-variation.woovr-variation-radio {
+	display: none !important;
+}
+
+/* NOTE: was hidden and then restored here on 2026-07-15 after that broke
+   the only way back to Option 2 - now that "No Welcome Box" is a real,
+   correctly-labeled variation with its own pill (see site-modernize.js
+   and the welcome-box variation data fix), the "Clear" link is genuinely
+   redundant again, but leaving it visible/functional rather than
+   revisiting that call a third time in one day. */
+
 .thwepo-extra-options td {
 	padding-left: 15px!important;
 }
@@ -733,6 +836,32 @@ color: #5e5e5e!important;
     	z-index: 300;
 	}
 
+	/* Scoped to the outer panel only - .elementor-nav-menu--dropdown is reused
+	   as a class on nested <ul class="sub-menu"> submenus too (SmartMenus),
+	   so an unscoped background/overflow rule here also hits those and
+	   breaks their inline expand/collapse sizing. */
+	nav.elementor-nav-menu--dropdown.elementor-nav-menu__container {
+		background: #fff;
+		box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+		max-height: calc(100vh - 54px);
+		overflow-y: auto;
+	}
+
+	/* Nested <ul class="sub-menu"> submenus (Gift, One Off Boxes) inherit
+	   position:absolute/top:54px from the bare .elementor-nav-menu--dropdown
+	   rule above, which is meant for the outer panel, not an inline submenu -
+	   it also relies on SmartMenus toggling inline display:none/block, which
+	   doesn't happen reliably on this mobile "toggle" layout (see
+	   tt-submenu-toggle script in site-core.php for the display fix). Force
+	   these back into normal document flow so an opened submenu appears
+	   right under its parent item instead of floating near the top of the panel. */
+	.menu-mob .sub-menu.elementor-nav-menu--dropdown {
+		position: static !important;
+		width: 100%;
+		box-shadow: none;
+		background: #f5f5f5;
+	}
+
 	.mobile-header .logo-menu .elementor-widget,
 	.mobile-header .logo-menu .elementor-widget-wrap,
 	.mobile-header .logo-menu .elementor-column-wrap,
@@ -860,6 +989,15 @@ color: #5e5e5e!important;
    1500x1000 original, since Elementor has no per-breakpoint background image set here. */
 @media (max-width: 767px) {
 	.elementor-element-22aea114:not(.elementor-motion-effects-element-type-background) {
-		background-image: url(https://treattrunk.co.uk/wp-content/uploads/2025/03/Treat-Trunk-Healthy-Snack-Box-Subscrition-Gift-Resize-768x513.webp) !important;
+		background-image: url(/wp-content/uploads/2025/03/Treat-Trunk-Healthy-Snack-Box-Subscrition-Gift-Resize-768x513.webp) !important;
 	}
+}
+
+/* reCAPTCHA badge (fixed bottom-right, Google sets an extremely high default
+   z-index) sits on top of real page content in that corner - the allergy-info
+   textarea on product pages and the basket totals table on /basket/ in
+   particular. It's a passive attribution badge, not something users need to
+   interact with above other content, so drop it below everything else. */
+.grecaptcha-badge {
+	z-index: 1 !important;
 }

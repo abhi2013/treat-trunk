@@ -35,11 +35,6 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
   padding:10px;
   color:#051c27;
 }
-#highlight-checkbox-no {
-	background-color:#f0b5b2;
-	padding:10px;
-	color: #fff;
-}
 </style>
 <form name="checkout" method="post" class="checkout woocommerce-checkout" action="<?php echo esc_url( wc_get_checkout_url() ); ?>" enctype="multipart/form-data" aria-label="<?php echo esc_attr__( 'Checkout', 'woocommerce' ); ?>">
 
@@ -50,7 +45,6 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 		<div class="col2-set" id="customer_details">
 			<div class="col-1">
 				<?php do_action( 'woocommerce_checkout_billing' ); ?>
-				<label class="checkbox" id="highlight-checkbox-no" style="line-height:2;"><input type="checkbox" class="input-checkbox" style="margin-right:8px;"> NO, I don't wish to receive offers and occasional updates (Subscribers, this includes your monthly contents list!)</label>
 			</div>
 
 			<div class="col-2">
