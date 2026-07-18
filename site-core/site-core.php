@@ -494,19 +494,34 @@ add_action( 'wp_footer', function () {
 	?>
 	<script id="tt-desktop-submenu-hover">
 	(function () {
-		var items = document.querySelectorAll( '.elementor-nav-menu--main li.menu-item-has-children' );
-		items.forEach( function ( li ) {
-			var submenu = li.querySelector( ':scope > .sub-menu' );
-			if ( ! submenu ) {
+		/* Delegated on the stable nav container rather than attaching
+		   listeners to each <li> directly - SmartMenus' own init still
+		   runs (and still throws, per the note above) but appears to
+		   touch/rebuild parts of this menu's markup before it does,
+		   which could silently orphan listeners bound straight to the
+		   original <li> elements. mouseover/mouseout bubble (mouseenter/
+		   mouseleave don't), so relatedTarget is checked manually to
+		   only fire on a genuine enter/leave of the <li>, not on every
+		   move between its descendants. */
+		var nav = document.querySelector( '.elementor-nav-menu--main' );
+		if ( ! nav ) {
+			return;
+		}
+		function handle( e, show ) {
+			var li = e.target.closest( 'li.menu-item-has-children' );
+			if ( ! li || ! nav.contains( li ) ) {
 				return;
 			}
-			li.addEventListener( 'mouseenter', function () {
-				submenu.style.display = 'block';
-			} );
-			li.addEventListener( 'mouseleave', function () {
-				submenu.style.display = 'none';
-			} );
-		} );
+			if ( e.relatedTarget && li.contains( e.relatedTarget ) ) {
+				return;
+			}
+			var submenu = li.querySelector( ':scope > .sub-menu' );
+			if ( submenu ) {
+				submenu.style.display = show ? 'block' : 'none';
+			}
+		}
+		nav.addEventListener( 'mouseover', function ( e ) { handle( e, true ); } );
+		nav.addEventListener( 'mouseout', function ( e ) { handle( e, false ); } );
 	})();
 	</script>
 	<?php
