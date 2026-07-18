@@ -1,5 +1,21 @@
 (function () {
-	var sections = document.querySelectorAll( '.elementor-top-section' );
+	/* Popups (elementor-location-popup) don't scroll into view - they're
+	   triggered directly by a click - so scroll-reveal doesn't apply and
+	   actively breaks them: this script only ever queries the DOM once,
+	   at page load, but popup content is injected later, the first time
+	   a popup opens. Any section whose HTML already had "tt-reveal"
+	   baked in (Elementor's own caching had captured an earlier render
+	   of this file) got the opacity:0 starting state with nothing left
+	   to ever add "tt-in" - permanently invisible. Excluded here; the
+	   matching CSS rule in site-modernize.css is the real backstop
+	   (covers the class already being present in cached popup HTML
+	   regardless of what this query does). */
+	var sections = Array.prototype.filter.call(
+		document.querySelectorAll( '.elementor-top-section' ),
+		function ( el ) {
+			return ! el.closest( '.elementor-location-popup' );
+		}
+	);
 	if ( ! sections.length ) {
 		return;
 	}

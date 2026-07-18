@@ -434,6 +434,18 @@ body .tt-reveal.tt-in {
     transition: none !important;
   }
 }
+/* Popup content doesn't scroll into view - it's triggered directly by a
+   click - so the reveal-on-scroll animation never applies to it. Worse,
+   popup markup can come back from Elementor's own caching already
+   carrying the tt-reveal class from an earlier page render, with no
+   scroll event left to ever add tt-in - stuck at opacity:0 permanently
+   (found via the newsletter popup rendering completely blank despite
+   its content being present and correctly sized in the DOM). Force
+   visible regardless of tt-in state, for any popup content. */
+.elementor-location-popup .tt-reveal {
+  opacity: 1 !important;
+  transform: none !important;
+}
 
 /* ---------- product order customisation (WooCommerce Extra Product
    Options: gift options, "who are the snacks for", size, personalisation)
