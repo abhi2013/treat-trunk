@@ -1384,21 +1384,45 @@ body .elementor-menu-cart__toggle_button .woocommerce-Price-amount {
    (9997) and correct position/size once opened - confirmed via
    getComputedStyle and via aria-expanded toggling correctly - but the
    menu tap did nothing visible: the hero heading painted over it
-   completely. Root cause: <header class="elementor-location-header">
-   is position:static, so it never establishes its own stacking
-   context; the homepage hero section has an explicit (if identity)
-   transform from this project's own scroll-reveal animation
-   (.tt-reveal/.tt-in, see below), and ANY transform value - even a
-   no-op matrix - creates a new stacking context regardless of
-   z-index. With the header not stacking as a unit, that hero
-   section's stacking context painted after (and over) the header's
-   z-index:9997 dropdown despite the dropdown's much higher number,
-   since z-index only resolves within a shared stacking context.
-   Giving the header its own explicit stacking context makes its
-   z-index:9997 dropdown compare correctly against page content again. */
-@media (max-width: 767px) {
-  body header.elementor-location-header {
-    position: relative !important;
-    z-index: 99999 !important;
-  }
+   completely.
+
+   Two fixes attempted and discarded before finding the real cause:
+   1. position:relative + z-index on the header - worked in Chromium,
+      but real-device testing on iPhone (Safari and Chrome, both
+      WebKit under the hood) found the nav toggle, basket icon, and
+      header banner button all became unresponsive to taps. Giving the
+      whole header position:relative makes it the *containing block*
+      for every position:absolute descendant inside it (the dropdown,
+      the discount-code popup trigger, possibly others) - a much
+      bigger change than intended, and exactly the kind of thing
+      WebKit has known hit-testing quirks around.
+   2. isolation:isolate on the header - doesn't create a containing
+      block, so it looked safer, but didn't actually fix the dropdown
+      either: isolation only changes paint order *within* an element's
+      own stacking context. The header itself was still
+      position:static, so per normal CSS painting rules a *positioned*
+      sibling elsewhere on the page still paints after all
+      non-positioned content regardless of isolation.
+
+   Real root cause, found by walking the dropdown's actual ancestor
+   chain: the header's own outer wrapping section (an
+   .elementor-top-section, same as the homepage hero) carries this
+   project's own tt-reveal scroll-animation class - applied sitewide
+   to every top-level section, including the header's, since the
+   query never excluded it. That class's transform (even a no-op
+   identity matrix - any non-"none" transform value creates a stacking
+   context, full stop) gives the header's own wrapper a stacking
+   context that competes with the hero section's own tt-reveal
+   transform below it, and DOM order decides the tie - the hero,
+   coming second, wins and paints on top.
+
+   Header content never scrolls into view in the first place - it's
+   already visible on load, same reasoning as excluding popups above -
+   so scroll-reveal never applied here either. Forcing transform:none
+   (the literal keyword, not just visually-identity) removes the
+   stacking context this section never needed, without touching the
+   header's own position/isolation at all - no containing-block
+   change, no risk to any other header button. */
+header.elementor-location-header .tt-reveal {
+  transform: none !important;
 }
