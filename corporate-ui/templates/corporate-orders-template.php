@@ -41,6 +41,7 @@ get_header();
 				<span>&#10003; No minimum order</span>
 				<span>&#10003; Dietary needs catered</span>
 				<span>&#10003; 800+ box orders handled</span>
+				<span>&#10003; Pay by invoice</span>
 			</div>
 		</div>
 		<div style="position: relative;">
@@ -78,6 +79,7 @@ get_header();
 					<h3 style="font-weight: 700; font-size: 20px; margin: 0; color: #1B2420;">Bulk Letterbox Boxes</h3>
 					<p style="font-size: 14.5px; line-height: 1.55; color: #1B2420; margin: 0; flex: 1;">Letterbox-friendly snack boxes delivered directly to your office address. Order online in one click - volume pricing applies automatically, no code needed. Want your branding on the box? <a href="#quote" style="color: #12786C; font-weight: 700;">Contact us directly</a>.</p>
 					<div style="font-weight: 700; font-size: 22px; color: #12786C;">£15.99 <span style="font-size: 13.5px; font-weight: 600; color: #5B6B68;">/box &middot; 20+: £13.75/box &middot; 50+: £13.00/box</span></div>
+					<p style="font-size: 13px; color: #5B6B68; margin: 0;">That&rsquo;s from £13 per person, each with their own box, delivered to any door in the UK.</p>
 
 					<?php
 					// One-click bulk ordering: WooCommerce's native add-to-cart URL
@@ -201,7 +203,7 @@ get_header();
 				<div class="tt-corp-card" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
 					<h3 style="font-weight: 700; font-size: 20px; margin: 0; color: #1B2420;">Deluxe Corporate Snack Box</h3>
 					<p style="font-size: 14.5px; line-height: 1.55; color: #1B2420; margin: 0; flex: 1;">Our biggest one-off box: 60+ sugar sensible, predominantly vegan snacks (some fan favourites included in multiples) - built for office kitchens, team days and client visits.</p>
-					<div style="font-weight: 700; font-size: 22px; color: #12786C;">£125<span style="font-size: 14px; font-weight: 600; color: #5B6B68;">/box</span></div>
+					<div style="font-weight: 700; font-size: 22px; color: #12786C;">£125<span style="font-size: 14px; font-weight: 600; color: #5B6B68;">/box &middot; about £2 a snack</span></div>
 					<a href="<?php echo esc_url( home_url( '/product/corporate-snack-box/' ) ); ?>" style="background: #12786C; color: #FAFAF8; text-align: center; font-weight: 700; font-size: 15.5px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Shop the deluxe box</a>
 				</div>
 			</div>
@@ -423,6 +425,33 @@ get_header();
 		</div>
 	</section>
 
+	<!-- Corporate gifting (added 2026-07-18: closes the corporate-gifting keyword
+	     gap vs Snackfully's dedicated gifting page + blog cluster; all offerings
+	     below are verified live products/services, nothing aspirational) -->
+	<section id="gifting" class="tt-corp-section" style="padding: 24px 48px 56px; max-width: 1240px; margin: 0 auto;">
+		<div style="text-align: center; max-width: 720px; margin: 0 auto 36px;">
+			<h2 style="font-weight: 700; font-size: 32px; margin: 0 0 12px; color: #1B2420;">Corporate gifting &amp; client gift boxes</h2>
+			<p style="font-size: 16.5px; line-height: 1.6; color: #1B2420; margin: 0;">The same hand-packed boxes work just as well as staff thank-yous, client gifts and new-starter welcomes - with your branding on the box if you want it.</p>
+		</div>
+		<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; max-width: 1000px; margin: 0 auto;">
+			<div style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 20px; padding: 26px; display: flex; flex-direction: column; gap: 10px;">
+				<h3 style="font-weight: 700; font-size: 19px; margin: 0; color: #1B2420;">One-off gift boxes</h3>
+				<p style="font-size: 14.5px; line-height: 1.6; color: #1B2420; margin: 0; flex: 1;">Standard or Mini snack boxes with a gift message and gift wrap at checkout - sent to one desk or a hundred doorsteps.</p>
+				<a href="<?php echo esc_url( home_url( '/send-a-gift/' ) ); ?>" style="color: #12786C; font-weight: 700; font-size: 15px; text-decoration: underline; text-underline-offset: 3px;">Browse gift boxes &rarr;</a>
+			</div>
+			<div style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 20px; padding: 26px; display: flex; flex-direction: column; gap: 10px;">
+				<h3 style="font-weight: 700; font-size: 19px; margin: 0; color: #1B2420;">Gift subscriptions</h3>
+				<p style="font-size: 14.5px; line-height: 1.6; color: #1B2420; margin: 0; flex: 1;">3, 6 or 12 months of monthly snack boxes - a staff reward or client thank-you that keeps landing long after the gesture.</p>
+				<a href="<?php echo esc_url( home_url( '/product/3-month-gift-subscription/' ) ); ?>" style="color: #12786C; font-weight: 700; font-size: 15px; text-decoration: underline; text-underline-offset: 3px;">See gift subscriptions &rarr;</a>
+			</div>
+			<div style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 20px; padding: 26px; display: flex; flex-direction: column; gap: 10px;">
+				<h3 style="font-weight: 700; font-size: 19px; margin: 0; color: #1B2420;">Branded &amp; bespoke</h3>
+				<p style="font-size: 14.5px; line-height: 1.6; color: #1B2420; margin: 0; flex: 1;">Your logo on boxes, stickers, wrapping and gift cards, plus tailored contents for occasions like new-parent or wellbeing gifts.</p>
+				<a href="#quote" style="color: #12786C; font-weight: 700; font-size: 15px; text-decoration: underline; text-underline-offset: 3px;">Ask about branding &rarr;</a>
+			</div>
+		</div>
+	</section>
+
 	<!-- Testimonials (verified against real page content 2026-07-04) -->
 	<section class="tt-corp-section" style="background: #FAFAF8; padding: 56px 48px;">
 		<div style="max-width: 1240px; margin: 0 auto;">
@@ -467,32 +496,40 @@ get_header();
 		<h2 style="font-weight: 700; font-size: 32px; text-align: center; margin: 0 0 28px; color: #1B2420;">Corporate FAQs</h2>
 		<div style="display: flex; flex-direction: column; gap: 12px;">
 			<details style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 14px; padding: 16px 20px;">
-				<summary style="font-weight: 700; font-size: 16px; color: #1B2420; cursor: pointer;">What is a corporate snack box?</summary>
+				<summary style="font-weight: 700; font-size: 16px; color: #1B2420; cursor: pointer;"><h3 style="display: inline; font-weight: 700; font-size: 16px; margin: 0; color: #1B2420;">What is a corporate snack box?</h3></summary>
 				<p style="font-size: 14.5px; line-height: 1.6; color: #1B2420; margin: 10px 0 0;">A corporate snack box is a curated selection of office snacks delivered to your workplace or straight to staff at home, ideal for office kitchens, client visits, staff wellbeing and team perks. Ours are predominantly vegan, sugar sensible and sourced from independent UK brands.</p>
 			</details>
 			<details style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 14px; padding: 16px 20px;">
-				<summary style="font-weight: 700; font-size: 16px; color: #1B2420; cursor: pointer;">How much do office snacks cost for a team?</summary>
-				<p style="font-size: 14.5px; line-height: 1.6; color: #1B2420; margin: 10px 0 0;">Our Letterbox snack box is £15.99/box, dropping automatically to £13.75/box on 20+ box orders and £13.00/box on 50+ box orders to one address. A one-off Deluxe Corporate Snack Box (60+ snacks) is £125. No minimum order and no discount code needed.</p>
+				<summary style="font-weight: 700; font-size: 16px; color: #1B2420; cursor: pointer;"><h3 style="display: inline; font-weight: 700; font-size: 16px; margin: 0; color: #1B2420;">How much do office snacks cost for a team?</h3></summary>
+				<p style="font-size: 14.5px; line-height: 1.6; color: #1B2420; margin: 10px 0 0;">Our Letterbox snack box is £15.99/box, dropping automatically to £13.75/box on 20+ box orders and £13.00/box on 50+ box orders to one address. A one-off Deluxe Corporate Snack Box (60+ snacks) is £125, about £2 a snack. For remote teams that works out from £13 per person with every box delivered to its own address. No minimum order and no discount code needed.</p>
 			</details>
 			<details style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 14px; padding: 16px 20px;">
-				<summary style="font-weight: 700; font-size: 16px; color: #1B2420; cursor: pointer;">Can you deliver to lots of individual home addresses?</summary>
+				<summary style="font-weight: 700; font-size: 16px; color: #1B2420; cursor: pointer;"><h3 style="display: inline; font-weight: 700; font-size: 16px; margin: 0; color: #1B2420;">Can you deliver to lots of individual home addresses?</h3></summary>
 				<p style="font-size: 14.5px; line-height: 1.6; color: #1B2420; margin: 10px 0 0;">Yes - this is our speciality. Send us a spreadsheet of names and addresses and we&rsquo;ll post a tracked, letterbox-friendly box to every one. We&rsquo;ve handled orders of 800+.</p>
 			</details>
 			<details style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 14px; padding: 16px 20px;">
-				<summary style="font-weight: 700; font-size: 16px; color: #1B2420; cursor: pointer;">Do the bulk discounts need a code?</summary>
+				<summary style="font-weight: 700; font-size: 16px; color: #1B2420; cursor: pointer;"><h3 style="display: inline; font-weight: 700; font-size: 16px; margin: 0; color: #1B2420;">Do the bulk discounts need a code?</h3></summary>
 				<p style="font-size: 14.5px; line-height: 1.6; color: #1B2420; margin: 10px 0 0;">No - order 20 or more Letterbox boxes to one address and the discount applies automatically in your cart. No code needed.</p>
 			</details>
 			<details style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 14px; padding: 16px 20px;">
-				<summary style="font-weight: 700; font-size: 16px; color: #1B2420; cursor: pointer;">Can you handle dietary requirements and allergies?</summary>
+				<summary style="font-weight: 700; font-size: 16px; color: #1B2420; cursor: pointer;"><h3 style="display: inline; font-weight: 700; font-size: 16px; margin: 0; color: #1B2420;">Can you handle dietary requirements and allergies?</h3></summary>
 				<p style="font-size: 14.5px; line-height: 1.6; color: #1B2420; margin: 10px 0 0;">All boxes are vegetarian (mostly vegan), low sugar and health-conscious throughout. We can tailor individual boxes for gluten-free, nut-free and other requirements, even within a single bulk order.</p>
 			</details>
 			<details style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 14px; padding: 16px 20px;">
-				<summary style="font-weight: 700; font-size: 16px; color: #1B2420; cursor: pointer;">Can we add our company branding?</summary>
+				<summary style="font-weight: 700; font-size: 16px; color: #1B2420; cursor: pointer;"><h3 style="display: inline; font-weight: 700; font-size: 16px; margin: 0; color: #1B2420;">Can we add our company branding?</h3></summary>
 				<p style="font-size: 14.5px; line-height: 1.6; color: #1B2420; margin: 10px 0 0;">Yes - we can incorporate your branding on boxes, stickers, wrapping and gift cards. Mention it in your enquiry and we&rsquo;ll quote for it.</p>
 			</details>
 			<details style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 14px; padding: 16px 20px;">
-				<summary style="font-weight: 700; font-size: 16px; color: #1B2420; cursor: pointer;">Can we pay by invoice?</summary>
+				<summary style="font-weight: 700; font-size: 16px; color: #1B2420; cursor: pointer;"><h3 style="display: inline; font-weight: 700; font-size: 16px; margin: 0; color: #1B2420;">Can we pay by invoice?</h3></summary>
 				<p style="font-size: 14.5px; line-height: 1.6; color: #1B2420; margin: 10px 0 0;">Yes - for corporate orders we can invoice your company directly. Mention it in the enquiry form and we&rsquo;ll set it up.</p>
+			</details>
+			<details style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 14px; padding: 16px 20px;">
+				<summary style="font-weight: 700; font-size: 16px; color: #1B2420; cursor: pointer;"><h3 style="display: inline; font-weight: 700; font-size: 16px; margin: 0; color: #1B2420;">How fast is corporate delivery?</h3></summary>
+				<p style="font-size: 14.5px; line-height: 1.6; color: #1B2420; margin: 10px 0 0;">We aim to post orders within 2 working days on a tracked 2 working day service, with a first class upgrade available. For larger bespoke orders, tell us your date in the enquiry and we&rsquo;ll work to it.</p>
+			</details>
+			<details style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 14px; padding: 16px 20px;">
+				<summary style="font-weight: 700; font-size: 16px; color: #1B2420; cursor: pointer;"><h3 style="display: inline; font-weight: 700; font-size: 16px; margin: 0; color: #1B2420;">How many snacks should I order per employee?</h3></summary>
+				<p style="font-size: 14.5px; line-height: 1.6; color: #1B2420; margin: 10px 0 0;">For remote or hybrid teams, one Letterbox box per person posted to their home works best. For a shared office kitchen, one 60+ snack Deluxe box covers roughly 15 to 20 people for a week of snacking as a rule of thumb, or arrives weekly on the Deluxe subscription.</p>
 			</details>
 		</div>
 	</section>
