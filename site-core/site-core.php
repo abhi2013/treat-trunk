@@ -860,12 +860,18 @@ add_action( 'wp_head', function () {
 			array( 'How can I contact you about your healthy snack boxes?', 'Email hello@treattrunk.co.uk or use the contact form on the Contact Us page.' ),
 		);
 	} elseif ( is_page( 36634 ) ) {
+		// Kept in sync with the visible Corporate FAQs accordion in
+		// corporate-ui/templates/corporate-orders-template.php - update both together.
 		$faqs = array(
 			array( 'What is a corporate snack box?', 'A curated selection of office snacks delivered to your workplace or straight to staff at home - ideal for office kitchens, client visits, staff wellbeing and team perks. Boxes are predominantly vegan, sugar sensible and sourced from independent UK brands.' ),
-			array( 'How much do office snacks cost for a team?', 'The Letterbox snack box is £15.99/box, dropping automatically to £13.75/box on 20+ box orders and £13.00/box on 50+ box orders to one address. A one-off Deluxe Corporate Snack Box (60+ snacks) is £125. No minimum order, no discount code needed.' ),
+			array( 'How much do office snacks cost for a team?', 'The Letterbox snack box is £15.99/box, dropping automatically to £13.75/box on 20+ box orders and £13.00/box on 50+ box orders to one address. A one-off Deluxe Corporate Snack Box (60+ snacks) is £125, about £2 a snack. For remote teams that works out from £13 per person with every box delivered to its own address. No minimum order, no discount code needed.' ),
 			array( 'Can you deliver to lots of individual home addresses?', "Yes - this is a speciality. Send a spreadsheet of names and addresses and we'll post a tracked, letterbox-friendly box to each one. We've handled orders of 800+ boxes." ),
 			array( 'Do the bulk discounts need a code?', 'No - order 20 or more Letterbox boxes to one address and the discount applies automatically in the cart.' ),
 			array( 'Can you handle dietary requirements and allergies?', 'All boxes are vegetarian (mostly vegan), low sugar and health-conscious throughout. Individual boxes within a single bulk order can be tailored for gluten-free, nut-free and other requirements.' ),
+			array( 'Can we add our company branding?', "Yes - branding can be incorporated on boxes, stickers, wrapping and gift cards. Mention it in your enquiry and we'll quote for it." ),
+			array( 'Can we pay by invoice?', "Yes - for corporate orders we can invoice your company directly. Mention it in the enquiry form and we'll set it up." ),
+			array( 'How fast is corporate delivery?', "We aim to post orders within 2 working days on a tracked 2 working day service, with a first class upgrade available. For larger bespoke orders, tell us your date in the enquiry and we'll work to it." ),
+			array( 'How many snacks should I order per employee?', 'For remote or hybrid teams, one Letterbox box per person posted to their home works best. For a shared office kitchen, one 60+ snack Deluxe box covers roughly 15 to 20 people for a week of snacking as a rule of thumb, or arrives weekly on the Deluxe subscription.' ),
 		);
 	}
 
