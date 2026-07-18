@@ -625,22 +625,30 @@ add_action( 'wp_footer', function () {
 			var popup = document.querySelector( '.elementor-location-popup[data-elementor-id="' + id + '"]' );
 			return !! popup && getComputedStyle( popup ).display !== 'none';
 		}
-		document.addEventListener( 'click', function ( e ) {
-			var link = e.target.closest( 'a[href^="#elementor-action"]' );
-			if ( ! link ) {
-				return;
-			}
-			var id = popupIdFromHref( link.getAttribute( 'href' ) );
-			if ( ! id ) {
-				return;
-			}
-			var wasVisible = popupVisible( id );
-			setTimeout( function () {
-				if ( ! wasVisible && ! popupVisible( id ) && window.elementorProFrontend && window.elementorProFrontend.modules && window.elementorProFrontend.modules.popup ) {
-					window.elementorProFrontend.modules.popup.showPopup( { id: id } );
+		/* Bound directly to each matching link at load time, not delegated
+		   via a single document-level listener - the hamburger and basket
+		   fixes above both needed a listener bound straight to the exact
+		   tapped element to reliably receive a real touch-originated click
+		   on iOS Safari/Chrome, and delegation is one more variable this
+		   doesn't need given those two are now confirmed working on a real
+		   device this way. */
+		var links = document.querySelectorAll( 'a[href^="#elementor-action"]' );
+		for ( var i = 0; i < links.length; i++ ) {
+			( function ( link ) {
+				var id = popupIdFromHref( link.getAttribute( 'href' ) );
+				if ( ! id ) {
+					return;
 				}
-			}, 50 );
-		}, true );
+				link.addEventListener( 'click', function () {
+					var wasVisible = popupVisible( id );
+					setTimeout( function () {
+						if ( ! wasVisible && ! popupVisible( id ) && window.elementorProFrontend && window.elementorProFrontend.modules && window.elementorProFrontend.modules.popup ) {
+							window.elementorProFrontend.modules.popup.showPopup( { id: id } );
+						}
+					}, 50 );
+				}, true );
+			} )( links[ i ] );
+		}
 	})();
 	</script>
 	<?php
