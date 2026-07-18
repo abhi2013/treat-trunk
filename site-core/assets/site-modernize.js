@@ -401,11 +401,18 @@
 } )();
 
 /* Testimonial cards: add a small initial-letter avatar before each
-   reviewer name, since the widget's own settings have per-review
-   photos that never actually render (a pre-existing Elementor quirk,
-   not something this project's CSS/JS controls). */
+   reviewer name, but only when the review has no real photo set -
+   some reviews in the widget have no image configured at all, and
+   those rendered with no avatar whatsoever. Reviews that DO have a
+   real photo (.elementor-testimonial__image) render it fine; this
+   was previously added unconditionally for every card, which put a
+   duplicate letter-avatar next to the real photo. */
 ( function () {
 	document.querySelectorAll( '.elementor-testimonial__cite' ).forEach( function ( cite ) {
+		var card = cite.closest( '.elementor-testimonial' );
+		if ( card && card.querySelector( '.elementor-testimonial__image' ) ) {
+			return;
+		}
 		var nameEl = cite.querySelector( '.elementor-testimonial__name' );
 		if ( ! nameEl || ! nameEl.textContent.trim() ) {
 			return;

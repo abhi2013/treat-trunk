@@ -82,7 +82,10 @@ body .elementor-toggle-title {
 
 /* ---------- testimonials ----------
    Previously floated as bare centered text with no card, no quote
-   mark, no avatar - just a paragraph that happened to be italic. */
+   mark, no avatar - just a paragraph that happened to be italic.
+   Clamped at 3 lines, not 6 - a card quote should read at a glance,
+   with "Read more" opening the full review in the modal below for
+   anyone who wants it. Card height shrunk to match (340px -> 272px). */
 body .elementor-testimonial__title {
   color: var(--tt-mist) !important;
 }
@@ -96,7 +99,7 @@ body .elementor-testimonial {
   margin: 0 auto;
   display: flex !important;
   flex-direction: column;
-  height: 340px;
+  height: 272px;
 }
 body .elementor-testimonial__content {
   position: relative;
@@ -109,7 +112,7 @@ body .elementor-testimonial__text {
   line-height: 1.6;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 6;
+  -webkit-line-clamp: 3;
   overflow: hidden;
 }
 .tt-review-more {
