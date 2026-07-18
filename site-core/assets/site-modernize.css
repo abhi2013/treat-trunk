@@ -300,6 +300,28 @@ body .elementor-element-2221eea8 .elementor-heading-title,
 body .elementor-element-2221eea8 p {
   color: var(--tt-canvas) !important;
 }
+/* The "Signup for newsletter" button's own configured background
+   (also var(--tt-teal)'s hex, coincidentally) exactly matches this
+   band's background - the button rendered as plain white text with no
+   visible button shape around it at all, reading as a caption rather
+   than a CTA. Inverted so it actually looks clickable against the
+   teal band. */
+body .elementor-element-2221eea8 .elementor-button {
+  background-color: var(--tt-canvas) !important;
+  color: var(--tt-teal) !important;
+}
+/* The widget's own settings hardcode white text on its nested spans
+   directly (a more specific match than the rule above touching just
+   the <a> itself), left over from when the button matched its teal
+   surroundings - same white-on-white problem the background swap
+   above was meant to fix, just one layer deeper. */
+body .elementor-element-2221eea8 .elementor-button .elementor-button-text,
+body .elementor-element-2221eea8 .elementor-button .elementor-button-content-wrapper {
+  color: var(--tt-teal) !important;
+}
+body .elementor-element-2221eea8 .elementor-button:hover {
+  background-color: var(--tt-teal-light) !important;
+}
 
 /* ---------- buttons: one consistent style ---------- */
 body .elementor-button,
