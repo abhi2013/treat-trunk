@@ -979,7 +979,7 @@ function jgreen_preload_homepage_hero() {
 	if ( ! is_front_page() ) {
 		return;
 	}
-	echo '<link rel="preload" as="image" media="(max-width: 767px)" href="https://treattrunk.co.uk/wp-content/uploads/2025/03/Treat-Trunk-Healthy-Snack-Box-Subscrition-Gift-Resize-768x513.webp">' . "\n";
-	echo '<link rel="preload" as="image" media="(min-width: 768px)" href="https://treattrunk.co.uk/wp-content/uploads/2025/03/Treat-Trunk-Healthy-Snack-Box-Subscrition-Gift-Resize.webp">' . "\n";
+	echo '<link rel="preload" as="image" media="(max-width: 767px)" href="' . esc_url( home_url( '/wp-content/uploads/2025/03/Treat-Trunk-Healthy-Snack-Box-Subscrition-Gift-Resize-768x513.webp' ) ) . '">' . "\n";
+	echo '<link rel="preload" as="image" media="(min-width: 768px)" href="' . esc_url( home_url( '/wp-content/uploads/2025/03/Treat-Trunk-Healthy-Snack-Box-Subscrition-Gift-Resize.webp' ) ) . '">' . "\n";
 }
 add_action('wp_head', 'jgreen_preload_homepage_hero', 1);

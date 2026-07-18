@@ -44,13 +44,13 @@ switch ( $template ) {
 		echo '<div id="primary" class="content-area twentysixteen"><main id="main" class="site-main" role="main">';
 		break;
 	default :
-		/*if (is_product()) {
+		if ( is_product() ) {
 			echo '<header class="page-header woocommerce">';
 			the_title( '<h1 class="entry-title">', '</h1>' );
 			echo '</header>';
 			echo '<div id="primary" class="content-area"><main id="main" class="site-main" role="main">';
 		}
-		else*/
+		else
 			echo '<div id="primary" class="content-area"><main id="main" class="site-main" role="main">';
 		break;
 }
