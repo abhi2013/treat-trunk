@@ -1001,3 +1001,16 @@ color: #5e5e5e!important;
 .grecaptcha-badge {
 	z-index: 1 !important;
 }
+
+/* Desktop nav dropdowns (Gift, One Off Boxes): Elementor Pro's own stock
+   widget CSS hardcodes dropdown submenus to a fixed 12em (156px), which is
+   too narrow for several real item labels here ("12 Month Gift
+   Subscription", "Menopause Snack Box" etc.) - they sit cramped right
+   against the edge with no breathing room. Size to content instead, with a
+   sane floor/ceiling so it can't collapse to nothing or run unreasonably
+   wide. */
+.elementor-nav-menu--main .elementor-nav-menu ul.sub-menu {
+	width: max-content !important;
+	min-width: 156px;
+	max-width: 280px;
+}
