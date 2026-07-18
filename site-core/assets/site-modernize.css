@@ -1344,3 +1344,27 @@ body .elementor-menu-cart__toggle_button .woocommerce-Price-amount {
 .woovr-variations .option_header {
   cursor: pointer;
 }
+
+/* ---------- mobile hamburger menu: dropdown rendered behind hero content ----------
+   The dropdown panel (.elementor-nav-menu--dropdown) has a real z-index
+   (9997) and correct position/size once opened - confirmed via
+   getComputedStyle and via aria-expanded toggling correctly - but the
+   menu tap did nothing visible: the hero heading painted over it
+   completely. Root cause: <header class="elementor-location-header">
+   is position:static, so it never establishes its own stacking
+   context; the homepage hero section has an explicit (if identity)
+   transform from this project's own scroll-reveal animation
+   (.tt-reveal/.tt-in, see below), and ANY transform value - even a
+   no-op matrix - creates a new stacking context regardless of
+   z-index. With the header not stacking as a unit, that hero
+   section's stacking context painted after (and over) the header's
+   z-index:9997 dropdown despite the dropdown's much higher number,
+   since z-index only resolves within a shared stacking context.
+   Giving the header its own explicit stacking context makes its
+   z-index:9997 dropdown compare correctly against page content again. */
+@media (max-width: 767px) {
+  body header.elementor-location-header {
+    position: relative !important;
+    z-index: 99999 !important;
+  }
+}

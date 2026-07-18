@@ -354,6 +354,21 @@ add_filter( 'rocket_delay_js_exclusions', function ( $excluded ) {
 	$excluded[] = 'elementor-webpack-runtime';
 	$excluded[] = 'jquery-ui-position';
 	$excluded[] = 'smartmenus';
+	/* Same class of bug as the smartmenus one above, this time hitting the
+	   homepage testimonial carousel: wp_register_script( 'swiper', ..., [],
+	   ... ) in elementor/includes/frontend.php has no dependencies of its
+	   own, so nothing else pulls it into the excluded chain automatically,
+	   but pro-elements-handlers (already excluded, loads immediately) calls
+	   `new Swiper(...)` on it as soon as the page loads. With 'swiper'
+	   itself still delayed, that init either fails silently or runs late
+	   against a library that only finishes loading once the visitor's
+	   first real interaction fires the delay-JS trigger - by then the
+	   pagination dots end up wired up, but the very touch gesture that
+	   triggered the delayed load is the one that gets missed, so swiping
+	   didn't reliably advance the carousel. Confirmed via CDP-dispatched
+	   touch events on a fresh load: dot clicks worked, real touch swipes
+	   did not. */
+	$excluded[] = 'swiper';
 	return $excluded;
 } );
 
@@ -530,8 +545,8 @@ add_action( 'wp_enqueue_scripts', function () {
 	if ( is_page( 36634 ) ) {
 		return;
 	}
-	wp_enqueue_style( 'tt-site-modernize', plugins_url( 'assets/site-modernize.css', __FILE__ ), array(), '1.5.5' );
-	wp_enqueue_script( 'tt-site-modernize', plugins_url( 'assets/site-modernize.js', __FILE__ ), array(), '1.5.5', true );
+	wp_enqueue_style( 'tt-site-modernize', plugins_url( 'assets/site-modernize.css', __FILE__ ), array(), '1.5.6' );
+	wp_enqueue_script( 'tt-site-modernize', plugins_url( 'assets/site-modernize.js', __FILE__ ), array(), '1.5.6', true );
 }, 20 );
 
 /**
