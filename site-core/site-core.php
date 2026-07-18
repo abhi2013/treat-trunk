@@ -535,6 +535,13 @@ add_action( 'wp_footer', function () {
  * Same fallback shape as the hamburger fix: capture-phase listener records
  * the open state before anything else can react, and forces the same
  * result itself only if nothing changed one macrotask later.
+ *
+ * The panel's own close button (.elementor-menu-cart__close-button) is a
+ * separate plain <div> with no click handling of its own beyond whatever
+ * Elementor Pro binds to it - same real-device failure reported on it
+ * separately once the open side of this fix let people actually reach it.
+ * It only ever closes (never toggles), so it gets the same treatment but
+ * pinned to the "closed" end state rather than a flip.
  */
 add_action( 'wp_footer', function () {
 	?>
@@ -543,6 +550,7 @@ add_action( 'wp_footer', function () {
 		var toggle = document.querySelector( '.elementor-menu-cart__toggle_button' );
 		var widget = toggle ? toggle.closest( '.elementor-widget-woocommerce-menu-cart' ) : null;
 		var container = document.querySelector( '.elementor-menu-cart__container' );
+		var closeBtn = document.querySelector( '.elementor-menu-cart__close-button' );
 		if ( ! toggle || ! widget || ! container ) {
 			return;
 		}
@@ -562,6 +570,15 @@ add_action( 'wp_footer', function () {
 				}
 			}, 50 );
 		}, true );
+		if ( closeBtn ) {
+			closeBtn.addEventListener( 'click', function () {
+				setTimeout( function () {
+					if ( isOpen() ) {
+						setOpen( false );
+					}
+				}, 50 );
+			}, true );
+		}
 	})();
 	</script>
 	<?php
