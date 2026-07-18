@@ -290,6 +290,22 @@ body .page-header .entry-title {
   color: var(--tt-canvas) !important;
 }
 
+/* ---------- header discount-code banner (element 416ec58) ----------
+   The thin strip behind "Grab your 10% discount code" is a column with
+   its own hardcoded classic background (#0B6176), one of the old
+   pre-rebrand global colors - untouched by the sitewide button rule
+   below since it's the column background, not the button itself, and
+   left visibly off-palette (a colder, darker blue-teal) against the new
+   --tt-teal used everywhere else on the page. The actual paint happens
+   on the column's own .elementor-widget-wrap child (Elementor's "classic
+   background" setting targets that child, not the column element
+   itself), so the override has to match that child directly or it just
+   sits underneath the same fill and never shows. */
+body .elementor-element-416ec58,
+body .elementor-element-416ec58 > .elementor-widget-wrap {
+  background-color: var(--tt-teal) !important;
+}
+
 /* ---------- global newsletter-signup band (element 2221eea8) ----------
    Appears near the bottom of every page with its own bright teal
    background; same contrast problem as the title band above. */
@@ -404,6 +420,46 @@ body textarea:focus {
 body input[type="radio"],
 body input[type="checkbox"] {
   accent-color: var(--tt-teal) !important;
+}
+
+/* ---------- coupon code + apply button, mobile ----------
+   Both the cart page's ".coupon" and checkout's ".checkout_coupon" lay
+   the code field and its submit button out with WooCommerce's own
+   float-based CSS: on mobile it targets `.input-text + .button` to
+   float the button next to the input, but a hidden nonce field sits
+   between them in the actual markup, breaking that adjacency selector.
+   The button never gets floated, drops onto its own line below the
+   input, and ends up right-aligned and vertically stranded rather than
+   sitting neatly with it - confirmed against a real-device screenshot
+   of the cart page, 2026-07-18. Explicit stacked flex layout instead of
+   depending on that fragile sibling-selector chain. */
+@media (max-width: 767px) {
+  body.woocommerce-cart .coupon,
+  body .checkout_coupon {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 10px;
+    float: none !important;
+  }
+  body.woocommerce-cart .coupon .input-text,
+  body .checkout_coupon .input-text {
+    flex: 1 1 100%;
+    width: 100% !important;
+    margin: 0 !important;
+    float: none !important;
+  }
+  body.woocommerce-cart .coupon button.button,
+  body .checkout_coupon button.button {
+    flex: 1 1 100%;
+    width: 100% !important;
+    float: none !important;
+    margin: 0 !important;
+  }
+  body .checkout_coupon .form-row-first,
+  body .checkout_coupon .form-row-last {
+    width: 100% !important;
+    float: none !important;
+  }
 }
 
 /* ---------- homepage "how our subscription works" icons ----------
@@ -1282,6 +1338,16 @@ body .woocommerce-MyAccount-navigation a:hover {
    override, specific to price text inside this one button only. */
 body .elementor-menu-cart__toggle_button .woocommerce-Price-amount {
   color: var(--tt-canvas) !important;
+}
+/* Same contrast problem, the cart glyph itself: the widget never sets
+   --toggle-button-icon-color, so the icon's <svg fill> falls back to the
+   plugin default (#69727d, a mid-grey) - legible on the old button
+   styling, but this button is now teal (see the sitewide rule above), and
+   grey-on-teal reads as almost no icon at all, just the count badge
+   floating on an empty pill. Matches the price-text fix immediately
+   above: force canvas so the glyph actually shows up. */
+body .elementor-menu-cart__toggle_button svg {
+  fill: var(--tt-canvas) !important;
 }
 
 /* ---------- mobile header: decluttering cart price + Login ----------
