@@ -1169,3 +1169,55 @@ add_shortcode( 'tt_box_comparison', function () {
 	<?php
 	return ob_get_clean();
 } );
+
+/**
+ * Newsletter duplicate-check endpoint (added 2026-07-19).
+ *
+ * ActiveCampaign's proc.php returns an identical success response for new
+ * and already-subscribed emails, so the signup popup can't distinguish the
+ * two client-side. This same-origin AJAX endpoint checks (via the AC API,
+ * using the credentials the AC WooCommerce plugin already stores) whether
+ * an email is already a contact, so the popup can honestly say "we've
+ * re-sent your code" to existing subscribers (AC's welcome automation has
+ * multientry enabled, so the code email genuinely is re-sent).
+ *
+ * Privacy trade-off, considered deliberately: this discloses whether an
+ * email is subscribed (enumeration). Standard for newsletter forms
+ * (Mailchimp's embeds disclose the same), mitigated here by returning only
+ * a boolean and rate-limiting to 8 checks per 10 minutes per IP.
+ */
+add_action( 'wp_ajax_tt_nl_check', 'tt_newsletter_duplicate_check' );
+add_action( 'wp_ajax_nopriv_tt_nl_check', 'tt_newsletter_duplicate_check' );
+function tt_newsletter_duplicate_check() {
+	$email = isset( $_GET['email'] ) ? sanitize_email( wp_unslash( $_GET['email'] ) ) : '';
+	if ( ! $email || ! is_email( $email ) ) {
+		wp_send_json( array( 'exists' => false ) );
+	}
+
+	$ip  = isset( $_SERVER['REMOTE_ADDR'] ) ? $_SERVER['REMOTE_ADDR'] : '';
+	$key = 'tt_nl_chk_' . md5( $ip );
+	$hits = (int) get_transient( $key );
+	if ( $hits >= 8 ) {
+		wp_send_json( array( 'exists' => false ) );
+	}
+	set_transient( $key, $hits + 1, 10 * MINUTE_IN_SECONDS );
+
+	$settings = get_option( 'activecampaign_for_woocommerce_settings' );
+	if ( empty( $settings['api_url'] ) || empty( $settings['api_key'] ) ) {
+		wp_send_json( array( 'exists' => false ) );
+	}
+
+	$resp = wp_remote_get(
+		trailingslashit( $settings['api_url'] ) . 'api/3/contacts?email=' . rawurlencode( $email ),
+		array(
+			'timeout' => 4,
+			'headers' => array( 'Api-Token' => $settings['api_key'] ),
+		)
+	);
+	if ( is_wp_error( $resp ) || wp_remote_retrieve_response_code( $resp ) !== 200 ) {
+		wp_send_json( array( 'exists' => false ) );
+	}
+
+	$body = json_decode( wp_remote_retrieve_body( $resp ), true );
+	wp_send_json( array( 'exists' => ! empty( $body['contacts'] ) ) );
+}
