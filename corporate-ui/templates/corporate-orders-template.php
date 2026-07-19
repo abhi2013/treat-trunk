@@ -570,6 +570,10 @@ get_header();
 					<input type="text" id="tt-cq-lastname" name="lastname" autocomplete="family-name" style="font-size: 15px; padding: 12px 14px; border: 1.5px solid #C4DDDA; border-radius: 12px; width: 100%; box-sizing: border-box;">
 					<label for="tt-cq-email" style="font-size: 13px; font-weight: 700; color: #1B2420; margin: 0;">Work email *</label>
 					<input type="email" id="tt-cq-email" name="email" required autocomplete="email" style="font-size: 15px; padding: 12px 14px; border: 1.5px solid #C4DDDA; border-radius: 12px; width: 100%; box-sizing: border-box;">
+					<label for="tt-cq-message" style="font-size: 13px; font-weight: 700; color: #1B2420; margin: 0;">What do you need? <span style="font-weight: 400; color: #5B6B68;">(team size, budget, one-off or subscription, delivery)</span></label>
+					<textarea id="tt-cq-message" name="message" rows="3" style="font-size: 15px; padding: 12px 14px; border: 1.5px solid #C4DDDA; border-radius: 12px; width: 100%; box-sizing: border-box; font-family: inherit; resize: vertical;"></textarea>
+					<?php // Honeypot: hidden from real users, bots fill it and get silently dropped server-side. ?>
+					<div style="position: absolute; left: -9999px;" aria-hidden="true"><label>Leave this blank<input type="text" name="tt_hp" tabindex="-1" autocomplete="off"></label></div>
 					<input type="hidden" name="field[1][]" value="~|">
 					<label style="display: flex; gap: 8px; align-items: flex-start; font-size: 12.5px; line-height: 1.5; color: #5B6B68;">
 						<input type="checkbox" name="field[1][]" value="Opt In" required style="margin-top: 2px;">
@@ -584,49 +588,45 @@ get_header();
 					var form = document.getElementById('tt-corp-quote-form');
 					var btn = document.getElementById('tt-cq-submit');
 					var status = document.getElementById('tt-cq-status');
-					var settled = false;
-					var timer = null;
 					function done( ok, msg ) {
-						if ( settled ) { return; }
-						settled = true;
-						clearTimeout( timer );
 						btn.disabled = false;
 						btn.textContent = 'Request a quote';
 						status.style.display = 'block';
 						status.style.color = ok ? '#0B5951' : '#A03D3A';
 						status.textContent = msg;
-						if ( ok ) { form.reset(); settled = false; }
+						if ( ok ) { form.reset(); }
 					}
-					var prevThanks = window._show_thank_you, prevErr = window._show_error;
-					window._show_thank_you = function () {
-						if ( window.__ttACPending === 'corp' ) {
-							window.__ttACPending = null;
-							done( true, 'Thanks, we have your details. Our team replies personally, usually the same day and always within 24 hours.' );
-						} else if ( prevThanks ) { prevThanks.apply( null, arguments ); }
-					};
-					window._show_error = function ( id, message ) {
-						if ( window.__ttACPending === 'corp' ) {
-							window.__ttACPending = null;
-							done( false, message || 'Something went wrong. Please try again or email hello@treattrunk.co.uk.' );
-						} else if ( prevErr ) { prevErr.apply( null, arguments ); }
-					};
 					form.addEventListener('submit', function ( e ) {
 						e.preventDefault();
 						if ( form.reportValidity && ! form.reportValidity() ) { return; }
-						settled = false;
-						window.__ttACPending = 'corp';
 						btn.disabled = true;
 						btn.textContent = 'Sending…';
-						var params = new URLSearchParams( new FormData( form ) ).toString();
-						var s = document.createElement('script');
+
+						// Primary path: same-origin endpoint that emails the team.
+						// Drives the success/error UI because it's reliable (no
+						// cross-origin blind spot) and is what actually delivers
+						// the lead to hello@treattrunk.co.uk.
+						var data = new FormData( form );
+						fetch( '/wp-admin/admin-ajax.php?action=tt_corp_enquiry', { method: 'POST', body: data } )
+							.then( function ( r ) { return r.json(); } )
+							.then( function ( res ) {
+								if ( res && res.success ) {
+									done( true, 'Thanks, we have your enquiry. Our team replies personally, usually the same day and always within 24 hours.' );
+								} else {
+									done( false, ( res && res.data && res.data.message ) || 'Something went wrong. Please email hello@treattrunk.co.uk.' );
+								}
+							} )
+							.catch( function () {
+								done( false, 'Something went wrong. Please email hello@treattrunk.co.uk directly.' );
+							} );
+
+						// Parallel, fire-and-forget: keep the ActiveCampaign
+						// capture the old embed provided, so enquirers still land
+						// in AC. Its outcome doesn't affect the UI.
+						var params = new URLSearchParams( data ).toString();
+						var s = document.createElement( 'script' );
 						s.src = 'https://treattrunk.activehosted.com/proc.php?' + params + '&jsonp=true';
-						s.onerror = function () {
-							if ( ! settled ) { form.submit(); done( true, 'Thanks, we have your details. Our team replies within 24 hours.' ); }
-						};
 						document.head.appendChild( s );
-						timer = setTimeout( function () {
-							if ( ! settled ) { form.submit(); done( true, 'Thanks, we have your details. Our team replies within 24 hours.' ); }
-						}, 8000 );
 					});
 				})();
 				</script>

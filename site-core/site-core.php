@@ -1221,3 +1221,67 @@ function tt_newsletter_duplicate_check() {
 	$body = json_decode( wp_remote_retrieve_body( $resp ), true );
 	wp_send_json( array( 'exists' => ! empty( $body['contacts'] ) ) );
 }
+
+/**
+ * Corporate quote enquiry -> email the Treat Trunk team (added 2026-07-19).
+ *
+ * The /corporate-orders/ "Request a quote" form posts to ActiveCampaign form 1
+ * (the consumer newsletter) which only ever subscribed the enquirer and, for a
+ * brand-new email, sent the 10% welcome code - the team was never notified of a
+ * B2B enquiry. This same-origin endpoint emails hello@treattrunk.co.uk on every
+ * submission so leads actually reach the team (the AC subscribe still happens in
+ * parallel client-side, preserving AC lead capture).
+ *
+ * Abuse protection: honeypot field (bots fill it -> silently dropped) plus a
+ * rate limit of 5 sends per 15 minutes per IP. No nonce, deliberately: the page
+ * is full-page-cached by WP Rocket so a nonce would be stale on first paint -
+ * same reasoning as tt_nl_check above.
+ */
+add_action( 'wp_ajax_tt_corp_enquiry', 'tt_corporate_enquiry_notify' );
+add_action( 'wp_ajax_nopriv_tt_corp_enquiry', 'tt_corporate_enquiry_notify' );
+function tt_corporate_enquiry_notify() {
+	// Honeypot: a real user never fills this hidden field.
+	if ( ! empty( $_POST['tt_hp'] ) ) {
+		wp_send_json( array( 'ok' => true ) );
+	}
+
+	$ip   = isset( $_SERVER['REMOTE_ADDR'] ) ? $_SERVER['REMOTE_ADDR'] : '';
+	$key  = 'tt_corp_enq_' . md5( $ip );
+	$hits = (int) get_transient( $key );
+	if ( $hits >= 5 ) {
+		wp_send_json_error( array( 'message' => 'Too many enquiries in a short time. Please email hello@treattrunk.co.uk directly.' ) );
+	}
+
+	$firstname = isset( $_POST['firstname'] ) ? sanitize_text_field( wp_unslash( $_POST['firstname'] ) ) : '';
+	$lastname  = isset( $_POST['lastname'] ) ? sanitize_text_field( wp_unslash( $_POST['lastname'] ) ) : '';
+	$email     = isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '';
+	$message   = isset( $_POST['message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['message'] ) ) : '';
+
+	if ( empty( $firstname ) || ! is_email( $email ) ) {
+		wp_send_json_error( array( 'message' => 'Please enter your name and a valid email.' ) );
+	}
+
+	set_transient( $key, $hits + 1, 15 * MINUTE_IN_SECONDS );
+
+	$name    = trim( $firstname . ' ' . $lastname );
+	$subject = 'New corporate enquiry: ' . $name;
+	$body    = "New corporate snack box enquiry from the /corporate-orders/ quote form.\n\n"
+		. "Name:  $name\n"
+		. "Email: $email\n\n"
+		. "Message:\n" . ( $message !== '' ? $message : '(none provided)' ) . "\n\n"
+		. "Reply directly to this email to respond to the enquirer.";
+	$headers = array(
+		'Content-Type: text/plain; charset=UTF-8',
+		'Reply-To: ' . $name . ' <' . $email . '>',
+	);
+
+	$sent = wp_mail( 'hello@treattrunk.co.uk', $subject, $body, $headers );
+
+	// wp_mail returning false is rare (SMTP handoff failure). Report it so the
+	// front-end can tell the enquirer to email us directly rather than assume
+	// the lead was captured when it wasn't.
+	if ( $sent ) {
+		wp_send_json_success( array( 'message' => 'sent' ) );
+	}
+	wp_send_json_error( array( 'message' => "Sorry, that didn't go through. Please email hello@treattrunk.co.uk directly." ) );
+}
