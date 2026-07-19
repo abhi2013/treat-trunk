@@ -548,22 +548,12 @@ get_header();
 			</div>
 			<div style="background: #FAFAF8; border-radius: 22px; padding: 28px;">
 				<?php
-				// Native styled form posting to the same ActiveCampaign form 1 the
-				// old [activecampaign form=1 css=1] embed used (same proc.php
-				// fields, verified live 2026-07-19) - the embed injected AC's own
-				// generically-styled markup via JS, which clashed with this page.
-				// Submission feedback uses AC's JSONP protocol (their embed's own
-				// mechanism) so real errors surface instead of blind success.
+				// Native styled quote form. Submits same-origin to the
+				// tt_corp_enquiry endpoint (site-core.php) which emails the
+				// team - B2B leads deliberately do NOT go onto the consumer
+				// newsletter (removed 2026-07-19 per business decision).
 				?>
-				<form method="POST" action="https://treattrunk.activehosted.com/proc.php" id="tt-corp-quote-form" target="tt-corp-quote-iframe" novalidate style="display: flex; flex-direction: column; gap: 12px;">
-					<input type="hidden" name="u" value="6A5B371388F14">
-					<input type="hidden" name="f" value="1">
-					<input type="hidden" name="s">
-					<input type="hidden" name="c" value="0">
-					<input type="hidden" name="m" value="0">
-					<input type="hidden" name="act" value="sub">
-					<input type="hidden" name="v" value="2">
-					<input type="hidden" name="or" value="03b32774-f101-440e-a004-6b61109d564b">
+				<form id="tt-corp-quote-form" novalidate style="display: flex; flex-direction: column; gap: 12px;">
 					<label for="tt-cq-firstname" style="font-size: 13px; font-weight: 700; color: #1B2420; margin: 0;">First name *</label>
 					<input type="text" id="tt-cq-firstname" name="firstname" required autocomplete="given-name" style="font-size: 15px; padding: 12px 14px; border: 1.5px solid #C4DDDA; border-radius: 12px; width: 100%; box-sizing: border-box;">
 					<label for="tt-cq-lastname" style="font-size: 13px; font-weight: 700; color: #1B2420; margin: 0;">Last name</label>
@@ -574,15 +564,13 @@ get_header();
 					<textarea id="tt-cq-message" name="message" rows="3" style="font-size: 15px; padding: 12px 14px; border: 1.5px solid #C4DDDA; border-radius: 12px; width: 100%; box-sizing: border-box; font-family: inherit; resize: vertical;"></textarea>
 					<?php // Honeypot: hidden from real users, bots fill it and get silently dropped server-side. ?>
 					<div style="position: absolute; left: -9999px;" aria-hidden="true"><label>Leave this blank<input type="text" name="tt_hp" tabindex="-1" autocomplete="off"></label></div>
-					<input type="hidden" name="field[1][]" value="~|">
 					<label style="display: flex; gap: 8px; align-items: flex-start; font-size: 12.5px; line-height: 1.5; color: #5B6B68;">
-						<input type="checkbox" name="field[1][]" value="Opt In" required style="margin-top: 2px;">
-						<span>I&rsquo;m happy for Treat Trunk to contact me about my enquiry and occasional offers. Unsubscribe any time - see our <a href="<?php echo esc_url( home_url( '/privacy-policy/' ) ); ?>" style="color: #12786C;">privacy policy</a>.</span>
+						<input type="checkbox" name="consent" value="yes" required style="margin-top: 2px;">
+						<span>I&rsquo;m happy for Treat Trunk to contact me about this enquiry. We won&rsquo;t add you to our newsletter - see our <a href="<?php echo esc_url( home_url( '/privacy-policy/' ) ); ?>" style="color: #12786C;">privacy policy</a>.</span>
 					</label>
 					<button type="submit" id="tt-cq-submit" style="background: #12786C; color: #FAFAF8; border: none; font-weight: 700; font-size: 16px; padding: 14px 0; border-radius: 999px; cursor: pointer;">Request a quote</button>
 					<p id="tt-cq-status" role="status" style="font-size: 13.5px; line-height: 1.5; margin: 0; display: none;"></p>
 				</form>
-				<iframe name="tt-corp-quote-iframe" title="" style="display:none;" aria-hidden="true"></iframe>
 				<script id="tt-corp-quote">
 				(function () {
 					var form = document.getElementById('tt-corp-quote-form');
@@ -620,13 +608,6 @@ get_header();
 								done( false, 'Something went wrong. Please email hello@treattrunk.co.uk directly.' );
 							} );
 
-						// Parallel, fire-and-forget: keep the ActiveCampaign
-						// capture the old embed provided, so enquirers still land
-						// in AC. Its outcome doesn't affect the UI.
-						var params = new URLSearchParams( data ).toString();
-						var s = document.createElement( 'script' );
-						s.src = 'https://treattrunk.activehosted.com/proc.php?' + params + '&jsonp=true';
-						document.head.appendChild( s );
 					});
 				})();
 				</script>
