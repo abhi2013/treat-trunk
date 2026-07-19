@@ -1,11 +1,11 @@
 <?php
 /**
  *	Plugin Name: 	Subscription Custom Reports
- *	Plugin URI:		https://jgreen3d.com/
+ *	Plugin URI:		https://treattrunk.co.uk/
  *	Description:	Add Custom Reporting for all subscription products to see current active subscriptions
  *	Version:		0.1.0
- *	Author:			Joe Green
- *	Author URI:		https://jgreen3d.com/
+ *	Author:			Treat Trunk
+ *	Author URI:		https://treattrunk.co.uk/
  *	Text Domain:	subscription-reporting
  */
  
