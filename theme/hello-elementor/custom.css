@@ -1263,3 +1263,49 @@ a[href*="trustpilot"] {
 .elementor-element-6253820:active {
 	transform: translateY(-2px) scale(0.99);
 }
+
+/* /subscribe/ page plan cards (Monthly 3b0db51a / Mini Monthly 1d9767bd) plus
+   the "Monthly Subscription" graphic (7b87b2ce) next to them. These are the same
+   flat, sharp, grey-outlined blocks the homepage cards used to be, but on a
+   different page - different Elementor IDs, so the homepage rules above don't
+   reach them. Apply the identical elevated-rounded-card system so /subscribe/
+   matches the homepage and /send-a-gift/. */
+.elementor-element-3b0db51a,
+.elementor-element-1d9767bd {
+	border-radius: 18px;
+	overflow: hidden;
+	box-shadow: 0 16px 40px -20px rgba(11, 89, 81, 0.45);
+	/* !important: Elementor sets its own transition (background/box-shadow, no
+	   transform), which otherwise makes the hover lift jump instead of animate. */
+	transition: transform 0.22s ease, box-shadow 0.22s ease !important;
+}
+/* Zero the column's widget-wrap padding so the coloured header fills flush to
+   the rounded top and its corners clip round. */
+.elementor-element-3b0db51a > .elementor-widget-wrap,
+.elementor-element-1d9767bd > .elementor-widget-wrap {
+	padding: 0 !important;
+}
+/* The content inner-section carried a flat 1px grey outline that now duplicates
+   the card edge - drop it; the card's shadow is the boundary. Re-pad so the
+   price / button don't touch the rounded edge. */
+.elementor-element-3521804,
+.elementor-element-4b3f9dac {
+	border: 0 !important;
+	padding-left: 16px !important;
+	padding-right: 16px !important;
+	padding-bottom: 14px !important;
+}
+.elementor-element-3b0db51a:hover,
+.elementor-element-1d9767bd:hover {
+	transform: translateY(-6px);
+	box-shadow: 0 26px 52px -20px rgba(11, 89, 81, 0.55);
+}
+.elementor-element-3b0db51a:active,
+.elementor-element-1d9767bd:active {
+	transform: translateY(-2px) scale(0.99);
+}
+/* The graphic beside the plans, matched to the rounded cards. */
+.elementor-element-7b87b2ce img {
+	border-radius: 18px !important;
+	box-shadow: 0 14px 34px -18px rgba(11, 89, 81, 0.4) !important;
+}
