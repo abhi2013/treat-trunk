@@ -1190,3 +1190,19 @@ a[href*="trustpilot"] {
 		}
 	}
 }
+
+/* Homepage subscription cards (Monthly aad58e5 / Mini Monthly 6253820): they
+   were flat, full-bleed, sharp-cornered blocks that looked unfinished next to
+   the site's rounded, layered style. Lift them into proper floating cards -
+   rounded corners clipping the teal header + white body, a soft tinted shadow,
+   and side margin so they don't run edge to edge. Holds on both the stacked
+   mobile layout and the side-by-side desktop layout. */
+.elementor-element-aad58e5,
+.elementor-element-6253820 {
+	border-radius: 18px;
+	overflow: hidden;
+	box-shadow: 0 16px 40px -20px rgba(11, 89, 81, 0.45);
+	margin-left: 16px;
+	margin-right: 16px;
+	width: auto;
+}
