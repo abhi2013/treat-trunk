@@ -1309,3 +1309,30 @@ a[href*="trustpilot"] {
 	border-radius: 18px !important;
 	box-shadow: 0 14px 34px -18px rgba(11, 89, 81, 0.4) !important;
 }
+
+/* Mobile header row balance. Section 55d2f86 is the mobile-only header row
+   (desktop uses fe4e040, so this never touches desktop). Its two columns -
+   hamburger+logo (0e8fa0f) and cart (e7fd3a4) - packed to the left under the
+   default justify-content, stranding the cart mid-row with ~a third of the bar
+   empty on the right. Spread them to the full width so the cart sits at the
+   right edge (thumb-reachable), let the hamburger+logo group fill the space, and
+   centre the logo between the hamburger and the cart with auto margins (no
+   absolute positioning, so the menu dropdown is unaffected). */
+@media (max-width: 767px) {
+	.elementor-element-55d2f86 > .elementor-container {
+		justify-content: space-between !important;
+		align-items: center !important;
+		flex-wrap: nowrap !important;
+	}
+	.elementor-element-55d2f86 .elementor-element-0e8fa0f {
+		flex: 1 1 auto !important;
+	}
+	.elementor-element-55d2f86 .elementor-element-0e8fa0f > .elementor-widget-wrap {
+		flex-wrap: nowrap !important;
+		align-items: center !important;
+	}
+	.elementor-element-55d2f86 .elementor-element-0e8fa0f .elementor-widget-image {
+		margin-left: auto !important;
+		margin-right: auto !important;
+	}
+}
