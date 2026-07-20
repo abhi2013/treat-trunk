@@ -393,42 +393,50 @@
 		}
 	}
 
+	/* IMPORTANT: bind the player controls via on* PROPERTIES, not
+	   addEventListener. WP Rocket's "delay JS" feature globally overrides
+	   EventTarget.prototype.addEventListener to queue listeners until the first
+	   user interaction, and it does not reliably replay touch listeners - which
+	   left the arrows dead until an interaction and the swipe dead entirely
+	   (confirmed: addEventListener is not native code on the live page). Element
+	   on* property handlers bypass that override, so these fire immediately and
+	   for real. One handler per element per event is fine here. */
 	slides.forEach( function ( slide, i ) {
 		var v = slide.querySelector( 'video' );
 		if ( v ) {
-			v.addEventListener( 'ended', function () {
+			v.onended = function () {
 				showIndex( i + 1 );
-			} );
+			};
 		}
 	} );
 	if ( prevBtn ) {
-		prevBtn.addEventListener( 'click', function () {
+		prevBtn.onclick = function () {
 			showIndex( current - 1 );
-		} );
+		};
 	}
 	if ( nextBtn ) {
-		nextBtn.addEventListener( 'click', function () {
+		nextBtn.onclick = function () {
 			showIndex( current + 1 );
-		} );
+		};
 	}
 
-	/* Touch swipe (mobile): swipe left -> next reel, swipe right -> prev.
-	   Passive listeners so vertical page scrolling is never blocked; a move
-	   only counts as a swipe when it's clearly horizontal (past a 40px
+	/* Touch swipe (mobile): swipe left -> next reel, swipe right -> prev. These
+	   don't call preventDefault, so vertical page scrolling is never blocked; a
+	   move only counts as a swipe when it's clearly horizontal (past a 40px
 	   threshold and more horizontal than vertical), so an ordinary up/down
 	   scroll that happens to start on the video doesn't flip slides. */
 	var touchStartX = 0;
 	var touchStartY = 0;
 	var touching = false;
-	slidesWrap.addEventListener( 'touchstart', function ( e ) {
+	slidesWrap.ontouchstart = function ( e ) {
 		if ( ! e.touches || ! e.touches.length ) {
 			return;
 		}
 		touchStartX = e.touches[ 0 ].clientX;
 		touchStartY = e.touches[ 0 ].clientY;
 		touching = true;
-	}, { passive: true } );
-	slidesWrap.addEventListener( 'touchend', function ( e ) {
+	};
+	slidesWrap.ontouchend = function ( e ) {
 		if ( ! touching || ! e.changedTouches || ! e.changedTouches.length ) {
 			return;
 		}
@@ -438,7 +446,7 @@
 		if ( Math.abs( dx ) > 40 && Math.abs( dx ) > Math.abs( dy ) * 1.5 ) {
 			showIndex( dx < 0 ? current + 1 : current - 1 );
 		}
-	}, { passive: true } );
+	};
 
 	if ( 'IntersectionObserver' in window ) {
 		var io = new IntersectionObserver( function ( entries ) {
