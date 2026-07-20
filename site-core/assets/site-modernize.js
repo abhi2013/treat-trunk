@@ -52,8 +52,13 @@
    columns (9a1ig01) and the "who can benefit" checklist (c7e2f79). Skipped under
    prefers-reduced-motion. IntersectionObserver-based (not addEventListener) so WP
    Rocket's delay-JS can't interfere; .tt-stagger is added at load so RUCSS keeps
-   the rule, and .tt-stagger* is RUCSS-safelisted in site-core.php. A safety
-   timeout reveals everything so nothing can ever stay hidden. */
+   the rule, and .tt-stagger* is RUCSS-safelisted in site-core.php. Instead of a
+   blanket timeout (which used to fire the reveal off-screen before the user ever
+   scrolled a far-down section into view, so no animation was seen), the only
+   forced reveal is for a section already at/above the viewport when this runs -
+   the genuine "user scrolled past before delayed JS ran" case - so content can
+   never stay hidden while sections still below the fold keep their scroll-in
+   animation. */
 ( function () {
 	if ( window.matchMedia && window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches ) {
 		return;
@@ -79,7 +84,13 @@
 				} );
 			}, { threshold: 0.15 } );
 			io.observe( section );
-			setTimeout( reveal, 3000 );
+			// Already in or above the viewport when we init? Reveal now so it
+			// can't stay hidden. Sections still below the fold fall through to
+			// the observer and animate as they scroll into view.
+			if ( section.getBoundingClientRect().top < window.innerHeight ) {
+				reveal();
+				io.disconnect();
+			}
 		} else {
 			reveal();
 		}
