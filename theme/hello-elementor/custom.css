@@ -1216,6 +1216,6 @@ a[href*="trustpilot"] {
 .elementor-element-456171df img,
 .elementor-element-0171c9b img,
 .elementor-element-74a2f31c img {
-	border-radius: 18px;
-	box-shadow: 0 14px 34px -18px rgba(11, 89, 81, 0.4);
+	border-radius: 18px !important;
+	box-shadow: 0 14px 34px -18px rgba(11, 89, 81, 0.4) !important;
 }

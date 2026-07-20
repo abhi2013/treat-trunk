@@ -55,6 +55,20 @@ add_action( 'wp_head', function () {
 	echo '<style id="tt-recaptcha-badge-hide">@media (max-width:767px){.grecaptcha-badge{visibility:hidden !important;}}</style>' . "\n";
 }, 1 );
 
+/**
+ * Keep the JS-toggled scroll-reveal classes in RUCSS's used-CSS. The
+ * .tt-stagger-in state (added by site-modernize.js only once the section
+ * scrolls into view) may not be present when RUCSS's renderer snapshots the
+ * page, so RUCSS could strip its rule and leave the "why choose us" feature
+ * columns permanently at opacity:0. Safelisting the token keeps every
+ * .tt-stagger* rule regardless. (There is a JS safety-timeout too, but that
+ * only helps if the CSS rule survives.)
+ */
+add_filter( 'rocket_rucss_safelist', function ( $safelist ) {
+	$safelist[] = 'tt-stagger';
+	return $safelist;
+} );
+
 add_action( 'wp_footer', function () {
 	echo '<div class="tt-recaptcha-tos" style="display:none;text-align:center;font-size:12px;line-height:1.5;color:#666;padding:12px 16px;">'
 		. 'This site is protected by reCAPTCHA and the Google '
@@ -918,8 +932,8 @@ add_action( 'wp_enqueue_scripts', function () {
 	if ( is_page( 36634 ) ) {
 		return;
 	}
-	wp_enqueue_style( 'tt-site-modernize', plugins_url( 'assets/site-modernize.css', __FILE__ ), array(), '1.6.4' );
-	wp_enqueue_script( 'tt-site-modernize', plugins_url( 'assets/site-modernize.js', __FILE__ ), array(), '1.6.4', true );
+	wp_enqueue_style( 'tt-site-modernize', plugins_url( 'assets/site-modernize.css', __FILE__ ), array(), '1.6.5' );
+	wp_enqueue_script( 'tt-site-modernize', plugins_url( 'assets/site-modernize.js', __FILE__ ), array(), '1.6.5', true );
 }, 20 );
 
 /**

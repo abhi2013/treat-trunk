@@ -47,6 +47,51 @@
 	}, 2500 );
 } )();
 
+/* Staggered scroll-reveal for the "why choose us" feature columns (section
+   9a1ig01): as the section enters view its six icon+heading+text columns rise
+   in one at a time - a one-off reveal, not a loop. Skipped entirely under
+   prefers-reduced-motion. Uses IntersectionObserver (not addEventListener) so
+   WP Rocket's delay-JS can't interfere; .tt-stagger is added at load (so RUCSS
+   keeps the rule) and .tt-stagger-in / -in classes are RUCSS-safelisted in
+   site-core.php. A safety timeout reveals everything so nothing can stay hidden. */
+( function () {
+	if ( window.matchMedia && window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches ) {
+		return;
+	}
+	var section = document.querySelector( '.elementor-element-9a1ig01' );
+	if ( ! section ) {
+		return;
+	}
+	var ids = [ '2a85291d', '1b11d0f7', '41bddc83', '5a87982b', '603af7c', '217cc953' ];
+	var cols = ids
+		.map( function ( id ) { return document.querySelector( '.elementor-element-' + id ); } )
+		.filter( Boolean );
+	if ( ! cols.length ) {
+		return;
+	}
+	cols.forEach( function ( col, i ) {
+		col.classList.add( 'tt-stagger' );
+		col.style.transitionDelay = ( i * 0.09 ) + 's';
+	} );
+	function reveal() {
+		cols.forEach( function ( c ) { c.classList.add( 'tt-stagger-in' ); } );
+	}
+	if ( 'IntersectionObserver' in window ) {
+		var sio = new IntersectionObserver( function ( entries ) {
+			entries.forEach( function ( e ) {
+				if ( e.isIntersecting ) {
+					reveal();
+					sio.disconnect();
+				}
+			} );
+		}, { threshold: 0.15 } );
+		sio.observe( section );
+		setTimeout( reveal, 3000 );
+	} else {
+		reveal();
+	}
+} )();
+
 /* Product-options pill toggles: highlight the checked radio's label via a
    plain class rather than relying only on :has(), since that selector
    isn't supported in older browsers still in real-world use. */

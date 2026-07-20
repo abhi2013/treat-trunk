@@ -1507,3 +1507,18 @@ body .elementor-menu-cart__toggle_button svg {
 header.elementor-location-header .tt-reveal {
   transform: none !important;
 }
+
+/* Staggered scroll-reveal for the "why choose us" feature columns (paired with
+   the JS in site-modernize.js). Each column starts nudged down + transparent and
+   rises into place; per-column transition-delay (set inline by the JS) gives the
+   one-at-a-time cascade. .tt-stagger/.tt-stagger-in are RUCSS-safelisted. */
+.tt-stagger {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+  will-change: opacity, transform;
+}
+.tt-stagger.tt-stagger-in {
+  opacity: 1;
+  transform: none;
+}
