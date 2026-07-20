@@ -986,5 +986,14 @@ function jgreen_preload_homepage_hero() {
 	$desktop = esc_url( home_url( '/wp-content/uploads/2025/03/Treat-Trunk-Healthy-Snack-Box-Subscrition-Gift-Resize.webp' ) );
 	echo '<link rel="preload" as="image" fetchpriority="high" media="(max-width: 767px)" href="' . $mobile . '">' . "\n";
 	echo '<link rel="preload" as="image" fetchpriority="high" media="(min-width: 768px)" href="' . $desktop . '">' . "\n";
+
+	// NB: deliberately NOT preloading the DM Sans fonts here. Tested 2026-07-20:
+	// preloading the 3 weights (84KB, high priority) stole throttled bandwidth
+	// from the hero background image and regressed mobile LCP ~2.5s -> ~4.4s.
+	// The fonts use font-display:swap so they don't block render anyway (text
+	// paints in a fallback and swaps in), and they sit on PageSpeed's "critical
+	// chain" only as an Unscored/informational item. The hero image (the actual
+	// LCP element) keeps the connection to itself. Do not re-add font preloads
+	// without re-measuring LCP.
 }
 add_action('wp_head', 'jgreen_preload_homepage_hero', 1);
