@@ -1234,10 +1234,18 @@ a[href*="trustpilot"] {
 .elementor-element-aad58e5,
 .elementor-element-6253820 {
 	cursor: pointer;
-	transition: transform 0.2s ease, box-shadow 0.2s ease;
+	/* !important because Elementor sets its own transition here (background/border/
+	   box-shadow only, no transform), which otherwise makes the hover lift jump
+	   instantly instead of animating. */
+	transition: transform 0.22s ease, box-shadow 0.22s ease !important;
 }
 .elementor-element-aad58e5:hover,
 .elementor-element-6253820:hover {
 	transform: translateY(-6px);
 	box-shadow: 0 26px 52px -20px rgba(11, 89, 81, 0.55);
+}
+/* Touchscreens have no hover, so give a press-feedback on tap instead. */
+.elementor-element-aad58e5:active,
+.elementor-element-6253820:active {
+	transform: translateY(-2px) scale(0.99);
 }

@@ -56,6 +56,27 @@ add_action( 'wp_head', function () {
 }, 1 );
 
 /**
+ * Consistent clickable product cards across the WHOLE site. Every Elementor
+ * image that links to a /product/ page (the one-off / gift / subscription
+ * illustration cards on the homepage, /send-a-gift/, etc.) gets rounded
+ * corners, a soft shadow and a hover lift, so each product image reads as the
+ * same tappable card. Scoped to /product/ links, so it never touches the logo
+ * (which links home), nav, or social icons.
+ *
+ * Inline <style> rather than custom.css on purpose: RUCSS strips the
+ * a[href*="/product/"] attribute selector from an enqueued stylesheet as
+ * "unused" (its SaaS renderer doesn't retain it), which left the gift-page
+ * cards flat. A developer inline <style> is left untouched by RUCSS.
+ */
+add_action( 'wp_head', function () {
+	echo '<style id="tt-product-cards">'
+		. '.elementor-widget-image a[href*="/product/"]{display:block;border-radius:18px;}'
+		. '.elementor-widget-image a[href*="/product/"] img{border-radius:18px !important;box-shadow:0 14px 34px -18px rgba(11,89,81,0.4);transition:transform 0.22s ease,box-shadow 0.22s ease;display:block;}'
+		. '.elementor-widget-image a[href*="/product/"]:hover img{transform:translateY(-6px);box-shadow:0 24px 48px -18px rgba(11,89,81,0.55);}'
+		. '</style>' . "\n";
+}, 1 );
+
+/**
  * Keep the JS-toggled scroll-reveal classes in RUCSS's used-CSS. The
  * .tt-stagger-in state (added by site-modernize.js only once the section
  * scrolls into view) may not be present when RUCSS's renderer snapshots the
@@ -66,6 +87,11 @@ add_action( 'wp_head', function () {
  */
 add_filter( 'rocket_rucss_safelist', function ( $safelist ) {
 	$safelist[] = 'tt-stagger';
+	// Keep the product-card rules (below) in the used CSS. RUCSS's renderer
+	// drops the a[href*="/product/"] attribute selector as "unused", which left
+	// the gift-page / homepage product images flat; safelisting the fragment
+	// forces every rule whose selector contains it to be retained.
+	$safelist[] = '[href*="/product/"]';
 	return $safelist;
 } );
 
@@ -933,7 +959,7 @@ add_action( 'wp_enqueue_scripts', function () {
 		return;
 	}
 	wp_enqueue_style( 'tt-site-modernize', plugins_url( 'assets/site-modernize.css', __FILE__ ), array(), '1.6.5' );
-	wp_enqueue_script( 'tt-site-modernize', plugins_url( 'assets/site-modernize.js', __FILE__ ), array(), '1.6.6', true );
+	wp_enqueue_script( 'tt-site-modernize', plugins_url( 'assets/site-modernize.js', __FILE__ ), array(), '1.6.8', true );
 }, 20 );
 
 /**

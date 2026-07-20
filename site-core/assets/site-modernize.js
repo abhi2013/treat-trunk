@@ -47,48 +47,69 @@
 	}, 2500 );
 } )();
 
-/* Staggered scroll-reveal for the "why choose us" feature columns (section
-   9a1ig01): as the section enters view its six icon+heading+text columns rise
-   in one at a time - a one-off reveal, not a loop. Skipped entirely under
-   prefers-reduced-motion. Uses IntersectionObserver (not addEventListener) so
-   WP Rocket's delay-JS can't interfere; .tt-stagger is added at load (so RUCSS
-   keeps the rule) and .tt-stagger-in / -in classes are RUCSS-safelisted in
-   site-core.php. A safety timeout reveals everything so nothing can stay hidden. */
+/* One-off staggered scroll-reveals: as a section enters view its items rise into
+   place one at a time (not a loop). Applied to the "why choose us" feature
+   columns (9a1ig01) and the "who can benefit" checklist (c7e2f79). Skipped under
+   prefers-reduced-motion. IntersectionObserver-based (not addEventListener) so WP
+   Rocket's delay-JS can't interfere; .tt-stagger is added at load so RUCSS keeps
+   the rule, and .tt-stagger* is RUCSS-safelisted in site-core.php. A safety
+   timeout reveals everything so nothing can ever stay hidden. */
 ( function () {
 	if ( window.matchMedia && window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches ) {
 		return;
 	}
-	var section = document.querySelector( '.elementor-element-9a1ig01' );
-	if ( ! section ) {
-		return;
+	function stagger( section, els, step ) {
+		if ( ! section || ! els.length ) {
+			return;
+		}
+		els.forEach( function ( el, i ) {
+			el.classList.add( 'tt-stagger' );
+			el.style.transitionDelay = ( i * step ) + 's';
+		} );
+		function reveal() {
+			els.forEach( function ( e ) { e.classList.add( 'tt-stagger-in' ); } );
+		}
+		if ( 'IntersectionObserver' in window ) {
+			var io = new IntersectionObserver( function ( entries ) {
+				entries.forEach( function ( e ) {
+					if ( e.isIntersecting ) {
+						reveal();
+						io.disconnect();
+					}
+				} );
+			}, { threshold: 0.15 } );
+			io.observe( section );
+			setTimeout( reveal, 3000 );
+		} else {
+			reveal();
+		}
 	}
-	var ids = [ '2a85291d', '1b11d0f7', '41bddc83', '5a87982b', '603af7c', '217cc953' ];
-	var cols = ids
-		.map( function ( id ) { return document.querySelector( '.elementor-element-' + id ); } )
-		.filter( Boolean );
-	if ( ! cols.length ) {
-		return;
+
+	var whySection = document.querySelector( '.elementor-element-9a1ig01' );
+	if ( whySection ) {
+		var ids = [ '2a85291d', '1b11d0f7', '41bddc83', '5a87982b', '603af7c', '217cc953' ];
+		stagger(
+			whySection,
+			ids.map( function ( id ) { return document.querySelector( '.elementor-element-' + id ); } ).filter( Boolean ),
+			0.09
+		);
 	}
-	cols.forEach( function ( col, i ) {
-		col.classList.add( 'tt-stagger' );
-		col.style.transitionDelay = ( i * 0.09 ) + 's';
-	} );
-	function reveal() {
-		cols.forEach( function ( c ) { c.classList.add( 'tt-stagger-in' ); } );
-	}
-	if ( 'IntersectionObserver' in window ) {
-		var sio = new IntersectionObserver( function ( entries ) {
-			entries.forEach( function ( e ) {
-				if ( e.isIntersecting ) {
-					reveal();
-					sio.disconnect();
-				}
-			} );
-		}, { threshold: 0.15 } );
-		sio.observe( section );
-		setTimeout( reveal, 3000 );
-	} else {
-		reveal();
+
+	var benefitSection = document.querySelector( '.elementor-element-c7e2f79' );
+	if ( benefitSection ) {
+		// The checklist <li>s can be absent for a beat when this runs (they
+		// render just after the structural "why" columns), so poll briefly
+		// until they exist before applying the base state, otherwise stagger()
+		// bails on an empty list and the reveal never arms.
+		var benefitTries = 0;
+		( function armBenefit() {
+			var items = Array.prototype.slice.call( benefitSection.querySelectorAll( 'li' ) );
+			if ( items.length ) {
+				stagger( benefitSection, items, 0.07 );
+			} else if ( benefitTries++ < 20 ) {
+				setTimeout( armBenefit, 150 );
+			}
+		} )();
 	}
 } )();
 
