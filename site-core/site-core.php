@@ -218,6 +218,18 @@ add_filter( 'style_loader_tag', function ( $html, $handle ) {
 			'elementor-gf-local-fredokaone',
 			'elementor-gf-local-damion',
 			'jetpack-forms-layout',
+			// 2026-07-20: the per-page Elementor CSS and the brand stylesheet were
+			// the last render-blocking files (~128KB combined). The critical CSS
+			// (critical-home.css) was regenerated to cover the CURRENT rebranded
+			// above-the-fold - header, teal buttons, the discount bar and the hero
+			// - so these can now defer too. `tt-site-modernize` especially: the old
+			// critical CSS predated the teal rebrand and had none of its rules, so
+			// it had to stay blocking; the new critical includes them.
+			'elementor-post-6',
+			'elementor-post-25',
+			'elementor-post-173',
+			'elementor-post-14303',
+			'tt-site-modernize',
 		) );
 	}
 
@@ -1285,3 +1297,19 @@ function tt_corporate_enquiry_notify() {
 	}
 	wp_send_json_error( array( 'message' => "Sorry, that didn't go through. Please email hello@treattrunk.co.uk directly." ) );
 }
+
+/**
+ * Homepage hero LCP: stop WP Rocket's Above-The-Fold optimizer from also
+ * preloading the hero (added 2026-07-20). The hero is an Elementor CSS
+ * background image; WP Rocket auto-detects it and emits its own
+ * `data-rocket-preload as="image" fetchpriority="high"` for the full-size
+ * (106KB) file with no media query, so on mobile the browser fetches that at
+ * high priority alongside the 50KB responsive image the hero actually needs,
+ * delaying the paint. jgreen_preload_homepage_hero() (theme functions.php)
+ * already preloads the correct per-viewport image at high priority, so WP
+ * Rocket's is pure waste here. Scoped to the front page only - the ATF
+ * optimizer still runs on product/other pages where the LCP is a real <img>.
+ */
+add_filter( 'rocket_atf_elements', function ( $elements ) {
+	return is_front_page() ? array() : $elements;
+} );
