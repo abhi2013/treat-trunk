@@ -773,37 +773,43 @@ body table.extra-options tr.option_is_gift td.label {
   top: 50%;
   transform: translateY(-50%);
   z-index: 2;
-  width: 36px;
-  height: 36px;
+  width: 46px;
+  height: 46px;
   padding: 0;
   margin: 0;
   line-height: 0;
   font-size: 0;
   border-radius: 50%;
-  border: none;
-  background: rgba(250, 250, 248, 0.9);
-  color: var(--tt-teal);
+  /* Solid brand teal with a white chevron + white ring so the control stays
+     obvious over any video frame (the old translucent cream disappeared on
+     light frames). 46px is also a comfortable touch target. */
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  background: var(--tt-teal);
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 6px 16px -6px rgba(11, 89, 81, 0.5);
+  box-shadow: 0 4px 14px -2px rgba(10, 20, 16, 0.45);
   transition: background-color 0.15s ease, transform 0.15s ease;
 }
 .tt-ig-arrow--prev {
-  left: 10px;
+  left: 12px;
 }
 .tt-ig-arrow--next {
-  right: 10px;
+  right: 12px;
 }
 .tt-ig-arrow:hover {
-  background: var(--tt-canvas);
+  background: var(--tt-teal-dark, #0b5951);
   transform: translateY(-50%) scale(1.08);
+}
+.tt-ig-arrow:active {
+  transform: translateY(-50%) scale(0.96);
 }
 .tt-ig-arrow svg {
   display: block;
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
   flex: none;
   transform: translateY(1.5px);
 }
