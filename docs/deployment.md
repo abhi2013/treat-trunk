@@ -59,3 +59,27 @@ Lighthouse's `link-name` audit ("Links must have discernible text") was failing 
 - **Corporate page specifically**: reset `_wp_page_template` back to its prior value (`default`) — the original Elementor-built page reappears, since nothing was deleted (see `docs/elementor-removal-plan.md`).
 - **Any other file change**: restore from the local file backup taken before the change (`docs/backup-plan.md`), or from the pre-change Lightsail snapshot for a full-instance rollback.
 - **Git**: every deployed change corresponds to a commit on `feature/corporate-page-redesign` (later merged to `main`), so the exact diff of any deploy is always known and revertible in the repo, independent of the server-side rollback.
+
+## LCP fix: disable WP Rocket CSS background-image lazyload — 2026-07-20
+
+The homepage hero is an Elementor CSS **background image** (not an `<img>`),
+and WP Rocket's "LazyLoad for CSS background images" (`lazyload_css_bg_img`)
+was converting it to the `data-rocket-lazy-bg` / `--wpr-bg` deferred-reveal
+system. With delay-JS on, the reveal JS ran late, so the (correctly
+preloaded) hero image sat in cache unpainted until ~4.2s — LCP === the hero,
+and FCP (~1.9s) and LCP (~4.2s) had a ~2.3s gap that was pure JS-reveal delay.
+
+**Fix (both environments):** set `lazyload_css_bg_img = 0` in the
+`wp_rocket_settings` option, regenerate the Rocket config, clear cache. This
+is a plugin **setting** (DB option), not a repo file — recorded here for the
+trail. Reverse by flipping the same key back to `1`.
+
+Measured (throttled mobile, 4x CPU / ~1.6Mbps, browser cache off):
+- Before: FCP 1.9s, **LCP 4.2s**, 2.3s gap (JS-reveal delay)
+- After:  FCP 1.9s, **LCP ~3.5s** median (gap partly closed; hero paints with CSS)
+
+Remaining LCP work (not yet done): a preload conflict (WP Rocket auto-preloads
+the full 106KB desktop hero at fetchpriority=high with no media query, so
+mobile also fetches it alongside the correct 50KB responsive preload), and the
+render-blocking CSS keeping FCP at ~1.9s (WP Rocket critical-CSS SaaS has been
+failing auth since 2026-06). Both are follow-ups.
