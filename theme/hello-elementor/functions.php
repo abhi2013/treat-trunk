@@ -972,14 +972,19 @@ function jgreen_product_meta_and_description_tab() { // this is where you indica
 remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_meta', 40);
 add_filter('woocommerce_product_tabs', 'jgreen_add_meta_to_description', 999);
 
-// Preload the homepage hero background image (LCP element on mobile). WP Rocket only
-// auto-preloads <img> LCP elements, not Elementor CSS background-images, so this is added
-// manually. Two variants, gated by media query, matching the responsive override in custom.css.
+// Preload the homepage hero background image (the LCP element). It's an Elementor CSS
+// background image, which WP Rocket's own ATF preload doesn't size responsively, so this
+// is added manually with the correct per-viewport image AND fetchpriority=high, so the
+// browser fetches exactly the image the hero needs, first. WP Rocket's own (unresponsive,
+// full-size) ATF preload for this page is disabled via rocket_atf_elements in site-core.php
+// so the two don't compete on mobile. home_url() keeps it correct on any environment.
 function jgreen_preload_homepage_hero() {
 	if ( ! is_front_page() ) {
 		return;
 	}
-	echo '<link rel="preload" as="image" media="(max-width: 767px)" href="' . esc_url( home_url( '/wp-content/uploads/2025/03/Treat-Trunk-Healthy-Snack-Box-Subscrition-Gift-Resize-768x513.webp' ) ) . '">' . "\n";
-	echo '<link rel="preload" as="image" media="(min-width: 768px)" href="' . esc_url( home_url( '/wp-content/uploads/2025/03/Treat-Trunk-Healthy-Snack-Box-Subscrition-Gift-Resize.webp' ) ) . '">' . "\n";
+	$mobile  = esc_url( home_url( '/wp-content/uploads/2025/03/Treat-Trunk-Healthy-Snack-Box-Subscrition-Gift-Resize-768x513.webp' ) );
+	$desktop = esc_url( home_url( '/wp-content/uploads/2025/03/Treat-Trunk-Healthy-Snack-Box-Subscrition-Gift-Resize.webp' ) );
+	echo '<link rel="preload" as="image" fetchpriority="high" media="(max-width: 767px)" href="' . $mobile . '">' . "\n";
+	echo '<link rel="preload" as="image" fetchpriority="high" media="(min-width: 768px)" href="' . $desktop . '">' . "\n";
 }
 add_action('wp_head', 'jgreen_preload_homepage_hero', 1);
