@@ -1077,3 +1077,21 @@ body .elementor-element-1480be7 a.elementor-button:hover .elementor-button-text 
 	text-decoration: underline;
 	text-underline-offset: 3px;
 }
+
+/* CLS: the first two "how it works" step icons (Select Your Plan 5f5dcd78,
+   Choose Your Delivery 222a9495) are 179x148 PNGs in Elementor image widgets
+   with NO width/height attributes, lazy-loaded behind a 0x0 SVG placeholder -
+   so they reserve no space and shift the layout when they swap in (flagged by
+   PageSpeed Insights "explicit width and height"). Reserve their box with an
+   explicit width + matching aspect-ratio; height:auto and max-width keep them
+   responsive and undistorted. Verified natural 179x148; same IDs on staging.
+   Deliberately scoped to just these two: the "why choose us" icons are 48x48
+   with their own dimensions, and the third step icon (3a7dcdc) already ships
+   width/height=300/300 - none of those need (or should get) this rule. */
+.elementor-element-5f5dcd78 img,
+.elementor-element-222a9495 img {
+	width: 179px;
+	max-width: 100%;
+	height: auto;
+	aspect-ratio: 179 / 148;
+}
