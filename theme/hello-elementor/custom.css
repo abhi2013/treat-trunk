@@ -1014,3 +1014,66 @@ color: #5e5e5e!important;
 	min-width: 156px;
 	max-width: 280px;
 }
+/* =============================================================================
+ * Homepage hero polish - 2026-07-20
+ * Three fixes: (1) desktop hero background framing (the product flat-lay was
+ * cropped and floating too high, with `cover` + a `0px -274px` offset chopping
+ * the snacks at the bottom edge); (2) primary/secondary hierarchy on the two
+ * hero CTAs (both were identical solid teal); (3) the "Grab your 10% discount
+ * code" bar didn't read as clickable. Brand-preserving: teal #12786C, DM Sans,
+ * existing 11px pill radius all kept.
+ * ============================================================================= */
+
+/* (1) Desktop/tablet only - mobile keeps its own tuned positioning (see the
+   max-width:767px block above). Anchor the flat-lay to the bottom so the full
+   row of products sits in frame with headroom above for the headline + CTAs. */
+@media (min-width: 768px) {
+	body.home .elementor-element.elementor-element-22aea114:not(.elementor-motion-effects-element-type-background) {
+		background-position: center bottom !important;
+		background-repeat: no-repeat !important;
+		background-size: cover !important;
+	}
+	body.home .elementor-element.elementor-element-22aea114 > .elementor-container {
+		min-height: 600px !important;
+	}
+}
+
+/* (2) Secondary CTA "Gift a Snack Box" (970c311) -> ghost/outline, so the
+   primary "Get a Snack Box" (solid teal) clearly leads. Higher specificity
+   than the sitewide button rule in site-modernize.css, both !important. */
+body .elementor-element-970c311 a.elementor-button,
+body .elementor-element-970c311 .elementor-button {
+	background-color: rgba(255, 255, 255, 0.92) !important;
+	border: 2px solid #12786C !important;
+	color: #12786C !important;
+	box-shadow: 0 4px 14px -6px rgba(31, 61, 44, 0.22) !important;
+}
+body .elementor-element-970c311 a.elementor-button .elementor-button-text {
+	color: #12786C !important;
+}
+body .elementor-element-970c311 a.elementor-button:hover,
+body .elementor-element-970c311 .elementor-button:hover {
+	background-color: #12786C !important;
+	border-color: #12786C !important;
+}
+body .elementor-element-970c311 a.elementor-button:hover .elementor-button-text {
+	color: #FAFAF8 !important;
+}
+
+/* Primary CTA "Get a Snack Box" (e657b56) - give it a lift so it reads as
+   the leading action. */
+body .elementor-element-e657b56 a.elementor-button,
+body .elementor-element-e657b56 .elementor-button {
+	box-shadow: 0 10px 24px -8px rgba(18, 120, 108, 0.55) !important;
+}
+
+/* (3) Top discount bar (1480be7) - trailing arrow + hover underline so it
+   reads as an actionable link, not static text. */
+body .elementor-element-1480be7 a.elementor-button .elementor-button-text::after {
+	content: " \2192";
+	font-weight: 700;
+}
+body .elementor-element-1480be7 a.elementor-button:hover .elementor-button-text {
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
