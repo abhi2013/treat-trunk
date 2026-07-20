@@ -83,3 +83,37 @@ the full 106KB desktop hero at fetchpriority=high with no media query, so
 mobile also fetches it alongside the correct 50KB responsive preload), and the
 render-blocking CSS keeping FCP at ~1.9s (WP Rocket critical-CSS SaaS has been
 failing auth since 2026-06). Both are follow-ups.
+
+## Static asset caching (browser cache lifetimes) — 2026-07-20
+
+**Symptom:** PageSpeed "Use efficient cache lifetimes" flagged ~2.9 MB with no
+cache TTL — `reels/reel-1.mp4` (2 MB), the hero `.webp`, poster/bg images all
+served with **no** `Cache-Control`/`Expires` (repeat visits re-download them).
+
+**Root cause:** the Bitnami Apache **HTTPS vhost sets `AllowOverride None`** for
+`/opt/bitnami/wordpress`, so `.htaccess` is ignored entirely (WP Rocket's browser-
+caching rules never apply), **and `mod_expires` is not loaded** (only
+`mod_headers`). So no expires headers reach static files.
+
+**Fix (both environments — server config, NOT a repo file, recorded here):** add
+a `mod_headers` block to `conf/vhosts/wordpress-https-vhost.conf`, just before the
+letsencrypt include, inside the `<VirtualHost>` (co-located with the security
+headers). Then `httpd -t` and `sudo /opt/bitnami/ctlscript.sh restart apache`.
+
+```apache
+<IfModule mod_headers.c>
+  <FilesMatch "\.(mp4|webm|ogg|webp|avif|jpe?g|png|gif|svg|ico|css|js|woff2?|ttf|otf|eot)$">
+    Header set Cache-Control "public, max-age=31536000"
+  </FilesMatch>
+</IfModule>
+```
+
+Backups: `~/backups-wp-rocket-20260720/wordpress-https-vhost.conf.bak-cache`
+(prod) and `~/vhost-https.conf.bak-cache` (staging). Verified: reel-1.mp4, hero
+webp and reel-2 poster now return `public, max-age=31536000` on both envs.
+
+**Known gap:** `/uploads/` PNG/JPGs intercepted by CompressX are served via PHP
+with `no-store`, which the vhost `Header set` does not override — those (e.g.
+`newsletter-bg.png`) still don't cache. Needs a CompressX-side setting; ~150 KB,
+lower priority. An earlier `# BEGIN Treat Trunk static asset caching` block was
+also appended to prod `.htaccess` but is **inert** (AllowOverride None) — harmless.
