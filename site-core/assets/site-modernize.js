@@ -490,47 +490,66 @@
 	} );
 } )();
 
-/* Testimonial cards: all the same height with the quote clamped to 6
-   lines (see CSS), plus a "Read more" for reviews long enough to be
-   cut off. Opens the full review in a shared modal rather than
-   expanding the card in place, which pushed every card below it down
-   the page each time one was opened. */
+/* Testimonial cards: the quote is clamped to 3 lines (see CSS), with a
+   "Read more" on any review actually clipped by that clamp, opening the full
+   text in a shared modal (rather than expanding the card in place, which
+   pushed every card below it down the page).
+
+   Truncation is detected with scrollHeight > clientHeight, which is exact.
+   The previous code used a >260-character guess to sidestep swiper slides not
+   being laid out yet - but that missed shorter reviews that are still clipped
+   (e.g. ~180-260 chars), so those showed cut-off text with no way to read the
+   rest. Instead we handle the timing directly: wait for fonts to load, then
+   measure, skip any element not yet laid out (clientHeight 0), and re-measure
+   when the section scrolls into view - so every clipped card gets its button,
+   whichever slide it's on. Handlers are bound via on* properties because WP
+   Rocket's delay-JS overrides addEventListener and would otherwise swallow the
+   click until a first interaction (same fix as the reels player). */
 ( function () {
 	var texts = Array.prototype.slice.call( document.querySelectorAll( '.elementor-testimonial__text' ) );
-	/* A scrollHeight/clientHeight comparison depends on the element
-	   already being laid out at real size - swiper keeps non-active
-	   slides at zero size until scrolled to, so that check silently
-	   passed (no Read more shown) for any review that was not the
-	   active slide, or was measured before swiper finished sizing it.
-	   A plain character-count guess has no such timing dependency. */
-	var overflowing = texts.filter( function ( text ) {
-		return text.textContent.trim().length > 260;
-	} );
-	if ( ! overflowing.length ) {
+	if ( ! texts.length ) {
 		return;
 	}
 
-	var overlay = document.createElement( 'div' );
-	overlay.className = 'tt-review-modal-overlay';
-	overlay.hidden = true;
-	overlay.innerHTML =
-		'<div class="tt-review-modal" role="dialog" aria-modal="true">' +
-			'<button type="button" class="tt-review-modal-close" aria-label="Close">' +
-				'<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>' +
-			'</button>' +
-			'<span class="tt-review-modal-quote">“</span>' +
-			'<div class="tt-review-modal-text"></div>' +
-			'<div class="tt-review-modal-footer"></div>' +
-		'</div>';
-	document.body.appendChild( overlay );
-	var modalText = overlay.querySelector( '.tt-review-modal-text' );
-	var modalFooter = overlay.querySelector( '.tt-review-modal-footer' );
-	var closeBtn = overlay.querySelector( '.tt-review-modal-close' );
-
+	var overlay, modalText, modalFooter;
 	function closeModal() {
+		if ( overlay ) {
+			overlay.hidden = true;
+		}
+	}
+	function ensureModal() {
+		if ( overlay ) {
+			return;
+		}
+		overlay = document.createElement( 'div' );
+		overlay.className = 'tt-review-modal-overlay';
 		overlay.hidden = true;
+		overlay.innerHTML =
+			'<div class="tt-review-modal" role="dialog" aria-modal="true">' +
+				'<button type="button" class="tt-review-modal-close" aria-label="Close">' +
+					'<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>' +
+				'</button>' +
+				'<span class="tt-review-modal-quote">“</span>' +
+				'<div class="tt-review-modal-text"></div>' +
+				'<div class="tt-review-modal-footer"></div>' +
+			'</div>';
+		document.body.appendChild( overlay );
+		modalText = overlay.querySelector( '.tt-review-modal-text' );
+		modalFooter = overlay.querySelector( '.tt-review-modal-footer' );
+		overlay.querySelector( '.tt-review-modal-close' ).onclick = closeModal;
+		overlay.onclick = function ( e ) {
+			if ( e.target === overlay ) {
+				closeModal();
+			}
+		};
+		document.addEventListener( 'keydown', function ( e ) {
+			if ( e.key === 'Escape' && overlay && ! overlay.hidden ) {
+				closeModal();
+			}
+		} );
 	}
 	function openModal( text ) {
+		ensureModal();
 		modalText.textContent = text.textContent.trim();
 		var footer = text.closest( '.elementor-testimonial' ).querySelector( '.elementor-testimonial__footer' );
 		modalFooter.innerHTML = '';
@@ -539,40 +558,50 @@
 		}
 		overlay.hidden = false;
 	}
-	closeBtn.addEventListener( 'click', closeModal );
-	overlay.addEventListener( 'click', function ( e ) {
-		if ( e.target === overlay ) {
-			closeModal();
-		}
-	} );
-	document.addEventListener( 'keydown', function ( e ) {
-		if ( e.key === 'Escape' && ! overlay.hidden ) {
-			closeModal();
-		}
-	} );
 
-	overflowing.forEach( function ( text ) {
+	function addReadMore( text ) {
+		if ( text.getAttribute( 'data-tt-review' ) || text.clientHeight === 0 ) {
+			return; // already handled, or not laid out yet (retry on view)
+		}
+		text.setAttribute( 'data-tt-review', '1' );
+		if ( text.scrollHeight <= text.clientHeight + 4 ) {
+			return; // not actually clipped
+		}
 		var btn = document.createElement( 'button' );
 		btn.type = 'button';
 		btn.className = 'tt-review-more';
 		btn.textContent = 'Read more';
-		btn.addEventListener( 'click', function ( e ) {
+		btn.onclick = function ( e ) {
 			e.stopPropagation();
 			openModal( text );
-		} );
+		};
 		text.parentNode.insertBefore( btn, text.nextSibling );
 
-		/* the whole card opens the same modal, not just the Read more
-		   button - the truncated text under a card that does nothing
-		   when clicked reads as broken. */
 		var card = text.closest( '.elementor-testimonial' );
 		if ( card ) {
 			card.classList.add( 'tt-review-clickable' );
-			card.addEventListener( 'click', function () {
+			card.onclick = function () {
 				openModal( text );
-			} );
+			};
 		}
+	}
+	function processAll() {
+		texts.forEach( addReadMore );
+	}
+
+	( document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve() ).then( function () {
+		requestAnimationFrame( processAll );
 	} );
+	if ( 'IntersectionObserver' in window ) {
+		var container = texts[ 0 ].closest( '.elementor-widget-testimonial-carousel, .elementor-widget, section' ) || document.body;
+		new IntersectionObserver( function ( entries ) {
+			entries.forEach( function ( e ) {
+				if ( e.isIntersecting ) {
+					processAll();
+				}
+			} );
+		} ).observe( container );
+	}
 } )();
 
 /* Welcome-box subscription products: make Option 1 / Option 2 a real

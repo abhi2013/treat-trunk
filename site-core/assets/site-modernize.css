@@ -1227,8 +1227,17 @@ body .elementor-search-form__submit:hover {
   counter-increment: tt-step;
 }
 .elementor-element-6b803ead > .elementor-container > .elementor-column .elementor-widget-image {
+  /* Shrink-wrap the widget to the icon and centre it, so the step-number badge
+     below (position:absolute; right:2px) lands on the icon's own top-right
+     corner instead of the full-width column's right edge - where it floated
+     detached, off to the side, looking unnatural on mobile. */
   position: relative;
-  display: inline-block;
+  display: block;
+  width: -moz-fit-content;
+  width: fit-content;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
 }
 .elementor-element-6b803ead > .elementor-container > .elementor-column .elementor-widget-image::after {
   content: counter(tt-step);
