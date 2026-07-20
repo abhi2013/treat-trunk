@@ -412,6 +412,34 @@
 		} );
 	}
 
+	/* Touch swipe (mobile): swipe left -> next reel, swipe right -> prev.
+	   Passive listeners so vertical page scrolling is never blocked; a move
+	   only counts as a swipe when it's clearly horizontal (past a 40px
+	   threshold and more horizontal than vertical), so an ordinary up/down
+	   scroll that happens to start on the video doesn't flip slides. */
+	var touchStartX = 0;
+	var touchStartY = 0;
+	var touching = false;
+	slidesWrap.addEventListener( 'touchstart', function ( e ) {
+		if ( ! e.touches || ! e.touches.length ) {
+			return;
+		}
+		touchStartX = e.touches[ 0 ].clientX;
+		touchStartY = e.touches[ 0 ].clientY;
+		touching = true;
+	}, { passive: true } );
+	slidesWrap.addEventListener( 'touchend', function ( e ) {
+		if ( ! touching || ! e.changedTouches || ! e.changedTouches.length ) {
+			return;
+		}
+		touching = false;
+		var dx = e.changedTouches[ 0 ].clientX - touchStartX;
+		var dy = e.changedTouches[ 0 ].clientY - touchStartY;
+		if ( Math.abs( dx ) > 40 && Math.abs( dx ) > Math.abs( dy ) * 1.5 ) {
+			showIndex( dx < 0 ? current + 1 : current - 1 );
+		}
+	}, { passive: true } );
+
 	if ( 'IntersectionObserver' in window ) {
 		var io = new IntersectionObserver( function ( entries ) {
 			entries.forEach( function ( entry ) {

@@ -919,7 +919,7 @@ add_action( 'wp_enqueue_scripts', function () {
 		return;
 	}
 	wp_enqueue_style( 'tt-site-modernize', plugins_url( 'assets/site-modernize.css', __FILE__ ), array(), '1.6.2' );
-	wp_enqueue_script( 'tt-site-modernize', plugins_url( 'assets/site-modernize.js', __FILE__ ), array(), '1.6.1', true );
+	wp_enqueue_script( 'tt-site-modernize', plugins_url( 'assets/site-modernize.js', __FILE__ ), array(), '1.6.2', true );
 }, 20 );
 
 /**
