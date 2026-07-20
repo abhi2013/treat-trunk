@@ -26,6 +26,20 @@ if ( ! defined( 'TT_MANUAL_CSS_OPT' ) ) {
 }
 
 /**
+ * CLS: the header logo (attachment 18837, Treat-Trunk-Logo-Sig-Logo-150.png) is
+ * above the fold but was being lazy-loaded. Its lazy placeholder renders ~120px
+ * tall while the loaded logo is a fixed 60x60 (set in CSS), so on load the header
+ * collapses ~99px and the whole <main> jumps up - a ~0.22 layout shift flagged by
+ * PageSpeed Insights. Skip lazyload for it (WP Rocket honours data-no-lazy) so it
+ * loads eagerly at its final size: no shift, and the logo paints sooner. */
+add_filter( 'wp_get_attachment_image_attributes', function ( $attr, $attachment ) {
+	if ( isset( $attachment->ID ) && 18837 === (int) $attachment->ID ) {
+		$attr['data-no-lazy'] = '1';
+	}
+	return $attr;
+}, 10, 2 );
+
+/**
  * Bulk pricing for the Letterbox product (ID 40245, slug "letterbox").
  *
  * Corporate buyers ordering many boxes to one address (a single WooCommerce
