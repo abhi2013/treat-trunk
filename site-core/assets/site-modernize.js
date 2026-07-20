@@ -92,6 +92,31 @@
 	}
 } )();
 
+/* Make the whole subscription card clickable (-> its Subscribe product link), so
+   the cards read as obviously interactive, not just the button. Clicks that land
+   on a real link/button (Subscribe, "Buy one trunk") are left alone so they keep
+   their own destinations; everything else on the card follows the primary
+   Subscribe link. Bound via the onclick property so WP Rocket's delay-JS can't
+   swallow it. Keyboard users still tab to the real inner links. */
+( function () {
+	[ 'aad58e5', '6253820' ].forEach( function ( id ) {
+		var card = document.querySelector( '.elementor-element-' + id );
+		if ( ! card ) {
+			return;
+		}
+		var primary = card.querySelector( 'a.elementor-button' );
+		if ( ! primary || ! primary.href ) {
+			return;
+		}
+		card.onclick = function ( e ) {
+			if ( e.target.closest( 'a, button' ) ) {
+				return;
+			}
+			window.location.href = primary.href;
+		};
+	} );
+} )();
+
 /* Product-options pill toggles: highlight the checked radio's label via a
    plain class rather than relying only on :has(), since that selector
    isn't supported in older browsers still in real-world use. */

@@ -1219,3 +1219,25 @@ a[href*="trustpilot"] {
 	border-radius: 18px !important;
 	box-shadow: 0 14px 34px -18px rgba(11, 89, 81, 0.4) !important;
 }
+
+/* Subscription cards, part 2: make them read as real, tappable cards.
+   (1) The inner .elementor-widget-wrap carried 10px padding, which left the teal
+   header inset as a sharp square inside the rounded card - zero it so the header
+   fills to the rounded edge and its top corners get clipped round.
+   (2) A hover lift + deeper shadow + pointer cursor so they're obviously
+   interactive; the whole card is made clickable (-> Subscribe) in
+   site-modernize.js, with the inner Subscribe / Buy-one-trunk links still working. */
+.elementor-element-aad58e5 > .elementor-widget-wrap,
+.elementor-element-6253820 > .elementor-widget-wrap {
+	padding: 0 !important;
+}
+.elementor-element-aad58e5,
+.elementor-element-6253820 {
+	cursor: pointer;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.elementor-element-aad58e5:hover,
+.elementor-element-6253820:hover {
+	transform: translateY(-6px);
+	box-shadow: 0 26px 52px -20px rgba(11, 89, 81, 0.55);
+}
