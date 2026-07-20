@@ -1110,3 +1110,25 @@ body .elementor-element-1480be7 a.elementor-button:hover .elementor-button-text 
 a[href*="trustpilot"] {
 	text-decoration: underline;
 }
+
+/* Homepage "why choose us" feature list (section 9a1ig01): the six circular
+   feature icons were only 48px - undersized against the 28px headings, leaving
+   the icon column looking empty. Enlarge them to 72px and bump the descriptions
+   from 16px to 17px to use the whitespace and balance each row. Scoped to the
+   six icon widgets by id so the large product image in the left column is left
+   alone; width+height stay explicit so the 72x72 box is still reserved (no CLS)
+   while the icons lazy-load. */
+.elementor-element-7138764c img,
+.elementor-element-fdb352b img,
+.elementor-element-552d5535 img,
+.elementor-element-7f7ffa74 img,
+.elementor-element-38c97647 img,
+.elementor-element-3d677392 img {
+	width: 72px !important;
+	height: 72px !important;
+}
+.elementor-element-9a1ig01 .elementor-widget-text-editor,
+.elementor-element-9a1ig01 .elementor-widget-text-editor p {
+	font-size: 17px !important;
+	line-height: 1.6 !important;
+}

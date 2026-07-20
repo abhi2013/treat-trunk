@@ -40,6 +40,31 @@ add_filter( 'wp_get_attachment_image_attributes', function ( $attr, $attachment 
 }, 10, 2 );
 
 /**
+ * reCAPTCHA v3 badge: hide it on mobile, where the fixed bottom-right icon eats
+ * screen space and overlaps content. Google's terms allow hiding the badge as
+ * long as the reCAPTCHA attribution text is shown in its place - the mobile-only
+ * footer line below provides that. Desktop keeps the standard badge (which
+ * carries its own attribution), so no change there.
+ *
+ * The hide rule is an inline <style> rather than custom.css on purpose: the
+ * .grecaptcha-badge element is injected by reCAPTCHA's JS after the initial
+ * HTML, so RUCSS would strip a rule targeting it from an enqueued stylesheet as
+ * "unused". A developer inline <style> is left untouched by RUCSS.
+ */
+add_action( 'wp_head', function () {
+	echo '<style id="tt-recaptcha-badge-hide">@media (max-width:767px){.grecaptcha-badge{visibility:hidden !important;}}</style>' . "\n";
+}, 1 );
+
+add_action( 'wp_footer', function () {
+	echo '<div class="tt-recaptcha-tos" style="display:none;text-align:center;font-size:12px;line-height:1.5;color:#666;padding:12px 16px;">'
+		. 'This site is protected by reCAPTCHA and the Google '
+		. '<a href="https://policies.google.com/privacy" target="_blank" rel="nofollow noopener" style="color:#666;text-decoration:underline;">Privacy Policy</a> and '
+		. '<a href="https://policies.google.com/terms" target="_blank" rel="nofollow noopener" style="color:#666;text-decoration:underline;">Terms of Service</a> apply.'
+		. '</div>'
+		. '<style>@media (max-width:767px){.tt-recaptcha-tos{display:block !important;}}</style>' . "\n";
+} );
+
+/**
  * Bulk pricing for the Letterbox product (ID 40245, slug "letterbox").
  *
  * Corporate buyers ordering many boxes to one address (a single WooCommerce
