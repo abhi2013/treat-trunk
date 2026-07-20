@@ -218,18 +218,6 @@ add_filter( 'style_loader_tag', function ( $html, $handle ) {
 			'elementor-gf-local-fredokaone',
 			'elementor-gf-local-damion',
 			'jetpack-forms-layout',
-			// 2026-07-20: the per-page Elementor CSS and the brand stylesheet were
-			// the last render-blocking files (~128KB combined). The critical CSS
-			// (critical-home.css) was regenerated to cover the CURRENT rebranded
-			// above-the-fold - header, teal buttons, the discount bar and the hero
-			// - so these can now defer too. `tt-site-modernize` especially: the old
-			// critical CSS predated the teal rebrand and had none of its rules, so
-			// it had to stay blocking; the new critical includes them.
-			'elementor-post-6',
-			'elementor-post-25',
-			'elementor-post-173',
-			'elementor-post-14303',
-			'tt-site-modernize',
 		) );
 	}
 
