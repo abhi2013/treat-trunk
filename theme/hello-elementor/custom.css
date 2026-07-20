@@ -1095,3 +1095,18 @@ body .elementor-element-1480be7 a.elementor-button:hover .elementor-button-text 
 	height: auto;
 	aspect-ratio: 179 / 148;
 }
+
+/* A11y (WCAG 2 AA colour contrast): testimonial review text was #7a7a7a on the
+   #fafaf8 card (~4.25:1, under the 4.5:1 minimum for body text). Darkened to
+   #666 (~5.5:1). Flagged by Lighthouse/axe color-contrast. */
+.elementor-testimonial__text {
+	color: #666666 !important;
+}
+
+/* A11y (WCAG link-in-text-block): the Trustpilot link sits inside the
+   "Rated 3.8 out of 5 ... on Trustpilot" sentence and was distinguished from the
+   surrounding text by colour alone. Underline it so it's identifiable without
+   relying on colour. */
+a[href*="trustpilot"] {
+	text-decoration: underline;
+}

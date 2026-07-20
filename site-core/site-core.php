@@ -495,6 +495,27 @@ add_action( 'wp_footer', function () {
 				}
 			}
 		} );
+
+		// A11y (aria-hidden-focus): Elementor Pro's menu-cart panel keeps its
+		// 6 links/buttons focusable while closed, even though the container is
+		// aria-hidden="true" - so keyboard users tab into an invisible cart.
+		// Sync the `inert` attribute to aria-hidden: inert while closed removes
+		// the panel from the tab order AND the accessibility tree. This is safe
+		// because Elementor's own showCart()/hideCart() set aria-hidden to
+		// false/true on this exact container (confirmed in the woocommerce-menu
+		// -cart bundle), so opening the cart clears inert and it stays fully
+		// interactive. Older browsers without `inert` support just ignore it.
+		document.querySelectorAll( '.elementor-menu-cart__container' ).forEach( function ( cart ) {
+			var sync = function () {
+				if ( cart.getAttribute( 'aria-hidden' ) === 'true' ) {
+					cart.setAttribute( 'inert', '' );
+				} else {
+					cart.removeAttribute( 'inert' );
+				}
+			};
+			sync();
+			new MutationObserver( sync ).observe( cart, { attributes: true, attributeFilter: [ 'aria-hidden' ] } );
+		} );
 	})();
 	</script>
 	<?php
