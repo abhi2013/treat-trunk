@@ -11,6 +11,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Manual homepage CSS optimization (inline critical CSS + preload-swap deferral)
+ * was a workaround built while WP Rocket's license was nulled and its Remove
+ * Unused CSS (RUCSS) SaaS could not authenticate. As of 2026-07-20 the genuine
+ * WP Rocket 3.23 license is active (consumer_email sally@treattrunk.co.uk) and
+ * RUCSS handles CSS delivery natively - which strips *unused* rules rather than
+ * only deferring whole stylesheets. The two mechanisms conflict: rewriting a
+ * <link rel=stylesheet> to rel=preload stops RUCSS from processing that handle.
+ * So the manual path is now gated off. Flip this to true to instantly restore
+ * the old behavior if RUCSS ever has to be turned back off.
+ */
+if ( ! defined( 'TT_MANUAL_CSS_OPT' ) ) {
+	define( 'TT_MANUAL_CSS_OPT', false );
+}
+
+/**
  * Bulk pricing for the Letterbox product (ID 40245, slug "letterbox").
  *
  * Corporate buyers ordering many boxes to one address (a single WooCommerce
@@ -166,6 +181,9 @@ add_action( 'wp_enqueue_scripts', function () {
  * async loading pattern, instead of blocking render.
  */
 add_filter( 'style_loader_tag', function ( $html, $handle ) {
+	if ( ! TT_MANUAL_CSS_OPT ) {
+		return $html;
+	}
 	$defer_handles = array(
 		'cookie-law-info',
 		'cookie-law-info-gdpr',
@@ -243,6 +261,9 @@ add_filter( 'style_loader_tag', function ( $html, $handle ) {
  * this same treatment to other page types.
  */
 add_action( 'wp_head', function () {
+	if ( ! TT_MANUAL_CSS_OPT ) {
+		return;
+	}
 	if ( ! is_front_page() ) {
 		return;
 	}
