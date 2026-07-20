@@ -65,6 +65,42 @@ add_action( 'wp_footer', function () {
 } );
 
 /**
+ * Contact Form 7 loads its reCAPTCHA v3 script (and pulls in Google's api.js +
+ * the badge) on EVERY page by default, even pages with no form - a well-known
+ * CF7 behaviour and pure dead weight on articles, the FAQ-less pages, etc.
+ * Dequeue it unless the current page actually embeds a CF7 form, so reCAPTCHA
+ * only loads where it's needed (Contact, Brand Rep/Affiliates, Corporate Orders,
+ * FAQ - the pages that contain [contact-form-7], whether in post content or in
+ * Elementor data). Verified no CF7 form lives in any global header/footer/popup
+ * template, so dropping it elsewhere is safe. On CF7 pages nothing is dequeued,
+ * so those forms keep their reCAPTCHA token generation. Handles confirmed from
+ * CF7 6.x source: 'google-recaptcha' (api.js) and 'wpcf7-recaptcha' (module).
+ */
+add_action( 'wp_enqueue_scripts', function () {
+	if ( is_admin() ) {
+		return;
+	}
+	$has_cf7_form = false;
+	if ( is_singular() ) {
+		$post = get_post();
+		if ( $post instanceof WP_Post ) {
+			if ( false !== strpos( (string) $post->post_content, 'contact-form-7' ) ) {
+				$has_cf7_form = true;
+			} else {
+				$elementor = get_post_meta( $post->ID, '_elementor_data', true );
+				if ( is_string( $elementor ) && false !== strpos( $elementor, 'contact-form-7' ) ) {
+					$has_cf7_form = true;
+				}
+			}
+		}
+	}
+	if ( ! $has_cf7_form ) {
+		wp_dequeue_script( 'wpcf7-recaptcha' );
+		wp_dequeue_script( 'google-recaptcha' );
+	}
+}, 100 );
+
+/**
  * Bulk pricing for the Letterbox product (ID 40245, slug "letterbox").
  *
  * Corporate buyers ordering many boxes to one address (a single WooCommerce
