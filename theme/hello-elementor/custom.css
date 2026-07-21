@@ -491,14 +491,40 @@ header .entry-title {
 /* The pills' original home (the native "Welcome Box" label + select row)
    is now empty once site-modernize.js moves them - the select itself
    must stay in the DOM and functional (WooCommerce's price/stock logic
-   listens for its change event), just visually hidden. */
-table.variations {
-	position: absolute;
-	width: 1px;
-	height: 1px;
-	overflow: hidden;
-	clip: rect(0, 0, 0, 0);
-	white-space: nowrap;
+   listens for its change event), just visually hidden.
+
+   Scoped to ":has(+ .tt-variation-pills)" for two reasons:
+
+   1. site-modernize.js only builds pills when a dropdown has between 2 and
+      6 options. Hiding the table unconditionally means any product outside
+      that range gets an invisible, unusable variation selector. Today every
+      variable product is within range, so this is latent rather than live,
+      but it should fail visible rather than fail unbuyable.
+
+   2. site-modernize.css sets "width: 100% !important" on table.variations
+      (it styles the table for the products where it IS shown). That beat
+      the plain "width: 1px" here, so the hidden table stayed 100% wide -
+      and because it is position:absolute, that 100% resolved against the
+      product wrapper, not the 50%-width summary column. The result was a
+      clipped-but-still-laid-out ~718px box hanging off the right edge of
+      every variable product page, giving ~350px of horizontal scroll on
+      tablet widths (iPad reported it; desktop was wide enough to hide it).
+      Hence !important on the box metrics below. */
+body table.variations:has(+ .tt-variation-pills),
+body table.variations:has(+ .tt-variation-pills) tbody,
+body table.variations:has(+ .tt-variation-pills) tr,
+body table.variations:has(+ .tt-variation-pills) th,
+body table.variations:has(+ .tt-variation-pills) td {
+	position: absolute !important;
+	width: 1px !important;
+	height: 1px !important;
+	overflow: hidden !important;
+	clip: rect(0, 0, 0, 0) !important;
+	clip-path: inset(50%) !important;
+	white-space: nowrap !important;
+	margin: -1px !important;
+	padding: 0 !important;
+	border: 0 !important;
 }
 
 /* The Mini/Standard Welcome Box cards nested inside Option 1 duplicate the

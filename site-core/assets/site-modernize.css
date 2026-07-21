@@ -1058,6 +1058,13 @@ body table.woocommerce-grouped-product-list .woocommerce-grouped-product-list-it
   order: 3;
   margin-left: auto;
   padding: 0 !important;
+  /* The cell is a flex item and was free to shrink below its own content;
+     at tablet widths it collapsed to ~58px while the "Select options"
+     button inside it stayed at its nowrap width (~129px) and spilled past
+     the right edge of the page. Holding the cell at max-content lets the
+     row's existing flex-wrap move the button to its own line instead. */
+  flex: 0 0 auto;
+  min-width: max-content;
 }
 body table.woocommerce-grouped-product-list .woocommerce-grouped-product-list-item__quantity .button {
   white-space: nowrap;
