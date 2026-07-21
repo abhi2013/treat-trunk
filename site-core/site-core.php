@@ -958,7 +958,7 @@ add_action( 'wp_enqueue_scripts', function () {
 	if ( is_page( 36634 ) ) {
 		return;
 	}
-	wp_enqueue_style( 'tt-site-modernize', plugins_url( 'assets/site-modernize.css', __FILE__ ), array(), '1.6.6' );
+	wp_enqueue_style( 'tt-site-modernize', plugins_url( 'assets/site-modernize.css', __FILE__ ), array(), '1.6.7' );
 	wp_enqueue_script( 'tt-site-modernize', plugins_url( 'assets/site-modernize.js', __FILE__ ), array(), '1.6.9', true );
 }, 20 );
 

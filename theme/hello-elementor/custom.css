@@ -1363,6 +1363,29 @@ a[href*="trustpilot"] {
 	}
 }
 
+/* Mobile header declutter: hide the cart's price text and the standalone
+   "Login" link so the header stays a single row (hamburger left, logo
+   centred, cart pill right). Without this the price ("£0.00" / a real
+   subtotal) and Login wrap onto a second row and push the logo off-centre.
+   The cart keeps its own icon + item-count badge, so it stays functional;
+   Login stays reachable via checkout / My Account.
+
+   These lived in site-core's site-modernize.css, but that file is NOT
+   enqueued on the corporate page (is_page(36634) early-return in
+   site-core.php), so the corporate header rendered the broken two-row
+   layout while every other page was fine - the "inconsistent header across
+   pages" bug. custom.css loads on every page, so it is the correct home:
+   this now applies uniformly, corporate included. Same 767px breakpoint as
+   the rebalance block above. */
+@media (max-width: 767px) {
+	body .elementor-menu-cart__toggle_button .elementor-button-text {
+		display: none !important;
+	}
+	body a.login-link {
+		display: none !important;
+	}
+}
+
 /* ===========================================================================
    Blog single-post reading experience. Every post uses the same Elementor
    single-post template, so styling .elementor-widget-theme-post-content

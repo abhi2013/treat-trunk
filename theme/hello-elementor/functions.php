@@ -114,7 +114,7 @@ if ( ! function_exists( 'hello_elementor_scripts_styles' ) ) {
 add_action( 'wp_enqueue_scripts', 'hello_elementor_scripts_styles' );
 
 function enqueue_custom_styles() {
-	wp_enqueue_style('custom', get_stylesheet_directory_uri() . '/custom.css', array(), '1.0.30');
+	wp_enqueue_style('custom', get_stylesheet_directory_uri() . '/custom.css', array(), '1.0.31');
 }
 add_action('wp_enqueue_scripts', 'enqueue_custom_styles');
 
