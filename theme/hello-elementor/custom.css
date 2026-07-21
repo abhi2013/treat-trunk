@@ -1336,3 +1336,87 @@ a[href*="trustpilot"] {
 		margin-right: auto !important;
 	}
 }
+
+/* ===========================================================================
+   Blog single-post reading experience. Every post uses the same Elementor
+   single-post template, so styling .elementor-widget-theme-post-content
+   upgrades all posts at once. The body copy was Roboto at 16px on an ~860px
+   (~108 chars/line) measure with a loose 210% line-height - too wide and
+   off-brand. Constrain the measure, switch to the brand font DM Sans, and set
+   an editorial rhythm for headings, lists, tables and quotes.
+   =========================================================================== */
+.elementor-widget-theme-post-content,
+.elementor-widget-theme-post-content > .elementor-widget-container {
+	max-width: 680px;
+	margin-left: auto;
+	margin-right: auto;
+}
+.elementor-widget-theme-post-content,
+.elementor-widget-theme-post-content p,
+.elementor-widget-theme-post-content li {
+	font-family: "DM Sans", sans-serif !important;
+	font-size: 18px;
+	line-height: 1.7;
+	color: #33413c;
+}
+.elementor-widget-theme-post-content p {
+	margin-bottom: 1.15em;
+}
+.elementor-widget-theme-post-content h2 {
+	font-size: 28px;
+	line-height: 1.25;
+	margin-top: 1.9em;
+	margin-bottom: 0.5em;
+}
+.elementor-widget-theme-post-content h3 {
+	font-size: 22px;
+	margin-top: 1.5em;
+	margin-bottom: 0.4em;
+}
+.elementor-widget-theme-post-content ul,
+.elementor-widget-theme-post-content ol {
+	padding-left: 1.4em;
+	margin-bottom: 1.15em;
+}
+.elementor-widget-theme-post-content li {
+	margin-bottom: 0.4em;
+}
+.elementor-widget-theme-post-content img {
+	border-radius: 14px;
+}
+/* On-brand comparison tables (these AI-style posts lean on them heavily). */
+.elementor-widget-theme-post-content table {
+	border-collapse: collapse;
+	width: 100%;
+	margin: 1.6em 0;
+	font-size: 16px;
+	line-height: 1.5;
+	overflow: hidden;
+	border-radius: 12px;
+	box-shadow: 0 10px 30px -18px rgba(11, 89, 81, 0.4);
+}
+.elementor-widget-theme-post-content thead th,
+.elementor-widget-theme-post-content tr:first-child th {
+	background: #12786c;
+	color: #ffffff;
+	text-align: left;
+	padding: 12px 15px;
+	font-family: "DM Sans", sans-serif;
+}
+.elementor-widget-theme-post-content td {
+	padding: 12px 15px;
+	border-bottom: 1px solid #ececec;
+}
+.elementor-widget-theme-post-content tr:nth-child(even) td {
+	background: #f6faf9;
+}
+/* Pull quotes on-brand. */
+.elementor-widget-theme-post-content blockquote {
+	border-left: 4px solid #12786c;
+	margin: 1.6em 0;
+	padding: 0.4em 0 0.4em 1.2em;
+	font-size: 21px;
+	line-height: 1.5;
+	font-style: italic;
+	color: #12786c;
+}
