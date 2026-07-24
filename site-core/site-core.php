@@ -1263,6 +1263,23 @@ add_action( 'template_redirect', function () {
  * "noindex" while the XML sitemap still listed the URL, which crawlers flag as
  * a "noindex page in sitemap" contradiction.
  */
+/**
+ * Functional/account utility pages that carry no search value (login, email
+ * preferences, account address forms - two even share the duplicate title
+ * "Shipping Addresses"). noindexed and kept out of the sitemap so they stop
+ * counting as thin/no-H1/indexable clutter. Paths (not slugs) because several
+ * are child pages. /email-offer/ is deliberately NOT here - it may be a live
+ * campaign landing page; left for a human decision.
+ */
+function tt_noindex_utility_page_paths() {
+	return array(
+		'affiliate-home/affiliate-login',
+		'communication-preferences',
+		'checkout/shipping-addresses',
+		'my-account/account-addresses',
+	);
+}
+
 function tt_thin_recap_slugs() {
 	return array(
 		'july2020', 'june2020-2', 'may2020', 'april2020', 'march2020', 'february2020',
@@ -1291,7 +1308,7 @@ add_filter( 'wpseo_robots_array', function ( $robots ) {
 
 	// Note: post_tag is a built-in taxonomy, so is_tag() must be used - is_tax(
 	// 'post_tag' ) returns false. product_tag is custom, so is_tax() is correct.
-	if ( $is_recap || is_tag() || is_tax( 'product_tag' ) ) {
+	if ( $is_recap || is_tag() || is_tax( 'product_tag' ) || is_page( tt_noindex_utility_page_paths() ) ) {
 		$robots['index']  = 'noindex';
 		$robots['follow'] = 'follow';
 	}
@@ -1325,6 +1342,15 @@ add_filter( 'wpseo_exclude_from_sitemap_by_post_ids', function ( $excluded ) {
 			$pid = (int) get_option( $opt );
 			if ( $pid ) {
 				$ids[] = $pid;
+			}
+		}
+		// The noindexed utility pages (see tt_noindex_utility_page_paths) - their
+		// noindex comes from the runtime filter above, so exclude them here too or
+		// they become fresh noindex-in-sitemap contradictions.
+		foreach ( tt_noindex_utility_page_paths() as $path ) {
+			$p = get_page_by_path( $path );
+			if ( $p ) {
+				$ids[] = (int) $p->ID;
 			}
 		}
 	}
@@ -1362,6 +1388,28 @@ add_filter( 'woocommerce_show_page_title', function ( $show ) {
 	}
 	return $show;
 }, 20 );
+
+/**
+ * Give blog category archives an H1. They render through a shared Elementor
+ * Archive template (post 7001) that has only a search box + posts grid and no
+ * title widget, so /category/recipes/, /interviews/, /healthy-living/ and
+ * /past-boxes/ all shipped with no <h1> (an SEO crawl error). Rather than
+ * hand-edit that shared template's _elementor_data (high blast radius across
+ * every archive), print a proper H1 with the category name in the archive
+ * content area, just before Elementor prints the location. Scoped to real
+ * category archives: tag archives are noindexed above, and product archives get
+ * their H1 from the woocommerce_show_page_title restore. Inherits the site's
+ * global `body h1` styling (DM Sans / teal) from custom.css; the inline layout
+ * keeps it inside the same 1140px content measure as the grid below it.
+ */
+add_action( 'elementor/theme/before_do_archive', function () {
+	if ( is_category() ) {
+		printf(
+			'<h1 class="tt-archive-title" style="max-width:1140px;margin:28px auto 4px;padding:0 20px;">%s</h1>',
+			esc_html( single_cat_title( '', false ) )
+		);
+	}
+} );
 
 /**
  * Company registration line - a standard UK ecommerce trust signal that
