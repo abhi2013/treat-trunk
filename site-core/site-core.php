@@ -1256,15 +1256,15 @@ add_action( 'template_redirect', function () {
 }, 0 );
 
 /**
- * noindex,follow the thin monthly "what's in this month's box" recap posts
- * (2019-2023) - near-duplicate content that dilutes topical authority
- * without adding unique value. `follow` is kept so internal link equity
- * still flows; this only removes them from the index, doesn't block
- * crawling. Genuinely useful posts (recipes, interviews, "10 tips"
- * listicles) are deliberately NOT in this list.
+ * Single source of truth for the thin monthly "what's in this month's box"
+ * recap post slugs (2019-2023). Used by BOTH the robots-meta filter (renders
+ * noindex on the page) and the sitemap-exclusion filter below, so the two can
+ * never drift out of sync - the original bug being that the page said
+ * "noindex" while the XML sitemap still listed the URL, which crawlers flag as
+ * a "noindex page in sitemap" contradiction.
  */
-add_filter( 'wpseo_robots_array', function ( $robots ) {
-	static $thin_recap_slugs = array(
+function tt_thin_recap_slugs() {
+	return array(
 		'july2020', 'june2020-2', 'may2020', 'april2020', 'march2020', 'february2020',
 		'january-2020', 'december-2019-treat-trunk', 'november2019', 'october2019',
 		'september2019', 'august2020', 'september2020', 'october2020', 'november2020',
@@ -1274,14 +1274,94 @@ add_filter( 'wpseo_robots_array', function ( $robots ) {
 		'nov22', 'dec22', 'jan23', 'feb23', 'mar23', 'apr23', 'may23', 'june23',
 		'july23', 'aug23', 'jan25',
 	);
+}
 
-	if ( is_singular( 'post' ) && in_array( get_post_field( 'post_name' ), $thin_recap_slugs, true ) ) {
+/**
+ * noindex,follow the thin recap posts (see tt_thin_recap_slugs) plus the thin
+ * tag archives (post_tag + product_tag): 207 post tags + 65 product tags for
+ * ~106 posts, no unique H1/description/content, near-duplicate index bloat that
+ * competes with the real money pages. `follow` is kept everywhere so internal
+ * link equity still flows; this only removes them from the index, doesn't block
+ * crawling. Genuinely useful posts (recipes, interviews, "10 tips" listicles)
+ * are deliberately NOT in the recap list.
+ */
+add_filter( 'wpseo_robots_array', function ( $robots ) {
+	$is_recap = is_singular( 'post' )
+		&& in_array( get_post_field( 'post_name' ), tt_thin_recap_slugs(), true );
+
+	// Note: post_tag is a built-in taxonomy, so is_tag() must be used - is_tax(
+	// 'post_tag' ) returns false. product_tag is custom, so is_tax() is correct.
+	if ( $is_recap || is_tag() || is_tax( 'product_tag' ) ) {
 		$robots['index']  = 'noindex';
 		$robots['follow'] = 'follow';
 	}
 
 	return $robots;
 } );
+
+/**
+ * Keep the noindexed recap posts out of the XML sitemap too. The robots filter
+ * above runs on the front-end template render, but Yoast builds its sitemap
+ * separately and does NOT run that filter - so without this the URLs kept
+ * appearing in post-sitemap.xml while serving noindex (the contradiction
+ * crawlers flag). Slugs are resolved to IDs once and cached.
+ */
+add_filter( 'wpseo_exclude_from_sitemap_by_post_ids', function ( $excluded ) {
+	static $ids = null;
+	if ( null === $ids ) {
+		$ids = array();
+		foreach ( tt_thin_recap_slugs() as $slug ) {
+			$post = get_page_by_path( $slug, OBJECT, 'post' );
+			if ( $post ) {
+				$ids[] = (int) $post->ID;
+			}
+		}
+		// WooCommerce cart/checkout/my-account pages: correctly noindexed (their
+		// noindex comes from a runtime filter, so Yoast's sitemap builder doesn't
+		// see it and kept listing them - the same noindex-in-sitemap contradiction
+		// as the recap posts). Resolve their IDs by their assigned Woo option so
+		// this stays correct even if the pages are swapped.
+		foreach ( array( 'woocommerce_cart_page_id', 'woocommerce_checkout_page_id', 'woocommerce_myaccount_page_id' ) as $opt ) {
+			$pid = (int) get_option( $opt );
+			if ( $pid ) {
+				$ids[] = $pid;
+			}
+		}
+	}
+	return array_merge( (array) $excluded, $ids );
+} );
+
+/**
+ * Drop the post_tag and product_tag archives from the XML sitemap so they match
+ * their noindex robots state above (same contradiction-avoidance as the recap
+ * posts). Yoast passes the taxonomy name; return an empty array to emit no
+ * entries for that taxonomy's sitemap.
+ */
+add_filter( 'wpseo_sitemap_exclude_taxonomy', function ( $excluded, $taxonomy ) {
+	if ( in_array( $taxonomy, array( 'post_tag', 'product_tag' ), true ) ) {
+		return true;
+	}
+	return $excluded;
+}, 10, 2 );
+
+/**
+ * Restore the WooCommerce archive H1 on the Shop and product-category archives.
+ * The treattrunk-welcome-box plugin registers a blanket
+ * add_filter('woocommerce_show_page_title','__return_false') at priority 10,
+ * which strips the <h1> from EVERY Woo archive - so /shop/ and every
+ * /product-category/ page shipped with no H1 at all (an SEO crawl error, and no
+ * visible page heading either). This higher-priority filter re-enables the
+ * title only where it's genuinely wanted: the shop page (its money page) and
+ * product category archives. Runs at priority 20 so it wins over the plugin's
+ * priority-10 false. Left alone everywhere else (e.g. tag archives, now
+ * noindexed above), so this is a targeted restore, not a global revert.
+ */
+add_filter( 'woocommerce_show_page_title', function ( $show ) {
+	if ( function_exists( 'is_shop' ) && ( is_shop() || is_product_category() ) ) {
+		return true;
+	}
+	return $show;
+}, 20 );
 
 /**
  * Company registration line - a standard UK ecommerce trust signal that
