@@ -1308,7 +1308,12 @@ add_filter( 'wpseo_robots_array', function ( $robots ) {
 
 	// Note: post_tag is a built-in taxonomy, so is_tag() must be used - is_tax(
 	// 'post_tag' ) returns false. product_tag is custom, so is_tax() is correct.
-	if ( $is_recap || is_tag() || is_tax( 'product_tag' ) || is_page( tt_noindex_utility_page_paths() ) ) {
+	// Junk product categories: WooCommerce's default "Uncategorised" and a
+	// stray numeric "27" category - thin, no search value. "Block Subscription"
+	// (blocksub) is deliberately NOT here - it's a real gift-subscription group.
+	$junk_cat = is_product_category( array( 'uncategorised', '27' ) );
+
+	if ( $is_recap || is_tag() || is_tax( 'product_tag' ) || is_page( tt_noindex_utility_page_paths() ) || $junk_cat ) {
 		$robots['index']  = 'noindex';
 		$robots['follow'] = 'follow';
 	}
@@ -1369,6 +1374,21 @@ add_filter( 'wpseo_sitemap_exclude_taxonomy', function ( $excluded, $taxonomy ) 
 	}
 	return $excluded;
 }, 10, 2 );
+
+/**
+ * Keep the two junk product categories (noindexed in the robots filter above)
+ * out of the product_cat XML sitemap, so they don't read as a
+ * noindex-in-sitemap contradiction. Slugs resolved to term IDs.
+ */
+add_filter( 'wpseo_exclude_from_sitemap_by_term_ids', function ( $excluded ) {
+	foreach ( array( 'uncategorised', '27' ) as $slug ) {
+		$t = get_term_by( 'slug', $slug, 'product_cat' );
+		if ( $t ) {
+			$excluded[] = (int) $t->term_id;
+		}
+	}
+	return $excluded;
+} );
 
 /**
  * Restore the WooCommerce archive H1 on the Shop and product-category archives.
