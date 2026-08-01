@@ -1231,9 +1231,23 @@ add_action( 'template_redirect', function () {
 			$end += strlen( '</p>' );
 
 			$title = $is_blog ? 'Blog' : 'Brand Rep & Affiliate Programme';
-			$h1    = '<h1 class="elementor-heading-title elementor-size-xl" style="margin:16px 0 8px;">' . esc_html( $title ) . '</h1>';
+			$h1    = '<h1 class="elementor-heading-title elementor-size-xl tt-archive-h1"'
+				. ' style="margin:6px 0 0;line-height:1.2;">' . esc_html( $title ) . '</h1>';
 
-			return substr( $html, 0, $end ) . $h1 . substr( $html, $end );
+			/*
+			 * The anchor's parent is an Elementor `.elementor-container`, which
+			 * is `display:flex; flex-wrap:nowrap`. Appending the <h1> as a
+			 * sibling of the breadcrumb <p> therefore made the two share a
+			 * single flex row - the title rendered jammed against the end of
+			 * "Home » Blog" on the same line. Wrapping both in one full-width
+			 * block gives the container a single flex item, inside which the
+			 * <p> and <h1> stack normally.
+			 */
+			$breadcrumb = substr( $html, $pos, $end - $pos );
+			$head       = '<div class="tt-archive-head" style="flex:0 0 100%;width:100%;">'
+				. $breadcrumb . $h1 . '</div>';
+
+			return substr( $html, 0, $pos ) . $head . substr( $html, $end );
 		} );
 	}
 }, 1 );
