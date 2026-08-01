@@ -1280,6 +1280,24 @@ function tt_noindex_utility_page_paths() {
 	);
 }
 
+/**
+ * Retired products whose WooCommerce catalog visibility is "hidden"
+ * (exclude-from-catalog + exclude-from-search). Because they are hidden they
+ * can never appear in /shop/ or any product loop, so nothing on the site is
+ * able to link to them - they crawl as indexable orphan pages that still sit in
+ * product-sitemap.xml. Precedent: product 38923 (virgin-gift-experience) is
+ * already hidden AND out of the sitemap; these were simply missed.
+ *
+ * IDs, not slugs, because WooCommerce products are looked up far more cheaply
+ * by ID and these are stable. Products that are hidden but still actively sold
+ * through a campaign link must NOT be added here.
+ *
+ * 43461 vegan-snack-box - retired, confirmed 2026-08-01.
+ */
+function tt_noindex_product_ids() {
+	return array( 43461 );
+}
+
 function tt_thin_recap_slugs() {
 	return array(
 		'july2020', 'june2020-2', 'may2020', 'april2020', 'march2020', 'february2020',
@@ -1313,7 +1331,24 @@ add_filter( 'wpseo_robots_array', function ( $robots ) {
 	// (blocksub) is deliberately NOT here - it's a real gift-subscription group.
 	$junk_cat = is_product_category( array( 'uncategorised', '27' ) );
 
-	if ( $is_recap || is_tag() || is_tax( 'product_tag' ) || is_page( tt_noindex_utility_page_paths() ) || $junk_cat ) {
+	// Hidden/retired products - see tt_noindex_product_ids.
+	$is_retired_product = is_singular( 'product' )
+		&& in_array( (int) get_queried_object_id(), tt_noindex_product_ids(), true );
+
+	// product_shipping_class archives ("Small Box", "Subscription Box (Large)"
+	// etc). The taxonomy has no rewrite rule, so these only exist as raw
+	// ?taxonomy=product_shipping_class&term=... query-string URLs - never linked
+	// from anywhere on the site because no template would ever link a shipping
+	// class, yet Yoast was publishing them in product_shipping_class-sitemap.xml
+	// as indexable orphans. Zero search value; they are a shipping
+	// implementation detail.
+	//
+	// Author archives: a near-duplicate listing of the blog with no unique
+	// content. Only surfaced because guest interviewees (e.g. /author/zoewilliams/)
+	// were given user accounts, so each one spawned its own orphan archive.
+	if ( $is_recap || $is_retired_product || is_tag() || is_tax( 'product_tag' )
+		|| is_tax( 'product_shipping_class' ) || is_author()
+		|| is_page( tt_noindex_utility_page_paths() ) || $junk_cat ) {
 		$robots['index']  = 'noindex';
 		$robots['follow'] = 'follow';
 	}
@@ -1328,16 +1363,44 @@ add_filter( 'wpseo_robots_array', function ( $robots ) {
  * appearing in post-sitemap.xml while serving noindex (the contradiction
  * crawlers flag). Slugs are resolved to IDs once and cached.
  */
+/**
+ * Resolve tt_thin_recap_slugs() to post IDs. Shared by the sitemap exclusion
+ * below and the blog-listing query filter further down, so both always operate
+ * on the same set. ~49 get_page_by_path() lookups is too much to repeat on
+ * every blog page view, so the result is cached in a transient keyed on a hash
+ * of the slug list - editing tt_thin_recap_slugs() changes the key and busts
+ * the cache automatically, with no manual flush needed.
+ */
+function tt_thin_recap_post_ids() {
+	static $ids = null;
+	if ( null !== $ids ) {
+		return $ids;
+	}
+
+	$slugs = tt_thin_recap_slugs();
+	$key   = 'tt_recap_ids_' . substr( md5( implode( ',', $slugs ) ), 0, 12 );
+	$cached = get_transient( $key );
+	if ( is_array( $cached ) ) {
+		$ids = $cached;
+		return $ids;
+	}
+
+	$ids = array();
+	foreach ( $slugs as $slug ) {
+		$post = get_page_by_path( $slug, OBJECT, 'post' );
+		if ( $post ) {
+			$ids[] = (int) $post->ID;
+		}
+	}
+	set_transient( $key, $ids, WEEK_IN_SECONDS );
+
+	return $ids;
+}
+
 add_filter( 'wpseo_exclude_from_sitemap_by_post_ids', function ( $excluded ) {
 	static $ids = null;
 	if ( null === $ids ) {
-		$ids = array();
-		foreach ( tt_thin_recap_slugs() as $slug ) {
-			$post = get_page_by_path( $slug, OBJECT, 'post' );
-			if ( $post ) {
-				$ids[] = (int) $post->ID;
-			}
-		}
+		$ids = tt_thin_recap_post_ids();
 		// WooCommerce cart/checkout/my-account pages: correctly noindexed (their
 		// noindex comes from a runtime filter, so Yoast's sitemap builder doesn't
 		// see it and kept listing them - the same noindex-in-sitemap contradiction
@@ -1358,6 +1421,9 @@ add_filter( 'wpseo_exclude_from_sitemap_by_post_ids', function ( $excluded ) {
 				$ids[] = (int) $p->ID;
 			}
 		}
+		// Retired hidden products (see tt_noindex_product_ids) - noindexed by the
+		// robots filter above, so they must leave product-sitemap.xml too.
+		$ids = array_merge( $ids, tt_noindex_product_ids() );
 	}
 	return array_merge( (array) $excluded, $ids );
 } );
@@ -1369,11 +1435,23 @@ add_filter( 'wpseo_exclude_from_sitemap_by_post_ids', function ( $excluded ) {
  * entries for that taxonomy's sitemap.
  */
 add_filter( 'wpseo_sitemap_exclude_taxonomy', function ( $excluded, $taxonomy ) {
-	if ( in_array( $taxonomy, array( 'post_tag', 'product_tag' ), true ) ) {
+	if ( in_array( $taxonomy, array( 'post_tag', 'product_tag', 'product_shipping_class' ), true ) ) {
 		return true;
 	}
 	return $excluded;
 }, 10, 2 );
+
+/**
+ * Drop author-sitemap.xml entirely, matching the is_author() noindex above.
+ * Yoast's author sitemap provider bails out of get_index_links() when the
+ * filtered user list comes back empty, so returning an empty array removes the
+ * whole author sitemap from sitemap_index.xml rather than leaving an empty one
+ * behind (verified against wordpress-seo
+ * inc/sitemaps/class-author-sitemap-provider.php on production 2026-08-01).
+ * Without this the author URLs would keep being listed while serving noindex -
+ * the same contradiction the recap-post exclusion above exists to prevent.
+ */
+add_filter( 'wpseo_sitemap_exclude_author', '__return_empty_array' );
 
 /**
  * Keep the two junk product categories (noindexed in the robots filter above)
@@ -1432,6 +1510,89 @@ add_action( 'elementor/theme/before_do_archive', function () {
 } );
 
 /**
+ * Keep the thin monthly recap posts (tt_thin_recap_slugs - 49 of them) out of
+ * the /blog/ listing.
+ *
+ * They are already noindex, so they contribute nothing to search, but they were
+ * still filling the main blog loop: at 10 per page they stretched /blog/ to 11
+ * pages and pushed genuinely useful posts as deep as /blog/page/9/. Ahrefs
+ * reported two of them (the labour-snacks and CBD posts) as orphans for exactly
+ * this reason - they ARE linked, just from pagination too deep for the crawler
+ * to reach, which is functionally the same thing for ranking.
+ *
+ * Scoped to the main blog listing only ( $query->is_home() ), so
+ * /category/past-boxes/ still lists every recap post and remains their home -
+ * this hides them from the front door, it does not delete or unlink them.
+ *
+ * Side effect to expect: /blog/ drops from 11 pages to ~6, so /blog/page/7/
+ * through /page/11/ will start returning 404. They carried no traffic and
+ * Google drops empty pagination on its own.
+ */
+add_action( 'pre_get_posts', function ( $query ) {
+	if ( is_admin() || ! $query->is_main_query() || ! $query->is_home() ) {
+		return;
+	}
+
+	$ids = tt_thin_recap_post_ids();
+	if ( ! $ids ) {
+		return;
+	}
+
+	$query->set( 'post__not_in', array_merge( (array) $query->get( 'post__not_in' ), $ids ) );
+} );
+
+/**
+ * Category navigation on the blog listing and category archives.
+ *
+ * The shared Elementor Archive template (post 7001) has only a search box and a
+ * posts grid, and /blog/ linked exactly one category (/category/past-boxes/),
+ * so /category/recipes/ and /category/interviews/ had no incoming internal
+ * links at all and crawled as orphans. Printing the nav on category archives
+ * too means every category is reachable from every other one, which keeps them
+ * linked even if the blog listing template changes later.
+ *
+ * Rendered in PHP rather than by editing the shared template's _elementor_data,
+ * matching the H1 restore above - same reasoning, much lower blast radius.
+ */
+add_action( 'elementor/theme/before_do_archive', function () {
+	if ( ! is_home() && ! is_category() ) {
+		return;
+	}
+
+	$terms = get_terms(
+		array(
+			'taxonomy'   => 'category',
+			'hide_empty' => true,
+		)
+	);
+	if ( is_wp_error( $terms ) || count( $terms ) < 2 ) {
+		return;
+	}
+
+	$current = is_category() ? (int) get_queried_object_id() : 0;
+
+	// The colours carry !important because the site's global stylesheet forces
+	// its teal on every archive <a> with !important of its own. Without it the
+	// current-category pill rendered teal-on-teal (computed rgb(18,120,108) text
+	// on rgb(13,107,98) background - a ~1.05:1 contrast ratio, i.e. invisible).
+	// Verified on production 2026-08-01.
+	echo '<nav class="tt-cat-nav" aria-label="Blog categories" style="max-width:1140px;margin:8px auto 0;padding:0 20px;display:flex;flex-wrap:wrap;gap:10px;">';
+	foreach ( $terms as $term ) {
+		$is_current = ( $term->term_id === $current );
+		printf(
+			'<a href="%s"%s style="font-size:14px;line-height:1;padding:9px 14px;border:1px solid %s;border-radius:999px;text-decoration:none;color:%s !important;background:%s !important;">%s</a>',
+			esc_url( get_term_link( $term ) ),
+			$is_current ? ' aria-current="page"' : '',
+			$is_current ? '#0d6b62' : '#cfdedb',
+			$is_current ? '#ffffff' : '#0d6b62',
+			$is_current ? '#0d6b62' : 'transparent',
+			esc_html( $term->name )
+		);
+	}
+	echo '</nav>';
+}, 20 );
+
+/**
  * Company registration line - a standard UK ecommerce trust signal that
  * was missing entirely. Real details confirmed live on Companies House
  * (company 15624707) 2026-07-16. Echoed via wp_footer rather than added to
@@ -1439,6 +1600,44 @@ add_action( 'elementor/theme/before_do_archive', function () {
  * direct _elementor_data edit - same reasoning as the copyright-year fix
  * above.
  */
+/**
+ * Site-wide footer links for two pages that had no incoming internal links at
+ * all and crawled as orphans: /freebox/ (the Free Box offer) and
+ * /affiliate-home/ (the Store Affiliates portal).
+ *
+ * The obvious fix - adding them to the "Information" WP menu - does nothing
+ * here: the Elementor footer template renders its link column as hardcoded
+ * elementor-icon-list widgets, NOT a nav-menu widget, so the Information menu
+ * is not actually used anywhere on the front end despite listing the same URLs.
+ * Verified on production 2026-08-01 (no menu-item-* classes render in the
+ * footer). Printing them via wp_footer instead of editing the footer template's
+ * _elementor_data matches the company-registration line below - same reasoning,
+ * much lower blast radius, and revertible by deleting this block.
+ *
+ * /email-offer/ is deliberately excluded: it has no H1 and its title tag is
+ * just "Email Offer", so a link would clear the crawl error without giving it
+ * anything to rank on. It needs real content first.
+ */
+add_action( 'wp_footer', function () {
+	$links = array(
+		'/freebox/'       => 'Free Box Offer',
+		'/affiliate-home/' => 'Affiliate Portal',
+	);
+
+	$out = array();
+	foreach ( $links as $path => $label ) {
+		$out[] = sprintf(
+			'<a href="%s" style="color:#0d6b62;text-decoration:none;">%s</a>',
+			esc_url( home_url( $path ) ),
+			esc_html( $label )
+		);
+	}
+
+	echo '<p style="text-align:center;font-size:12px;color:#8a8a8a;padding:10px 20px 0;margin:0;">'
+		. implode( ' &middot; ', $out )
+		. '</p>';
+}, 29 );
+
 add_action( 'wp_footer', function () {
 	echo '<p style="text-align:center;font-size:12px;color:#8a8a8a;padding:10px 20px;margin:0;">'
 		. 'Treat Trunk Ltd &middot; Company No. 15624707 &middot; Registered office: 86-90 Paul Street, London, EC2A 4NE'
