@@ -21,7 +21,13 @@ get_header();
 	<!-- Announcement bar (WeWork offer - confirmed active 2026-07-04) -->
 	<div style="background: #12786C; color: #FAFAF8; text-align: center; padding: 10px 16px; font-size: 14px; font-weight: 600;">
 		In a WeWork office? Claim a FREE welcome snack box for your team &nbsp;&middot;&nbsp;
-		<a href="#wework" style="color: #12786C; text-decoration: underline; text-underline-offset: 3px;">Claim yours</a>
+		<a href="#wework" style="color: #FAFAF8; text-decoration: underline; text-underline-offset: 3px;">Claim yours</a>
+	</div>
+
+	<!-- Seasonal cross-link (Q4 gifting campaign, added 2026-08-01) -->
+	<div style="background: #0B5951; color: #FAFAF8; text-align: center; padding: 9px 16px; font-size: 13.5px; font-weight: 600;">
+		Christmas 2026 corporate gifting is now open &nbsp;&middot;&nbsp;
+		<a href="<?php echo esc_url( home_url( '/corporate-christmas-gifting/' ) ); ?>" style="color: #FAFAF8; text-decoration: underline; text-underline-offset: 3px;">See gifts &amp; deadlines</a>
 	</div>
 
 	<!-- Hero -->

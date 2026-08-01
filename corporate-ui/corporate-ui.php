@@ -14,16 +14,27 @@ define( 'TT_CORP_UI_TEMPLATE_KEY', 'templates/corporate-orders-template.php' );
 define( 'TT_CORP_UI_TEMPLATE_LABEL', 'Corporate Orders (Custom Redesign)' );
 define( 'TT_CORP_UI_DIR', plugin_dir_path( __FILE__ ) );
 
+/**
+ * All templates this plugin provides. The gifting template (added 2026-08-01
+ * for the Q4 corporate gifting campaign) shares corporate-orders.css via the
+ * same .tt-corp-* classes, so both register through one list.
+ */
+function tt_corp_ui_templates(): array {
+	return array(
+		TT_CORP_UI_TEMPLATE_KEY          => TT_CORP_UI_TEMPLATE_LABEL,
+		'templates/gifting-template.php' => 'Corporate Christmas Gifting (Custom)',
+	);
+}
+
 add_filter( 'theme_page_templates', function ( array $templates ): array {
-	$templates[ TT_CORP_UI_TEMPLATE_KEY ] = TT_CORP_UI_TEMPLATE_LABEL;
-	return $templates;
+	return array_merge( $templates, tt_corp_ui_templates() );
 } );
 
 add_filter( 'template_include', function ( string $template ): string {
 	if ( is_page() ) {
 		$assigned = get_page_template_slug( get_queried_object_id() );
-		if ( $assigned === TT_CORP_UI_TEMPLATE_KEY ) {
-			$custom = TT_CORP_UI_DIR . TT_CORP_UI_TEMPLATE_KEY;
+		if ( isset( tt_corp_ui_templates()[ $assigned ] ) ) {
+			$custom = TT_CORP_UI_DIR . $assigned;
 			if ( file_exists( $custom ) ) {
 				return $custom;
 			}
@@ -39,7 +50,7 @@ add_filter( 'template_include', function ( string $template ): string {
  * loaded theme-wide) to match the rest of the site's teal direction.
  */
 add_action( 'wp_enqueue_scripts', function () {
-	if ( ! is_page() || get_page_template_slug( get_queried_object_id() ) !== TT_CORP_UI_TEMPLATE_KEY ) {
+	if ( ! is_page() || ! isset( tt_corp_ui_templates()[ get_page_template_slug( get_queried_object_id() ) ] ) ) {
 		return;
 	}
 	wp_enqueue_style(

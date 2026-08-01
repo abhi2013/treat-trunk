@@ -955,7 +955,18 @@ add_action( 'wp_footer', function () {
  * name mapping.
  */
 add_action( 'wp_enqueue_scripts', function () {
+	// Skip every page built on a corporate-ui hand-built template, not just
+	// /corporate-orders/ (36634): the gifting page (54774, added 2026-08-01)
+	// has the same complete design system, and site-modernize's !important
+	// link-color rules were turning its solid teal buttons teal-on-teal
+	// (invisible) - the exact bug the 2026-07-15 staging audit fixed
+	// elsewhere. Template check rather than an ID list so future corporate-ui
+	// pages are excluded automatically.
 	if ( is_page( 36634 ) ) {
+		return;
+	}
+	if ( is_page() && function_exists( 'tt_corp_ui_templates' )
+		&& isset( tt_corp_ui_templates()[ get_page_template_slug( get_queried_object_id() ) ] ) ) {
 		return;
 	}
 	wp_enqueue_style( 'tt-site-modernize', plugins_url( 'assets/site-modernize.css', __FILE__ ), array(), '1.6.7' );
@@ -1634,8 +1645,9 @@ add_action( 'elementor/theme/before_do_archive', function () {
  */
 add_action( 'wp_footer', function () {
 	$links = array(
-		'/freebox/'       => 'Free Box Offer',
-		'/affiliate-home/' => 'Affiliate Portal',
+		'/freebox/'                     => 'Free Box Offer',
+		'/affiliate-home/'              => 'Affiliate Portal',
+		'/corporate-christmas-gifting/' => 'Corporate Christmas Gifts',
 	);
 
 	$out = array();
