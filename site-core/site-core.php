@@ -95,6 +95,33 @@ add_filter( 'rocket_rucss_safelist', function ( $safelist ) {
 	return $safelist;
 } );
 
+/**
+ * Raise WP Rocket's preload floor so the cache can actually get warm.
+ *
+ * WP Rocket sizes each preload batch as `round( -5 * $average_duration + 55 )`,
+ * clamped to [ min_in_progress_jobs, pending_jobs_cron_rows ] - see
+ * PreloadUrl::process_pending_jobs(). That estimate needs the
+ * `rocket_preload_previous_requests_durations` transient, which on this install
+ * is never set, so the batch permanently falls back to the floor of 5.
+ *
+ * At 5 URLs per run against a system cron that fires every 5 minutes, that is
+ * 60 URLs/hour. With ~560 URLs queued a full warm-up took ~9.2 hours, while the
+ * cache lifespan expired pages after 10 - so the site was never more than
+ * partly cached and most crawler/visitor requests paid the ~900ms
+ * regenerate-from-PHP cost instead of the ~100ms cache-hit cost. That is the
+ * cause of the Ahrefs "Slow page" warnings (their own numbers show the HTML
+ * itself downloads in ~80ms; the time is all TTFB).
+ *
+ * 15 is deliberately conservative rather than WP Rocket's own 45 ceiling: each
+ * job is a loopback HTTP request, and this is a 2-core box that was taken down
+ * on 2026-07-22 by exactly that kind of cron/loopback pile-up. 15 brings a full
+ * warm-up to ~3 hours, which is comfortably inside the (now much longer) cache
+ * lifespan, without tripling concurrent request pressure.
+ */
+add_filter( 'rocket_preload_cache_min_in_progress_jobs_count', function () {
+	return 15;
+} );
+
 add_action( 'wp_footer', function () {
 	echo '<div class="tt-recaptcha-tos" style="display:none;text-align:center;font-size:12px;line-height:1.5;color:#666;padding:12px 16px;">'
 		. 'This site is protected by reCAPTCHA and the Google '
