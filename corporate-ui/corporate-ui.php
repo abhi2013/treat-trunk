@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: Treat Trunk Corporate UI
- * Description: Custom page template for the redesigned Corporate Orders page. Registers a selectable page template (Page Attributes > Template) so the page can be switched between the original Elementor design and this one without deleting either.
- * Version: 1.0.0
+ * Description: Custom page templates for the corporate pages: Corporate Orders (gifting), Office Snack Boxes and Corporate Christmas Hampers. Registers selectable page templates (Page Attributes > Template) so each page can be switched back to its original design without deleting either.
+ * Version: 1.1.0
  * Author: Treat Trunk
  */
 
@@ -22,7 +22,8 @@ define( 'TT_CORP_UI_DIR', plugin_dir_path( __FILE__ ) );
 function tt_corp_ui_templates(): array {
 	return array(
 		TT_CORP_UI_TEMPLATE_KEY          => TT_CORP_UI_TEMPLATE_LABEL,
-		'templates/gifting-template.php' => 'Corporate Christmas Gifting (Custom)',
+		'templates/gifting-template.php' => 'Corporate Christmas Hampers (Custom)',
+		'templates/office-template.php'  => 'Office Snack Boxes (Custom)',
 	);
 }
 

@@ -2,18 +2,40 @@
 /**
  * Template Name: Corporate Orders (Custom Redesign)
  *
- * Server-rendered replacement for the Elementor-built Corporate Orders page.
- * Reuses the theme's real header/footer (Elementor Theme Builder) so nav,
- * mini-cart and site-wide chrome stay untouched. See docs/elementor-removal-plan.md.
+ * /corporate-orders/ (page 36634). Refocused 2026-09-13 as the corporate
+ * GIFTING page: "corporate snack gifts", employee gift boxes, staff
+ * wellbeing gifts, wellness gift box for employees, client gifts, new
+ * starter boxes. The office-kitchen products (subscriptions, bulk one-off
+ * boxes, Deluxe) moved to /office-snack-boxes/ and Christmas lives on
+ * /corporate-christmas-hampers/, so this page no longer competes with
+ * either - see docs/corporate-seo-pages-2026-09.md section 0.
  *
- * PLACEHOLDER IMAGES: the two hero/lifestyle photos from the Claude Design
- * mockup (photos-1783026072643.jpeg, photos-1783026082440.jpeg) could not be
- * fetched in full resolution (256KB tool cap). Using existing real product
- * photos as placeholders until the real ones are uploaded to the media
- * library and the URLs below are swapped in - see TODO markers.
+ * The WeWork welcome-box offer and its claim form are kept verbatim (the
+ * tt_wework_claim endpoint in corporate-ui.php). The "Click Here To Claim
+ * Corporate Discount" CTA of the original Elementor page is replaced by the
+ * shared quote form (parts/quote-form.php -> tt_corp_enquiry).
+ *
+ * Same server-rendered pattern as the other corporate-ui templates: theme
+ * header/footer, inline styles, shared .tt-corp-* classes.
  */
 
 get_header();
+
+$tt_newmum_img    = get_the_post_thumbnail_url( 8122, 'large' );
+$tt_menopause_img = get_the_post_thumbnail_url( 50327, 'large' );
+$tt_hamper_img    = wp_get_attachment_image_url( 54964, 'large' );
+
+$s_card  = 'background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 20px;';
+$s_h2    = 'font-weight: 700; font-size: 34px; line-height: 1.15; margin: 0 0 12px; color: #1B2420;';
+$s_h3    = 'font-weight: 700; font-size: 20px; margin: 0; color: #1B2420;';
+$s_p     = 'font-size: 16px; line-height: 1.65; color: #1B2420; margin: 0;';
+$s_btn   = 'background: #12786C; color: #FAFAF8; font-weight: 700; font-size: 15px; padding: 12px 22px; border-radius: 999px; text-decoration: none; display: inline-block; text-align: center;';
+$s_btn2  = 'background: #FFFFFF; color: #12786C; border: 2px solid #12786C; font-weight: 700; font-size: 14px; padding: 10px 18px; border-radius: 999px; text-decoration: none; display: inline-block; text-align: center;';
+$s_link  = 'color: #12786C; font-weight: 700; text-decoration: underline; text-underline-offset: 4px;';
+$s_pill  = 'background: #DCEFEC; color: #0B5951; font-size: 12.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 14px; border-radius: 999px;';
+$s_tick  = 'font-size: 14px; color: #5B6B68; font-weight: 600;';
+$s_price = 'font-weight: 700; font-size: 16px; color: #0B5951; margin: 0;';
+$s_td    = 'padding: 14px 16px; vertical-align: top;';
 ?>
 
 <div class="tt-corp-page" style="font-family: 'DM Sans', -apple-system, sans-serif; color: #1B2420; background: #FAFAF8;">
@@ -24,264 +46,204 @@ get_header();
 		<a href="#wework" style="color: #FAFAF8; text-decoration: underline; text-underline-offset: 3px;">Claim yours</a>
 	</div>
 
-	<!-- Seasonal cross-link (Q4 gifting campaign, added 2026-08-01) -->
+	<?php if ( time() < strtotime( '2026-12-18 00:00:00 Europe/London' ) ) : ?>
+	<!-- Seasonal cross-link, auto-hides after the last Christmas deadline -->
 	<div style="background: #0B5951; color: #FAFAF8; text-align: center; padding: 9px 16px; font-size: 13.5px; font-weight: 600;">
-		Christmas 2026 corporate gifting is now open &nbsp;&middot;&nbsp;
-		<a href="<?php echo esc_url( home_url( '/corporate-christmas-gifting/' ) ); ?>" style="color: #FAFAF8; text-decoration: underline; text-underline-offset: 3px;">See gifts &amp; deadlines</a>
+		Christmas 2026: branded orders close Fri 20 Nov &nbsp;&middot;&nbsp;
+		<a href="<?php echo esc_url( home_url( '/corporate-christmas-hampers/' ) ); ?>" style="color: #FAFAF8; text-decoration: underline; text-underline-offset: 3px;">See our corporate Christmas hampers</a>
 	</div>
+	<?php endif; ?>
 
 	<!-- Hero -->
-	<section class="tt-corp-hero" style="display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: center; padding: 72px 48px 80px; max-width: 1240px; margin: 0 auto;">
+	<section class="tt-corp-hero" style="display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: center; padding: 64px 48px 48px; max-width: 1240px; margin: 0 auto;">
 		<div style="display: flex; flex-direction: column; gap: 22px;">
 			<div style="display: flex; gap: 10px; flex-wrap: wrap;">
-				<span style="background: #DCEFEC; color: #0B5951; font-size: 12.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 14px; border-radius: 999px;">For offices &amp; teams</span>
-				<span style="background: #DCEFEC; color: #12786C; font-size: 12.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 14px; border-radius: 999px;">Vegetarian &amp; low sugar</span>
+				<span style="<?php echo esc_attr( $s_pill ); ?>">Employees &middot; clients &middot; new starters</span>
+				<span style="<?php echo esc_attr( $s_pill ); ?> color: #12786C;">Wellbeing range</span>
 			</div>
-			<h1 style="font-weight: 700; font-size: 44px; line-height: 1.1; margin: 0; color: #1B2420;">Corporate snack boxes your team will actually fight over</h1>
-			<p style="font-size: 18px; line-height: 1.6; margin: 0; max-width: 52ch; color: #1B2420;">Hand-packed office snacks from independent UK brands - delivered to your office, or straight through the letterbox of every remote employee. No vending-machine sadness, no admin.</p>
+			<h1 style="font-weight: 700; font-size: 42px; line-height: 1.1; margin: 0; color: #1B2420;">Corporate snack gifts and employee wellbeing boxes, packed by hand by a family that cares about the person opening them</h1>
+			<p style="font-size: 18px; line-height: 1.6; margin: 0; max-width: 54ch; color: #1B2420;">Say thank you, welcome, get well or well done with a box of healthier-for-you snacks from small, ethical UK makers. Employee gift boxes from &pound;13.99, wellbeing boxes for new parents and for menopause, client gifts with your branding on the card. No minimum order. Pay by invoice. Posted to one office or through every front door.</p>
 			<div style="display: flex; gap: 14px; align-items: center; flex-wrap: wrap;">
-				<a href="#boxes" style="background: #12786C; color: #FAFAF8; font-weight: 700; font-size: 17px; padding: 15px 30px; border-radius: 999px; text-decoration: none;">Shop corporate boxes</a>
-				<a href="#quote" style="color: #12786C; font-weight: 700; font-size: 16px; text-decoration: underline; text-underline-offset: 4px;">Request a quote &rarr;</a>
+				<a href="#quote" style="<?php echo esc_attr( $s_btn ); ?> font-size: 17px; padding: 15px 30px;">Tell us about your gift</a>
+				<a href="#wellbeing" style="<?php echo esc_attr( $s_link ); ?> font-size: 16px;">See the wellbeing range &rarr;</a>
 			</div>
-			<div style="display: flex; gap: 26px; margin-top: 6px; font-size: 14px; color: #5B6B68; font-weight: 600; flex-wrap: wrap;">
-				<span>&#10003; No minimum order</span>
-				<span>&#10003; Dietary needs catered</span>
-				<span>&#10003; 800+ box orders handled</span>
-				<span>&#10003; Pay by invoice</span>
+			<div style="display: flex; gap: 10px 26px; margin-top: 6px; flex-wrap: wrap;">
+				<span style="<?php echo esc_attr( $s_tick ); ?>">&#10003; No minimum order</span>
+				<span style="<?php echo esc_attr( $s_tick ); ?>">&#10003; A wellbeing gift range nobody else offers</span>
+				<span style="<?php echo esc_attr( $s_tick ); ?>">&#10003; Branded cards, stickers &amp; ribbon</span>
+				<span style="<?php echo esc_attr( $s_tick ); ?>">&#10003; Pay by invoice</span>
+				<span style="<?php echo esc_attr( $s_tick ); ?>">&#10003; Letterbox delivery to home addresses</span>
 			</div>
 		</div>
 		<div style="position: relative;">
-			<?php // TODO: swap for uploads/photos-1783026082440.jpeg once uploaded to the media library ?>
-			<img src="https://treattrunk.co.uk/wp-content/uploads/2022/02/IMG_0413-1-768x1024.jpeg" data-skip-lazy="1" alt="Corporate snack box order being hand-packed at Treat Trunk HQ" style="width: 100%; height: 460px; object-fit: cover; border-radius: 24px; box-shadow: 0 24px 48px -20px rgba(31, 61, 44, 0.35);">
+			<img src="https://treattrunk.co.uk/wp-content/uploads/2022/02/IMG_0413-1-768x1024.jpeg" data-skip-lazy="1" fetchpriority="high" alt="A corporate snack gift box of healthy snacks being hand-packed at Treat Trunk" style="width: 100%; height: 460px; object-fit: cover; border-radius: 24px; box-shadow: 0 24px 48px -20px rgba(31, 61, 44, 0.35);">
 		</div>
 	</section>
 
-	<!-- Social proof strip -->
-	<div style="background: #FAFAF8; padding: 18px 48px;">
-		<div style="max-width: 1240px; margin: 0 auto; display: flex; align-items: center; justify-content: center; gap: 40px; flex-wrap: wrap; font-size: 14px; color: #0B5951; font-weight: 600;">
-			<span style="font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; font-size: 12px;">Trusted by teams big &amp; small</span>
-			<span>High Speed Training Ltd</span><span>&middot;</span>
-			<span>An 800-employee letterbox campaign</span><span>&middot;</span>
-			<span>Startups, agencies &amp; NHS teams</span>
+	<!-- From-pricing strip -->
+	<div style="padding: 0 48px 8px;">
+		<div style="max-width: 1240px; margin: 0 auto; background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 20px; padding: 18px 24px; display: flex; justify-content: center; gap: 12px 36px; flex-wrap: wrap; font-size: 14.5px; color: #0B5951; font-weight: 700;">
+			<span>Letterbox Gift from &pound;13.00</span>
+			<span>Full Treat Trunk gift from &pound;35.00</span>
+			<span>New Mum &amp; Menopause boxes &pound;39.99</span>
+			<span>Signature Hamper &pound;149</span>
+			<a href="#pricing" style="<?php echo esc_attr( $s_link ); ?> font-size: 14.5px;">Full pricing &rarr;</a>
 		</div>
 	</div>
 
-	<!-- Product cards -->
-	<section id="boxes" class="tt-corp-section" style="padding: 72px 48px 40px; max-width: 1240px; margin: 0 auto;">
-		<div style="text-align: center; margin-bottom: 44px;">
-			<h2 style="font-weight: 700; font-size: 34px; margin: 0 0 12px; color: #1B2420;">Pick your corporate snacking setup</h2>
-			<p style="font-size: 17px; color: #1B2420; margin: 0;">Buy online in minutes - or <a href="#quote" style="color: #12786C; font-weight: 700;">talk to our team</a> for bespoke branding, mixed orders and volume pricing.</p>
+	<!-- Employee gift boxes -->
+	<section id="employee-gifts" class="tt-corp-section" style="padding: 40px 48px; max-width: 1240px; margin: 0 auto;">
+		<div style="max-width: 760px; margin: 0 auto 32px; text-align: center;">
+			<h2 style="<?php echo esc_attr( $s_h2 ); ?>">Employee gift boxes for the moments that matter</h2>
+			<p style="font-size: 17px; line-height: 1.6; color: #1B2420; margin: 0;">A snack box is a small thing, and that is rather the point. It arrives on a Tuesday, it is opened at the desk or the kitchen table, and for a minute somebody feels noticed. Here is where our clients tend to use them.</p>
 		</div>
-
 		<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px;">
-
-			<!-- Card 1: Letterbox, bulk discount applies automatically at checkout -->
-			<div class="tt-corp-card-wrap" style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
-				<div style="position: relative;">
-					<img src="https://treattrunk.co.uk/wp-content/uploads/2021/05/Treat-Trunk-Mini-Healthy-Snack-Box-March-1200.jpg" alt="Corporate letterbox office snack box" style="width: 100%; height: 180px; object-fit: cover; display: block;">
-					<span style="position: absolute; top: 12px; left: 12px; background: #12786C; color: #FAFAF8; font-size: 11.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px;">Best seller</span>
+			<?php
+			$tt_moments = array(
+				array( 'Thank-you and recognition gifts', 'The Full Treat Trunk, twenty to twenty-five full-size healthier-for-you snacks, with a printed card carrying your message. For the person who carried the project, the team that hit the number, or the whole company after a hard quarter.', 'From &pound;35.00 each at 50+' ),
+				array( 'New starter boxes', 'First-week nerves are real. A Letterbox Gift or Full Treat Trunk posted to a new starter&rsquo;s home before day one, with a welcome card from the team, says more than a lanyard ever will. Works just as well for remote hires, who so often get nothing physical at all. Give us a rolling list and we send one out every time someone joins.', 'From &pound;13.99' ),
+				array( 'Work anniversaries, birthdays and milestones', 'Set it up once: tell us the dates, we send the box. Branded card, their name on it, no admin for you.', 'From &pound;13.99' ),
+				array( 'Remote team boosts', 'The Letterbox Gift fits through any door, so a hybrid team of forty in twelve towns gets the same gift on the same day.', 'From &pound;13.00 each at 50+' ),
+			);
+			foreach ( $tt_moments as $tt_m ) : ?>
+				<div style="<?php echo esc_attr( $s_card ); ?> padding: 26px 26px 28px; display: flex; flex-direction: column; gap: 10px;">
+					<h3 style="<?php echo esc_attr( $s_h3 ); ?> font-size: 19px;"><?php echo $tt_m[0]; ?></h3>
+					<p style="font-size: 14.5px; line-height: 1.6; color: #1B2420; margin: 0; flex: 1;"><?php echo $tt_m[1]; ?></p>
+					<p style="<?php echo esc_attr( $s_price ); ?> font-size: 14.5px;"><?php echo $tt_m[2]; ?></p>
 				</div>
-				<div class="tt-corp-card" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
-					<h3 style="font-weight: 700; font-size: 20px; margin: 0; color: #1B2420;">Bulk Letterbox Boxes</h3>
-					<p style="font-size: 14.5px; line-height: 1.55; color: #1B2420; margin: 0; flex: 1;">Letterbox-friendly snack boxes delivered directly to your office address. Order online in one click - volume pricing applies automatically, no code needed. Want your branding on the box? <a href="#quote" style="color: #12786C; font-weight: 700;">Contact us directly</a>.</p>
-					<div style="font-weight: 700; font-size: 22px; color: #12786C;">£15.99 <span style="font-size: 13.5px; font-weight: 600; color: #5B6B68;">/box &middot; 20+: £13.75/box &middot; 50+: £13.00/box</span></div>
-					<p style="font-size: 13px; color: #5B6B68; margin: 0;">That&rsquo;s from £13 per person, each with their own box, delivered to any door in the UK.</p>
-
-					<?php
-					// One-click bulk ordering: WooCommerce's native add-to-cart URL
-					// (?add-to-cart={id}&quantity={n}) adds the item and redirects
-					// straight to the basket at the correct discounted price - no
-					// product-page visit, no manually typing a quantity, no "email us."
-					$letterbox_id = 40245;
-					$qty20_url    = esc_url( add_query_arg( array( 'add-to-cart' => $letterbox_id, 'quantity' => 20 ), home_url( '/' ) ) );
-					$qty50_url    = esc_url( add_query_arg( array( 'add-to-cart' => $letterbox_id, 'quantity' => 50 ), home_url( '/' ) ) );
-					?>
-					<div style="display: flex; flex-direction: column; gap: 8px;">
-						<a href="<?php echo $qty20_url; ?>" style="background: #12786C; color: #FAFAF8; text-align: center; font-weight: 700; font-size: 15px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Order 20 boxes (£275) &rarr;</a>
-						<a href="<?php echo $qty50_url; ?>" style="background: #12786C; color: #FAFAF8; text-align: center; font-weight: 700; font-size: 15px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Order 50 boxes (£650) &rarr;</a>
-						<form method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>" style="display: flex; gap: 6px; margin-top: 2px;">
-							<input type="hidden" name="add-to-cart" value="<?php echo esc_attr( $letterbox_id ); ?>">
-							<input type="number" name="quantity" min="1" value="1" aria-label="Custom quantity" style="width: 70px; padding: 10px 8px; border: 1.5px solid #C4DDDA; border-radius: 10px; font-size: 14px;">
-							<button type="submit" style="flex: 1; background: #FFFFFF; color: #12786C; border: 2px solid #12786C; font-weight: 700; font-size: 14px; padding: 10px 0; border-radius: 999px; cursor: pointer;">Add custom quantity</button>
-						</form>
-					</div>
-				</div>
-			</div>
-
-			<!-- Card 2: Weekly Office Subscription (big box, weekly cadence) -->
-			<div class="tt-corp-card-wrap" style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
-				<div style="position: relative;">
-					<img src="https://treattrunk.co.uk/wp-content/uploads/2020/08/Treat-Trunk-August-2020-1200.jpg" alt="Weekly office snack box" style="width: 100%; height: 180px; object-fit: cover; display: block;">
-					<span style="position: absolute; top: 12px; left: 12px; background: #DCEFEC; color: #12786C; font-size: 11.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px;">Subscription</span>
-				</div>
-				<div class="tt-corp-card" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
-					<h3 style="font-weight: 700; font-size: 20px; margin: 0; color: #1B2420;">Weekly Office Subscription</h3>
-					<p style="font-size: 14.5px; line-height: 1.55; color: #1B2420; margin: 0; flex: 1;">Our full-size 20+ snack box, refreshed every week instead of once. Pause or cancel anytime.</p>
-					<div style="font-weight: 700; font-size: 22px; color: #12786C;">£39.99<span style="font-size: 14px; font-weight: 600; color: #5B6B68;">/week</span></div>
-					<a href="<?php echo esc_url( home_url( '/product/treat-trunk-weekly-subscription/' ) ); ?>" style="background: #12786C; color: #FAFAF8; text-align: center; font-weight: 700; font-size: 15.5px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Start a weekly subscription</a>
-				</div>
-			</div>
-
-			<!-- Card 3: Bulk One-Off Boxes (full-size box, variation 7077 of product 7076) -->
-			<div class="tt-corp-card-wrap" style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
-				<div style="position: relative;">
-					<img src="https://treattrunk.co.uk/wp-content/uploads/2019/10/Treat-Trunk-Healthy-Snack-Box-1200-scaled.jpg" alt="Bulk full-size office snack boxes" style="width: 100%; height: 180px; object-fit: cover; display: block;">
-					<span style="position: absolute; top: 12px; left: 12px; background: #12786C; color: #FAFAF8; font-size: 11.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px;">Bulk</span>
-				</div>
-				<div class="tt-corp-card" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
-					<h3 style="font-weight: 700; font-size: 20px; margin: 0; color: #1B2420;">Bulk One-Off Boxes</h3>
-					<p style="font-size: 14.5px; line-height: 1.55; color: #1B2420; margin: 0; flex: 1;">Our full-size 20+ snack box, ordered in bulk to one address. Volume pricing applies automatically, no code needed.</p>
-					<div style="font-weight: 700; font-size: 22px; color: #12786C;">£44.99 <span style="font-size: 13.5px; font-weight: 600; color: #5B6B68;">/box &middot; 20+: £37.50/box &middot; 50+: £35.00/box</span></div>
-
-					<?php
-					// Same one-click bulk mechanism as the Letterbox card, but for a
-					// variable product: the variation ID + its (non-taxonomy)
-					// attribute value both need to be passed for WooCommerce to
-					// resolve the correct variation via the add-to-cart URL.
-					$oneoff_id         = 7076;
-					$oneoff_variation  = 7077;
-					$oneoff_attribute  = 'Standard (20-25 Snacks)';
-					$oneoff_qty20_url  = esc_url( add_query_arg( array( 'add-to-cart' => $oneoff_id, 'quantity' => 20, 'variation_id' => $oneoff_variation, 'attribute_size' => $oneoff_attribute ), home_url( '/' ) ) );
-					$oneoff_qty50_url  = esc_url( add_query_arg( array( 'add-to-cart' => $oneoff_id, 'quantity' => 50, 'variation_id' => $oneoff_variation, 'attribute_size' => $oneoff_attribute ), home_url( '/' ) ) );
-					?>
-					<div style="display: flex; flex-direction: column; gap: 8px;">
-						<a href="<?php echo $oneoff_qty20_url; ?>" style="background: #12786C; color: #FAFAF8; text-align: center; font-weight: 700; font-size: 15px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Order 20 boxes (£750) &rarr;</a>
-						<a href="<?php echo $oneoff_qty50_url; ?>" style="background: #12786C; color: #FAFAF8; text-align: center; font-weight: 700; font-size: 15px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Order 50 boxes (£1,750) &rarr;</a>
-						<form method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>" style="display: flex; gap: 6px; margin-top: 2px;">
-							<input type="hidden" name="add-to-cart" value="<?php echo esc_attr( $oneoff_id ); ?>">
-							<input type="hidden" name="variation_id" value="<?php echo esc_attr( $oneoff_variation ); ?>">
-							<input type="hidden" name="attribute_size" value="<?php echo esc_attr( $oneoff_attribute ); ?>">
-							<input type="number" name="quantity" min="1" value="1" aria-label="Custom quantity" style="width: 70px; padding: 10px 8px; border: 1.5px solid #C4DDDA; border-radius: 10px; font-size: 14px;">
-							<button type="submit" style="flex: 1; background: #FFFFFF; color: #12786C; border: 2px solid #12786C; font-weight: 700; font-size: 14px; padding: 10px 0; border-radius: 999px; cursor: pointer;">Add custom quantity</button>
-						</form>
-					</div>
-				</div>
-			</div>
-
-			<!-- Card 4: Monthly Office Subscription -->
-			<div class="tt-corp-card-wrap" style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
-				<div style="position: relative;">
-					<img src="https://treattrunk.co.uk/wp-content/uploads/2020/08/Treat-Trunk-August-2020-1200.jpg" alt="Monthly office snack box" style="width: 100%; height: 180px; object-fit: cover; display: block;">
-					<span style="position: absolute; top: 12px; left: 12px; background: #DCEFEC; color: #12786C; font-size: 11.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px;">Subscription</span>
-				</div>
-				<div class="tt-corp-card" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
-					<h3 style="font-weight: 700; font-size: 20px; margin: 0; color: #1B2420;">Monthly Office Subscription</h3>
-					<p style="font-size: 14.5px; line-height: 1.55; color: #1B2420; margin: 0; flex: 1;">A big box of 20+ healthy snacks for the office kitchen, refreshed every month. Pause or cancel anytime.</p>
-					<div style="font-weight: 700; font-size: 22px; color: #12786C;">£39.99<span style="font-size: 14px; font-weight: 600; color: #5B6B68;">/month</span></div>
-					<a href="<?php echo esc_url( home_url( '/product/treat-trunk-monthly-subscription/' ) ); ?>" style="background: #12786C; color: #FAFAF8; text-align: center; font-weight: 700; font-size: 15.5px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Start a subscription</a>
-				</div>
-			</div>
-
-			<!-- Card 5: Remote Team Boxes - quote/manual for now, no product page yet -->
-			<div class="tt-corp-card-wrap" style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
-				<div style="position: relative;">
-					<img src="https://treattrunk.co.uk/wp-content/uploads/2021/05/Treat-Trunk-Healthy-Vegan-Snack-Box-1200-2.jpg" alt="Snack boxes for remote staff" style="width: 100%; height: 180px; object-fit: cover; display: block;">
-					<span style="position: absolute; top: 12px; left: 12px; background: #DCEFEC; color: #0B5951; font-size: 11.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px;">Remote teams</span>
-				</div>
-				<div class="tt-corp-card" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
-					<h3 style="font-weight: 700; font-size: 20px; margin: 0; color: #1B2420;">Remote Team Boxes</h3>
-					<p style="font-size: 14.5px; line-height: 1.55; color: #1B2420; margin: 0; flex: 1;">Healthy office snacks delivered individually to each remote employee&rsquo;s home address. Send us a spreadsheet of addresses and we&rsquo;ll sort the rest - get a quote tailored to your team size.</p>
-					<div style="font-weight: 700; font-size: 22px; color: #12786C;">Custom pricing</div>
-					<a href="#quote" style="background: #FFFFFF; color: #12786C; border: 2px solid #12786C; text-align: center; font-weight: 700; font-size: 15.5px; padding: 10px 0; border-radius: 999px; text-decoration: none;">Set up for my team</a>
-				</div>
-			</div>
-
-			<!-- Card 6: Client & Staff Gifting -->
-			<div class="tt-corp-card-wrap" style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
-				<div style="position: relative;">
-					<img src="https://treattrunk.co.uk/wp-content/uploads/2019/10/Treat-Trunk-Healthy-Snack-Box-1200-scaled.jpg" alt="Client gift snack box" style="width: 100%; height: 180px; object-fit: cover; display: block;">
-					<span style="position: absolute; top: 12px; left: 12px; background: #DCEFEC; color: #0B5951; font-size: 11.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px;">Gifting</span>
-				</div>
-				<div class="tt-corp-card" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
-					<h3 style="font-weight: 700; font-size: 20px; margin: 0; color: #1B2420;">Client &amp; Staff Gifting</h3>
-					<p style="font-size: 14.5px; line-height: 1.55; color: #1B2420; margin: 0; flex: 1;">Corporate gifting for one-off thank-yous, onboarding gifts and Christmas orders. Add your branding to boxes, stickers and gift cards.</p>
-					<div style="font-weight: 700; font-size: 22px; color: #12786C;">£28.99<span style="font-size: 14px; font-weight: 600; color: #5B6B68;">/gift</span></div>
-					<a href="<?php echo esc_url( home_url( '/product/one-off-treat-trunk/' ) ); ?>" style="background: #12786C; color: #FAFAF8; text-align: center; font-weight: 700; font-size: 15.5px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Send a gift box</a>
-				</div>
-			</div>
-
-			<!-- Card 7: Deluxe Corporate Snack Box -->
-			<div class="tt-corp-card-wrap" style="background: #FFFFFF; border: 2px solid #12786C; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
-				<div style="position: relative;">
-					<img src="https://treattrunk.co.uk/wp-content/uploads/2021/05/one-off-trunk-1024x1024.jpg" alt="Deluxe corporate snack box with 60+ office snacks" style="width: 100%; height: 180px; object-fit: cover; display: block;">
-					<span style="position: absolute; top: 12px; left: 12px; background: #12786C; color: #FAFAF8; font-size: 11.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px;">Biggest box</span>
-				</div>
-				<div class="tt-corp-card" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
-					<h3 style="font-weight: 700; font-size: 20px; margin: 0; color: #1B2420;">Deluxe Corporate Snack Box</h3>
-					<p style="font-size: 14.5px; line-height: 1.55; color: #1B2420; margin: 0; flex: 1;">Our biggest one-off box: 60+ sugar sensible, predominantly vegan snacks (some fan favourites included in multiples) - built for office kitchens, team days and client visits.</p>
-					<div style="font-weight: 700; font-size: 22px; color: #12786C;">£125<span style="font-size: 14px; font-weight: 600; color: #5B6B68;">/box &middot; about £2 a snack</span></div>
-					<a href="<?php echo esc_url( home_url( '/product/corporate-snack-box/' ) ); ?>" style="background: #12786C; color: #FAFAF8; text-align: center; font-weight: 700; font-size: 15.5px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Shop the deluxe box</a>
-				</div>
-			</div>
-
-			<!-- Card 8: Deluxe Weekly Subscription (biggest box, weekly cadence) -->
-			<div class="tt-corp-card-wrap" style="background: #FFFFFF; border: 2px solid #12786C; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;">
-				<div style="position: relative;">
-					<img src="https://treattrunk.co.uk/wp-content/uploads/2021/05/one-off-trunk-1024x1024.jpg" alt="Deluxe corporate snack box weekly subscription" style="width: 100%; height: 180px; object-fit: cover; display: block;">
-					<span style="position: absolute; top: 12px; left: 12px; background: #12786C; color: #FAFAF8; font-size: 11.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px;">Biggest box</span>
-				</div>
-				<div class="tt-corp-card" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
-					<h3 style="font-weight: 700; font-size: 20px; margin: 0; color: #1B2420;">Deluxe Weekly Subscription</h3>
-					<p style="font-size: 14.5px; line-height: 1.55; color: #1B2420; margin: 0; flex: 1;">Our biggest box - 60+ sugar sensible, predominantly vegan snacks - delivered every week instead of as a one-off. Pause or cancel anytime.</p>
-					<div style="font-weight: 700; font-size: 22px; color: #12786C;">£100<span style="font-size: 14px; font-weight: 600; color: #5B6B68;">/week</span></div>
-					<a href="<?php echo esc_url( home_url( '/product/deluxe-corporate-snack-box-weekly-subscription/' ) ); ?>" style="background: #12786C; color: #FAFAF8; text-align: center; font-weight: 700; font-size: 15.5px; padding: 12px 0; border-radius: 999px; text-decoration: none;">Start a weekly subscription</a>
-				</div>
-			</div>
+			<?php endforeach; ?>
 		</div>
-		<p style="text-align: center; font-size: 14px; color: #5B6B68; margin: 26px 0 0;">Bigger team? Mixed dietary needs? <a href="#quote" style="color: #12786C; font-weight: 700;">Get volume pricing</a> - we&rsquo;ve shipped orders from 5 boxes to 800+.</p>
 	</section>
 
-	<!-- Comparison: value/attributes, not just price (rebased on Letterbox bulk pricing 2026-07-04) -->
-	<section class="tt-corp-section" style="padding: 24px 48px 56px; max-width: 900px; margin: 0 auto;">
-		<div style="text-align: center; margin-bottom: 32px;">
-			<h2 style="font-weight: 700; font-size: 32px; margin: 0 0 10px; color: #1B2420;">Why Treat Trunk over a standard office box</h2>
-			<p style="font-size: 16px; color: #1B2420; margin: 0;">It&rsquo;s not just price - it&rsquo;s what&rsquo;s actually in the box.</p>
+	<!-- Wellbeing range -->
+	<section id="wellbeing" class="tt-corp-section" style="padding: 24px 48px 40px; max-width: 1240px; margin: 0 auto;">
+		<div style="max-width: 760px; margin: 0 auto 32px; text-align: center;">
+			<h2 style="<?php echo esc_attr( $s_h2 ); ?>">Staff wellbeing gifts with real thought in them</h2>
+			<p style="font-size: 17px; line-height: 1.6; color: #1B2420; margin: 0;">This is the part we are proudest of, and the part no other snack company does. Most &ldquo;wellness gift boxes for employees&rdquo; are a scented candle and a tea bag. Ours were built for real moments in people&rsquo;s lives, and they come from the same healthier-for-you thinking as everything else we pack.</p>
 		</div>
+		<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+			<div class="tt-corp-card-wrap" style="<?php echo esc_attr( $s_card ); ?> overflow: hidden; display: flex; flex-direction: column;">
+				<?php if ( $tt_newmum_img ) : ?><img src="<?php echo esc_url( $tt_newmum_img ); ?>" alt="The Treat Trunk New Mum Box: a returning-from-parental-leave wellbeing gift of healthy snacks" style="width: 100%; height: 210px; object-fit: cover; display: block;"><?php endif; ?>
+				<div class="tt-corp-card" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
+					<h3 style="<?php echo esc_attr( $s_h3 ); ?>">The New Mum Box: the returning-from-leave gift</h3>
+					<p style="font-size: 14.5px; line-height: 1.6; color: #1B2420; margin: 0; flex: 1;">Twenty-plus healthier-for-you snacks chosen for new parents: one-handed, energy-steady, genuinely nice. Send it when the baby arrives, or as the &ldquo;welcome back, we&rsquo;re glad you&rsquo;re here&rdquo; gift on someone&rsquo;s first week back from parental leave. It is the kind of thing people mention years later, in a good way.</p>
+					<p style="<?php echo esc_attr( $s_price ); ?>">&pound;39.99 &middot; branded card available</p>
+					<a href="<?php echo esc_url( home_url( '/product/new-mum/' ) ); ?>" style="<?php echo esc_attr( $s_btn ); ?>">See the New Mum Box</a>
+				</div>
+			</div>
+			<div class="tt-corp-card-wrap" style="<?php echo esc_attr( $s_card ); ?> overflow: hidden; display: flex; flex-direction: column;">
+				<?php if ( $tt_menopause_img ) : ?><img src="<?php echo esc_url( $tt_menopause_img ); ?>" alt="The Treat Trunk Menopause Box: a staff wellbeing gift of plant-based snacks for energy, sleep and steadiness" style="width: 100%; height: 210px; object-fit: cover; display: block;"><?php endif; ?>
+				<div class="tt-corp-card" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
+					<h3 style="<?php echo esc_attr( $s_h3 ); ?>">The Menopause Box</h3>
+					<p style="font-size: 14.5px; line-height: 1.6; color: #1B2420; margin: 0; flex: 1;">Snack smarter, feel good: a box built around snacks that support energy, sleep and steadiness, from makers who take the science seriously. We recommend offering it as a choice rather than sending it unasked: many of our clients list it in a wellbeing menu, alongside the Full Treat Trunk, and let people pick. It quietly tells your team that menopause is something the company is comfortable talking about.</p>
+					<p style="<?php echo esc_attr( $s_price ); ?>">&pound;39.99</p>
+					<a href="<?php echo esc_url( home_url( '/product/menopause-snacks-healthy-snack-box/' ) ); ?>" style="<?php echo esc_attr( $s_btn ); ?>">See the Menopause Box</a>
+				</div>
+			</div>
+			<div class="tt-corp-card-wrap" style="<?php echo esc_attr( $s_card ); ?> overflow: hidden; display: flex; flex-direction: column;">
+				<img src="https://treattrunk.co.uk/wp-content/uploads/2020/08/Treat-Trunk-August-2020-1200.jpg" alt="The Full Treat Trunk: an everyday wellness gift box for employees with 20+ healthy snacks" style="width: 100%; height: 210px; object-fit: cover; display: block;">
+				<div class="tt-corp-card" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
+					<h3 style="<?php echo esc_attr( $s_h3 ); ?>">The everyday wellness gift box for employees</h3>
+					<p style="font-size: 14.5px; line-height: 1.6; color: #1B2420; margin: 0; flex: 1;">The Full Treat Trunk is the all-rounder for wellbeing budgets: real ingredients, sugar-sensible, mostly vegan, full-size packs. Send it for mental health awareness week, at the end of a heavy month, or as the box everyone gets when a wellbeing programme launches.</p>
+					<p style="<?php echo esc_attr( $s_price ); ?>">&pound;44.99 &middot; &pound;37.50 at 20+ &middot; &pound;35.00 at 50+</p>
+					<a href="<?php echo esc_url( home_url( '/product/one-off-treat-trunk/' ) ); ?>" style="<?php echo esc_attr( $s_btn ); ?>">See the Full Treat Trunk</a>
+				</div>
+			</div>
+		</div>
+		<div style="<?php echo esc_attr( $s_card ); ?> padding: 22px 26px; margin-top: 20px; display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap;">
+			<span style="<?php echo esc_attr( $s_pill ); ?>">A note on the budget</span>
+			<p style="font-size: 14.5px; line-height: 1.6; color: #1B2420; margin: 0; flex: 1; min-width: 260px;">Most of our wellbeing gifts are bought from an HR or wellbeing budget rather than the kitchen budget, and they are invoiced as such. If you need a line description for finance, tell us and we will word the invoice to match.</p>
+		</div>
+	</section>
+
+	<!-- Client gifts -->
+	<section id="client-gifts" class="tt-corp-section" style="padding: 24px 48px 40px; max-width: 1240px; margin: 0 auto;">
+		<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; align-items: center;">
+			<?php if ( $tt_hamper_img ) : ?>
+				<img src="<?php echo esc_url( $tt_hamper_img ); ?>" alt="The Treat Trunk Signature Hamper, a black wicker luxury client gift with leather straps" style="width: 100%; height: 400px; object-fit: cover; border-radius: 24px;">
+			<?php endif; ?>
+			<div style="display: flex; flex-direction: column; gap: 14px;">
+				<h2 style="<?php echo esc_attr( $s_h2 ); ?> font-size: 30px;">Client gifts that get talked about</h2>
+				<p style="<?php echo esc_attr( $s_p ); ?>">A client gift has one job: to be opened, enjoyed and remembered. Bottles get regifted and biscuits get left in reception. A box of small-maker snacks with your card on top gets photographed and passed round the office.</p>
+				<p style="<?php echo esc_attr( $s_p ); ?>">For a handful of key clients, the Signature Hamper is the luxury tier: black wicker, twenty gift-grade products, alcohol-free as standard, &pound;149. See our <a href="<?php echo esc_url( home_url( '/corporate-christmas-hampers/' ) ); ?>" style="<?php echo esc_attr( $s_link ); ?>">corporate Christmas hampers</a> page for the full spec; it is available all year round on request.</p>
+				<a href="#quote" style="<?php echo esc_attr( $s_btn ); ?> align-self: flex-start;">Ask about client gifts</a>
+			</div>
+		</div>
+	</section>
+
+	<!-- Pricing -->
+	<section id="pricing" class="tt-corp-section" style="padding: 24px 48px 40px; max-width: 1240px; margin: 0 auto;">
+		<h2 style="<?php echo esc_attr( $s_h2 ); ?> text-align: center; margin-bottom: 24px;">Corporate snack gift pricing</h2>
 		<div style="overflow-x: auto;">
-		<table style="width: 100%; border-collapse: collapse; background: #FFFFFF; border-radius: 20px; overflow: hidden; border: 1px solid #DCEBE9;">
-			<thead>
-				<tr style="background: #12786C;">
-					<th style="text-align: left; padding: 16px 20px; font-weight: 700; font-size: 14.5px; color: #B9DBD6;"></th>
-					<th style="text-align: left; padding: 16px 20px; font-weight: 700; font-size: 15.5px; color: #FAFAF8;">Treat Trunk</th>
-					<th style="text-align: left; padding: 16px 20px; font-weight: 700; font-size: 15.5px; color: #B9DBD6;">Competitor</th>
-				</tr>
-			</thead>
-			<tbody style="font-size: 14.5px; color: #1B2420;">
-				<tr style="border-top: 1px solid #DCEBE9;">
-					<td style="padding: 14px 20px; font-weight: 700;">Bulk price</td>
-					<td style="padding: 14px 20px;">from <strong>£13.00/box</strong> on 50+ box orders</td>
-					<td style="padding: 14px 20px; color: #5B6B68;">£87.50 per 50 snacks (£1.75/snack), no bulk tiers</td>
-				</tr>
-				<tr style="border-top: 1px solid #DCEBE9; background: #FAFAF8;">
-					<td style="padding: 14px 20px; font-weight: 700;">Sugar-conscious</td>
-					<td style="padding: 14px 20px;">&#10003; Every snack is low-sugar by default</td>
-					<td style="padding: 14px 20px; color: #5B6B68;">&#10005; Mixed selection, not sugar-focused</td>
-				</tr>
-				<tr style="border-top: 1px solid #DCEBE9;">
-					<td style="padding: 14px 20px; font-weight: 700;">Good-for-you snacks</td>
-					<td style="padding: 14px 20px;">&#10003; Handpicked for nutritional value, mostly vegan</td>
-					<td style="padding: 14px 20px; color: #5B6B68;">&#10005; Standard snack mix, not health-curated</td>
-				</tr>
-				<tr style="border-top: 1px solid #DCEBE9; background: #FAFAF8;">
-					<td style="padding: 14px 20px; font-weight: 700;">Allergy &amp; dietary catering</td>
-					<td style="padding: 14px 20px;">&#10003; Gluten-free/nut-free tailored per person, even within one bulk order</td>
-					<td style="padding: 14px 20px; color: #5B6B68;">&#10005; No per-person tailoring mentioned</td>
-				</tr>
-				<tr style="border-top: 1px solid #DCEBE9;">
-					<td style="padding: 14px 20px; font-weight: 700;">Minimum order</td>
-					<td style="padding: 14px 20px;">&#10003; None</td>
-					<td style="padding: 14px 20px; color: #5B6B68;">&#10005; 50-snack minimum</td>
-				</tr>
-				<tr style="border-top: 1px solid #DCEBE9; background: #FAFAF8;">
-					<td style="padding: 14px 20px; font-weight: 700;">Delivery</td>
-					<td style="padding: 14px 20px;">&#10003; Letterbox to home addresses, or bulk to one office</td>
-					<td style="padding: 14px 20px; color: #5B6B68;">&#10005; Office-only</td>
-				</tr>
-			</tbody>
-		</table>
+			<table style="width: 100%; border-collapse: collapse; background: #FFFFFF; border-radius: 20px; overflow: hidden; border: 1px solid #DCEBE9; font-size: 14.5px;">
+				<thead>
+					<tr style="background: #12786C; color: #FAFAF8;">
+						<th style="text-align: left; padding: 14px 16px;">Gift</th>
+						<th style="text-align: left; padding: 14px 16px;">What arrives</th>
+						<th style="text-align: left; padding: 14px 16px;">Single</th>
+						<th style="text-align: left; padding: 14px 16px;">20+</th>
+						<th style="text-align: left; padding: 14px 16px;">50+</th>
+						<th style="text-align: left; padding: 14px 16px;">Order</th>
+					</tr>
+				</thead>
+				<tbody style="color: #1B2420;">
+					<?php
+					$tt_rows = array(
+						array( 'Letterbox Gift', '7 to 8 healthy snacks, posts through any door', '&pound;13.99', '&pound;13.75', '&pound;13.00', home_url( '/product/letterbox/' ), 'Order' ),
+						array( 'Mini gift box', '10 to 15 snacks', '&pound;28.99', 'quoted', 'quoted', home_url( '/product/one-off-treat-trunk/' ), 'Order' ),
+						array( 'Full Treat Trunk gift', '20 to 25 full-size snacks', '&pound;44.99', '&pound;37.50', '&pound;35.00', home_url( '/product/one-off-treat-trunk/' ), 'Order' ),
+						array( 'New Mum Box', '20+ snacks for new parents', '&pound;39.99', 'quoted', 'quoted', home_url( '/product/new-mum/' ), 'Order' ),
+						array( 'Menopause Box', '20+ snacks for energy, sleep and steadiness', '&pound;39.99', 'quoted', 'quoted', home_url( '/product/menopause-snacks-healthy-snack-box/' ), 'Order' ),
+						array( 'Signature Hamper', 'Black wicker, 20 gift-grade products, alcohol-free', '&pound;149 <span style="color:#5B6B68;">(&pound;125 returning customers)</span>', '&pound;149', '&pound;149', '#quote', 'Quote' ),
+					);
+					foreach ( $tt_rows as $tt_k => $tt_r ) : ?>
+						<tr style="border-top: 1px solid #DCEBE9;<?php echo $tt_k % 2 ? ' background: #FAFAF8;' : ''; ?>">
+							<td style="<?php echo esc_attr( $s_td ); ?> font-weight: 700;"><?php echo $tt_r[0]; ?></td>
+							<td style="<?php echo esc_attr( $s_td ); ?>"><?php echo $tt_r[1]; ?></td>
+							<td style="<?php echo esc_attr( $s_td ); ?>"><?php echo $tt_r[2]; ?></td>
+							<td style="<?php echo esc_attr( $s_td ); ?>"><?php echo $tt_r[3]; ?></td>
+							<td style="<?php echo esc_attr( $s_td ); ?>"><?php echo $tt_r[4]; ?></td>
+							<td style="<?php echo esc_attr( $s_td ); ?>"><a href="<?php echo esc_url( $tt_r[5] ); ?>" style="<?php echo esc_attr( $s_btn2 ); ?> padding: 7px 14px; font-size: 13.5px;"><?php echo esc_html( $tt_r[6] ); ?></a></td>
+						</tr>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
 		</div>
-		<p style="text-align: center; font-size: 12.5px; color: #5B6B68; margin: 18px 0 0;">Competitor pricing checked July 2026 from a comparable UK office snack box provider's published pricing (ex VAT, 20% VAT added for a like-for-like comparison).</p>
+		<p style="text-align: center; font-size: 13.5px; color: #5B6B68; margin: 14px 0 0;">Dietary versions at no extra cost on every gift. Branding quoted separately. Volume pricing on the Letterbox Gift and Full Treat Trunk applies automatically in the basket. No VAT to add: we are not VAT registered. Looking for the kitchen, not a gift? See our <a href="<?php echo esc_url( home_url( '/office-snack-boxes/' ) ); ?>" style="<?php echo esc_attr( $s_link ); ?>">office snack box subscription</a>.</p>
 	</section>
+
+	<!-- Branding + how it works + dietary -->
+	<section class="tt-corp-section" style="padding: 24px 48px 40px; max-width: 1240px; margin: 0 auto;">
+		<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; align-items: start;">
+			<div style="<?php echo esc_attr( $s_card ); ?> padding: 30px 30px 32px;">
+				<h2 style="font-weight: 700; font-size: 24px; margin: 0 0 12px; color: #1B2420;">Your branding, on the bits people keep</h2>
+				<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 15px; line-height: 1.55; color: #1B2420;">
+					<li><strong>Gift cards.</strong> Your logo and a personal message, printed and placed in every box.</li>
+					<li><strong>Stickers.</strong> Branded stickers on the box, so the unboxing photo has your name in it.</li>
+					<li><strong>Ribbon.</strong> For the gift-wrapped tiers and the hamper.</li>
+					<li><strong>Proofed first.</strong> We send mock-ups for sign-off before anything is printed or packed. Allow around two weeks for branded orders.</li>
+				</ul>
+			</div>
+			<div style="<?php echo esc_attr( $s_card ); ?> padding: 30px 30px 32px;">
+				<h2 style="font-weight: 700; font-size: 24px; margin: 0 0 12px; color: #1B2420;">How corporate gifting works</h2>
+				<ol style="margin: 0; padding: 0 0 0 20px; display: flex; flex-direction: column; gap: 10px; font-size: 15px; line-height: 1.55; color: #1B2420;">
+					<li><strong>Choose.</strong> Pick a gift, or a mix. Tell us the occasion and who it is for.</li>
+					<li><strong>Personalise.</strong> Send your message and artwork; we proof the card, stickers or ribbon.</li>
+					<li><strong>One invoice.</strong> Your company is invoiced directly, worded for the right budget. Payment on invoice, then we dispatch.</li>
+					<li><strong>We deliver.</strong> One office address, or a spreadsheet of homes. Every parcel goes tracked and we report delivery for every recipient.</li>
+				</ol>
+			</div>
+			<div style="<?php echo esc_attr( $s_card ); ?> padding: 30px 30px 32px;">
+				<h2 style="font-weight: 700; font-size: 24px; margin: 0 0 12px; color: #1B2420;">Dietary needs, handled honestly</h2>
+				<p style="font-size: 15px; line-height: 1.65; color: #1B2420; margin: 0;">Every gift is vegetarian throughout and mostly vegan. We build vegan, gluten-free and nut-aware versions at no extra cost; tag each recipient in the address sheet. Kosher is handled case by case. We cannot offer bespoke allergy builds beyond those, so every box carries a contents and allergen card.</p>
+			</div>
+		</div>
+	</section>
+
+	<?php
+	$tt_quotes = array( '800', 'home' );
+	include TT_CORP_UI_DIR . 'templates/parts/trust.php';
+	?>
 
 	<!-- WeWork offer -->
 	<section id="wework" class="tt-corp-section" style="padding: 48px; max-width: 1240px; margin: 0 auto;">
@@ -409,216 +371,45 @@ get_header();
 		</div>
 	</section>
 
-	<!-- How it works -->
-	<section class="tt-corp-section" style="padding: 56px 48px; max-width: 1240px; margin: 0 auto;">
-		<h2 style="font-weight: 700; font-size: 32px; text-align: center; margin: 0 0 40px; color: #1B2420;">Corporate orders, without the admin</h2>
-		<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px;">
-			<div style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 20px; padding: 28px; display: flex; flex-direction: column; gap: 12px;">
-				<div style="width: 40px; height: 40px; border-radius: 999px; background: #DCEFEC; color: #12786C; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px;">1</div>
-				<h3 style="font-weight: 700; font-size: 19px; margin: 0; color: #1B2420;">Tell us about your team</h3>
-				<p style="font-size: 15px; line-height: 1.6; color: #1B2420; margin: 0;">Headcount, budget, dietary needs, one office or fifty home addresses - order online or drop us a message.</p>
-			</div>
-			<div style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 20px; padding: 28px; display: flex; flex-direction: column; gap: 12px;">
-				<div style="width: 40px; height: 40px; border-radius: 999px; background: #DCEFEC; color: #12786C; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px;">2</div>
-				<h3 style="font-weight: 700; font-size: 19px; margin: 0; color: #1B2420;">We hand-pack every box</h3>
-				<p style="font-size: 15px; line-height: 1.6; color: #1B2420; margin: 0;">Snacks are handpicked from small, ethical UK brands - vegetarian, mostly vegan, low sugar, with your branding on request.</p>
-			</div>
-			<div style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 20px; padding: 28px; display: flex; flex-direction: column; gap: 12px;">
-				<div style="width: 40px; height: 40px; border-radius: 999px; background: #DCEFEC; color: #12786C; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px;">3</div>
-				<h3 style="font-weight: 700; font-size: 19px; margin: 0; color: #1B2420;">Delivered &amp; tracked</h3>
-				<p style="font-size: 15px; line-height: 1.6; color: #1B2420; margin: 0;">Bulk to one location or individually to every doorstep - all tracked, letterbox-friendly.</p>
-			</div>
-		</div>
-	</section>
+	<?php
+	$tt_form = array(
+		'id'      => 'gift',
+		'source'  => 'corporate-orders',
+		'heading' => 'Tell us about your gift',
+		'intro'   => 'The occasion, roughly how many people, and whether it is one address or many. We reply personally with a quote, usually the same day.',
+		'bullets' => array( 'hello@treattrunk.co.uk', 'No minimum order, invoiced to the right budget', 'Branded cards, stickers and ribbon', 'New Mum and Menopause wellbeing boxes' ),
+		'fields'  => array(
+			array( 'name' => 'company', 'label' => 'Company', 'type' => 'text' ),
+			array( 'name' => 'headcount', 'label' => 'Rough headcount', 'type' => 'text', 'placeholder' => 'e.g. 1 colleague, or 60 staff' ),
+			array( 'name' => 'gifts', 'label' => 'Which gift?', 'type' => 'select', 'options' => array( 'Letterbox Gift', 'Full Treat Trunk', 'New Mum Box', 'Menopause Box', 'Signature Hamper', 'A mix', 'Not sure yet' ) ),
+			array( 'name' => 'occasion', 'label' => 'Occasion and ideal delivery date', 'type' => 'text', 'placeholder' => 'e.g. new starters on 5 October' ),
+			array( 'name' => 'addresses', 'label' => 'One address or many?', 'type' => 'select', 'options' => array( 'One office address', 'Individual home addresses', 'Both' ) ),
+			array( 'name' => 'branding', 'label' => 'Branding?', 'type' => 'select', 'options' => array( 'Yes', 'No', 'Not sure yet' ) ),
+		),
+		'message' => array( 'label' => 'Anything else', 'hint' => '(dietary needs, budget, message for the card)', 'placeholder' => 'e.g. budget around £30 a head, 3 vegan' ),
+		'button'  => 'Get my gifting quote',
+		'success' => 'Thanks, we have your enquiry. We reply personally, usually the same day and always within 24 hours.',
+	);
+	include TT_CORP_UI_DIR . 'templates/parts/quote-form.php';
 
-	<!-- Corporate gifting (added 2026-07-18: closes the corporate-gifting keyword
-	     gap vs Snackfully's dedicated gifting page + blog cluster; all offerings
-	     below are verified live products/services, nothing aspirational) -->
-	<section id="gifting" class="tt-corp-section" style="padding: 24px 48px 56px; max-width: 1240px; margin: 0 auto;">
-		<div style="text-align: center; max-width: 720px; margin: 0 auto 36px;">
-			<h2 style="font-weight: 700; font-size: 32px; margin: 0 0 12px; color: #1B2420;">Corporate gifting &amp; client gift boxes</h2>
-			<p style="font-size: 16.5px; line-height: 1.6; color: #1B2420; margin: 0;">The same hand-packed boxes work just as well as staff thank-yous, client gifts and new-starter welcomes - with your branding on the box if you want it.</p>
-		</div>
-		<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; max-width: 1000px; margin: 0 auto;">
-			<div style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 20px; padding: 26px; display: flex; flex-direction: column; gap: 10px;">
-				<h3 style="font-weight: 700; font-size: 19px; margin: 0; color: #1B2420;">One-off gift boxes</h3>
-				<p style="font-size: 14.5px; line-height: 1.6; color: #1B2420; margin: 0; flex: 1;">Standard or Mini snack boxes with a gift message and gift wrap at checkout - sent to one desk or a hundred doorsteps.</p>
-				<a href="<?php echo esc_url( home_url( '/send-a-gift/' ) ); ?>" style="color: #12786C; font-weight: 700; font-size: 15px; text-decoration: underline; text-underline-offset: 3px;">Browse gift boxes &rarr;</a>
-			</div>
-			<div style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 20px; padding: 26px; display: flex; flex-direction: column; gap: 10px;">
-				<h3 style="font-weight: 700; font-size: 19px; margin: 0; color: #1B2420;">Gift subscriptions</h3>
-				<p style="font-size: 14.5px; line-height: 1.6; color: #1B2420; margin: 0; flex: 1;">3, 6 or 12 months of monthly snack boxes - a staff reward or client thank-you that keeps landing long after the gesture.</p>
-				<a href="<?php echo esc_url( home_url( '/product/3-month-gift-subscription/' ) ); ?>" style="color: #12786C; font-weight: 700; font-size: 15px; text-decoration: underline; text-underline-offset: 3px;">See gift subscriptions &rarr;</a>
-			</div>
-			<div style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 20px; padding: 26px; display: flex; flex-direction: column; gap: 10px;">
-				<h3 style="font-weight: 700; font-size: 19px; margin: 0; color: #1B2420;">Branded &amp; bespoke</h3>
-				<p style="font-size: 14.5px; line-height: 1.6; color: #1B2420; margin: 0; flex: 1;">Your logo on boxes, stickers, wrapping and gift cards, plus tailored contents for occasions like new-parent or wellbeing gifts.</p>
-				<a href="#quote" style="color: #12786C; font-weight: 700; font-size: 15px; text-decoration: underline; text-underline-offset: 3px;">Ask about branding &rarr;</a>
-			</div>
-		</div>
-	</section>
+	// FAQ accordion. The FAQPage JSON-LD for page 36634 is emitted by
+	// site-core.php from an identical array - update both together.
+	$tt_faqs = array(
+		array( 'Is there a minimum order for corporate snack gifts?', 'No. One New Mum Box for one colleague is a real order. Volume pricing on the Letterbox Gift and Full Treat Trunk starts at 20.' ),
+		array( 'Can we send employee gift boxes to home addresses?', 'Yes. Send us a spreadsheet of addresses and we handle every label, dispatch tracked and report delivery status for every recipient. The Letterbox Gift fits through any standard letterbox.' ),
+		array( 'Can we pay by invoice, and can it come out of our wellbeing budget?', 'Yes. Your company is invoiced directly and we will word the invoice line to match the budget you are using, wellbeing, HR, marketing or client entertainment. Our standard terms are payment on invoice, then dispatch.' ),
+		array( 'Can you add our branding?', 'Yes: gift cards with your artwork and message, branded stickers on the box, and ribbon on the gift-wrapped tiers. We proof everything first. Allow around two weeks.' ),
+		array( 'What is in the New Mum and Menopause boxes, and are they suitable as employee gifts?', 'Both are 20+ healthier-for-you snacks chosen for the moment: one-handed and energy-steady for new parents; energy, sleep and steadiness for menopause. Both are widely used as returning-from-leave and wellbeing-programme gifts. We suggest offering the Menopause Box as a choice within a wellbeing menu rather than sending it unrequested.' ),
+		array( 'Can you set up recurring gifts for new starters or anniversaries?', 'Yes. Give us a rolling list or the dates and we send a box each time, with a card, and invoice monthly.' ),
+		array( 'What dietary options are there?', 'Vegetarian throughout and mostly vegan. Vegan, gluten-free and nut-aware versions at no extra cost, per recipient. Kosher case by case. Every box carries a contents and allergen card.' ),
+	);
+	$tt_faq_heading = 'Corporate gifting FAQs';
+	include TT_CORP_UI_DIR . 'templates/parts/faqs.php';
+	?>
 
-	<!-- Testimonials (verified against real page content 2026-07-04) -->
-	<section class="tt-corp-section" style="background: #FAFAF8; padding: 56px 48px;">
-		<div style="max-width: 1240px; margin: 0 auto;">
-			<h2 style="font-weight: 700; font-size: 32px; text-align: center; margin: 0 0 36px; color: #1B2420;">What corporate clients say</h2>
-			<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px;">
-				<figure style="background: #FFFFFF; border-radius: 20px; padding: 26px; margin: 0; display: flex; flex-direction: column; gap: 14px;">
-					<div style="color: #12786C; font-size: 16px;">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-					<blockquote style="margin: 0; font-size: 15px; line-height: 1.6; color: #1B2420; font-style: italic;">&ldquo;An extremely good value range of high-quality snacks, catering to the many allergen and dietary requirements we had, sent with tracking information and amazing customer service from Sally.&rdquo;</blockquote>
-					<figcaption style="font-size: 14px; font-weight: 700; color: #12786C;">Andy &middot; High Speed Training Ltd</figcaption>
-				</figure>
-				<figure style="background: #FFFFFF; border-radius: 20px; padding: 26px; margin: 0; display: flex; flex-direction: column; gap: 14px;">
-					<div style="color: #12786C; font-size: 16px;">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-					<blockquote style="margin: 0; font-size: 15px; line-height: 1.6; color: #1B2420; font-style: italic;">&ldquo;We ordered over 800 letterbox gifts to be sent to our staff - Sally was great and provided lots of options and costs to help us decide. A pleasure to deal with Treat Trunk.&rdquo;</blockquote>
-					<figcaption style="font-size: 14px; font-weight: 700; color: #12786C;">800-employee letterbox order</figcaption>
-				</figure>
-				<figure style="background: #FFFFFF; border-radius: 20px; padding: 26px; margin: 0; display: flex; flex-direction: column; gap: 14px;">
-					<div style="color: #12786C; font-size: 16px;">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-					<blockquote style="margin: 0; font-size: 15px; line-height: 1.6; color: #1B2420; font-style: italic;">&ldquo;Everyone was delighted to receive their boxes and we&rsquo;ve had lots of positive feedback. The ordering process was really easy and boxes were dispatched promptly.&rdquo;</blockquote>
-					<figcaption style="font-size: 14px; font-weight: 700; color: #12786C;">Staff wellbeing order</figcaption>
-				</figure>
-			</div>
-		</div>
-	</section>
-
-	<!-- Why Treat Trunk -->
-	<section class="tt-corp-section" style="padding: 56px 48px; max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; align-items: center;">
-		<img src="https://treattrunk.co.uk/wp-content/uploads/2022/02/IMG_0413-1-768x1024.jpeg" alt="Corporate order packed at Treat Trunk" style="width: 100%; height: 420px; object-fit: cover; border-radius: 24px;">
-		<div style="display: flex; flex-direction: column; gap: 16px;">
-			<h2 style="font-weight: 700; font-size: 30px; margin: 0; color: #1B2420;">Why offices choose Treat Trunk</h2>
-			<div style="display: flex; flex-direction: column; gap: 12px; font-size: 15px; line-height: 1.55; color: #1B2420;">
-				<div>&#10003; <strong>No minimum order</strong> - we work with big brands and five-person startups alike.</div>
-				<div>&#10003; <strong>Dietary needs sorted</strong> - vegetarian, mostly vegan, low sugar, allergen requirements handled per person.</div>
-				<div>&#10003; <strong>Your branding, our boxes</strong> - logos on stickers, wrapping and gift cards.</div>
-				<div>&#10003; <strong>Independent UK brands</strong> - every box champions small, ethical snack makers.</div>
-				<div>&#10003; <strong>One human, start to finish</strong> - you&rsquo;ll deal with a real person on our team, not a ticketing system.</div>
-			</div>
-		</div>
-	</section>
-
-	<!-- FAQ -->
-	<section class="tt-corp-section" style="padding: 24px 48px 56px; max-width: 800px; margin: 0 auto;">
-		<h2 style="font-weight: 700; font-size: 32px; text-align: center; margin: 0 0 28px; color: #1B2420;">Corporate FAQs</h2>
-		<div style="display: flex; flex-direction: column; gap: 12px;">
-			<details style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 14px; padding: 16px 20px;">
-				<summary style="font-weight: 700; font-size: 16px; color: #1B2420; cursor: pointer;"><h3 style="display: inline; font-weight: 700; font-size: 16px; margin: 0; color: #1B2420;">What is a corporate snack box?</h3></summary>
-				<p style="font-size: 14.5px; line-height: 1.6; color: #1B2420; margin: 10px 0 0;">A corporate snack box is a curated selection of office snacks delivered to your workplace or straight to staff at home, ideal for office kitchens, client visits, staff wellbeing and team perks. Ours are predominantly vegan, sugar sensible and sourced from independent UK brands.</p>
-			</details>
-			<details style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 14px; padding: 16px 20px;">
-				<summary style="font-weight: 700; font-size: 16px; color: #1B2420; cursor: pointer;"><h3 style="display: inline; font-weight: 700; font-size: 16px; margin: 0; color: #1B2420;">How much do office snacks cost for a team?</h3></summary>
-				<p style="font-size: 14.5px; line-height: 1.6; color: #1B2420; margin: 10px 0 0;">Our Letterbox snack box is £15.99/box, dropping automatically to £13.75/box on 20+ box orders and £13.00/box on 50+ box orders to one address. A one-off Deluxe Corporate Snack Box (60+ snacks) is £125, about £2 a snack. For remote teams that works out from £13 per person with every box delivered to its own address. No minimum order and no discount code needed.</p>
-			</details>
-			<details style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 14px; padding: 16px 20px;">
-				<summary style="font-weight: 700; font-size: 16px; color: #1B2420; cursor: pointer;"><h3 style="display: inline; font-weight: 700; font-size: 16px; margin: 0; color: #1B2420;">Can you deliver to lots of individual home addresses?</h3></summary>
-				<p style="font-size: 14.5px; line-height: 1.6; color: #1B2420; margin: 10px 0 0;">Yes - this is our speciality. Send us a spreadsheet of names and addresses and we&rsquo;ll post a tracked, letterbox-friendly box to every one. We&rsquo;ve handled orders of 800+.</p>
-			</details>
-			<details style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 14px; padding: 16px 20px;">
-				<summary style="font-weight: 700; font-size: 16px; color: #1B2420; cursor: pointer;"><h3 style="display: inline; font-weight: 700; font-size: 16px; margin: 0; color: #1B2420;">Do the bulk discounts need a code?</h3></summary>
-				<p style="font-size: 14.5px; line-height: 1.6; color: #1B2420; margin: 10px 0 0;">No - order 20 or more Letterbox boxes to one address and the discount applies automatically in your cart. No code needed.</p>
-			</details>
-			<details style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 14px; padding: 16px 20px;">
-				<summary style="font-weight: 700; font-size: 16px; color: #1B2420; cursor: pointer;"><h3 style="display: inline; font-weight: 700; font-size: 16px; margin: 0; color: #1B2420;">Can you handle dietary requirements and allergies?</h3></summary>
-				<p style="font-size: 14.5px; line-height: 1.6; color: #1B2420; margin: 10px 0 0;">All boxes are vegetarian (mostly vegan), low sugar and health-conscious throughout. We can tailor individual boxes for gluten-free, nut-free and other requirements, even within a single bulk order.</p>
-			</details>
-			<details style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 14px; padding: 16px 20px;">
-				<summary style="font-weight: 700; font-size: 16px; color: #1B2420; cursor: pointer;"><h3 style="display: inline; font-weight: 700; font-size: 16px; margin: 0; color: #1B2420;">Can we add our company branding?</h3></summary>
-				<p style="font-size: 14.5px; line-height: 1.6; color: #1B2420; margin: 10px 0 0;">Yes - we can incorporate your branding on boxes, stickers, wrapping and gift cards. Mention it in your enquiry and we&rsquo;ll quote for it.</p>
-			</details>
-			<details style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 14px; padding: 16px 20px;">
-				<summary style="font-weight: 700; font-size: 16px; color: #1B2420; cursor: pointer;"><h3 style="display: inline; font-weight: 700; font-size: 16px; margin: 0; color: #1B2420;">Can we pay by invoice?</h3></summary>
-				<p style="font-size: 14.5px; line-height: 1.6; color: #1B2420; margin: 10px 0 0;">Yes - for corporate orders we can invoice your company directly. Mention it in the enquiry form and we&rsquo;ll set it up.</p>
-			</details>
-			<details style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 14px; padding: 16px 20px;">
-				<summary style="font-weight: 700; font-size: 16px; color: #1B2420; cursor: pointer;"><h3 style="display: inline; font-weight: 700; font-size: 16px; margin: 0; color: #1B2420;">How fast is corporate delivery?</h3></summary>
-				<p style="font-size: 14.5px; line-height: 1.6; color: #1B2420; margin: 10px 0 0;">We aim to post orders within 2 working days on a tracked 2 working day service, with a first class upgrade available. For larger bespoke orders, tell us your date in the enquiry and we&rsquo;ll work to it.</p>
-			</details>
-			<details style="background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 14px; padding: 16px 20px;">
-				<summary style="font-weight: 700; font-size: 16px; color: #1B2420; cursor: pointer;"><h3 style="display: inline; font-weight: 700; font-size: 16px; margin: 0; color: #1B2420;">How many snacks should I order per employee?</h3></summary>
-				<p style="font-size: 14.5px; line-height: 1.6; color: #1B2420; margin: 10px 0 0;">For remote or hybrid teams, one Letterbox box per person posted to their home works best. For a shared office kitchen, one 60+ snack Deluxe box covers roughly 15 to 20 people for a week of snacking as a rule of thumb, or arrives weekly on the Deluxe subscription.</p>
-			</details>
-		</div>
-	</section>
-
-	<!-- Quote / enquiry - REAL ActiveCampaign integration, not a mock form -->
-	<section id="quote" class="tt-corp-section" style="background: #12786C; padding: 64px 48px;">
-		<div style="max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 48px; align-items: start;">
-			<div style="display: flex; flex-direction: column; gap: 16px;">
-				<h2 style="font-weight: 700; font-size: 32px; margin: 0; color: #FAFAF8;">Request a quote within 24 hours</h2>
-				<p style="font-size: 16px; line-height: 1.6; color: #B9DBD6; margin: 0;">Tell us about your team and what you have in mind - bulk letterbox orders, a monthly subscription, gifting, or your free WeWork welcome box. Our team replies personally, usually the same day.</p>
-				<ul style="list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; font-size: 14.5px; color: #B9DBD6; font-weight: 600; border-left: 2px solid rgba(250, 250, 248, 0.3);">
-					<li style="padding-left: 14px;">hello@treattrunk.co.uk</li>
-					<li style="padding-left: 14px;">Replies within 24 hours</li>
-					<li style="padding-left: 14px;">Volume discounts &amp; invoicing available</li>
-				</ul>
-			</div>
-			<div style="background: #FAFAF8; border-radius: 22px; padding: 28px;">
-				<?php
-				// Native styled quote form. Submits same-origin to the
-				// tt_corp_enquiry endpoint (site-core.php) which emails the
-				// team - B2B leads deliberately do NOT go onto the consumer
-				// newsletter (removed 2026-07-19 per business decision).
-				?>
-				<form id="tt-corp-quote-form" novalidate style="display: flex; flex-direction: column; gap: 12px;">
-					<label for="tt-cq-firstname" style="font-size: 13px; font-weight: 700; color: #1B2420; margin: 0;">First name *</label>
-					<input type="text" id="tt-cq-firstname" name="firstname" required autocomplete="given-name" style="font-size: 15px; padding: 12px 14px; border: 1.5px solid #C4DDDA; border-radius: 12px; width: 100%; box-sizing: border-box;">
-					<label for="tt-cq-lastname" style="font-size: 13px; font-weight: 700; color: #1B2420; margin: 0;">Last name</label>
-					<input type="text" id="tt-cq-lastname" name="lastname" autocomplete="family-name" style="font-size: 15px; padding: 12px 14px; border: 1.5px solid #C4DDDA; border-radius: 12px; width: 100%; box-sizing: border-box;">
-					<label for="tt-cq-email" style="font-size: 13px; font-weight: 700; color: #1B2420; margin: 0;">Work email *</label>
-					<input type="email" id="tt-cq-email" name="email" required autocomplete="email" style="font-size: 15px; padding: 12px 14px; border: 1.5px solid #C4DDDA; border-radius: 12px; width: 100%; box-sizing: border-box;">
-					<label for="tt-cq-message" style="font-size: 13px; font-weight: 700; color: #1B2420; margin: 0;">What do you need? <span style="font-weight: 400; color: #5B6B68;">(team size, budget, one-off or subscription, delivery)</span></label>
-					<textarea id="tt-cq-message" name="message" rows="3" style="font-size: 15px; padding: 12px 14px; border: 1.5px solid #C4DDDA; border-radius: 12px; width: 100%; box-sizing: border-box; font-family: inherit; resize: vertical;"></textarea>
-					<?php // Honeypot: hidden from real users, bots fill it and get silently dropped server-side. ?>
-					<div style="position: absolute; left: -9999px;" aria-hidden="true"><label>Leave this blank<input type="text" name="tt_hp" tabindex="-1" autocomplete="off"></label></div>
-					<label style="display: flex; gap: 8px; align-items: flex-start; font-size: 12.5px; line-height: 1.5; color: #5B6B68;">
-						<input type="checkbox" name="consent" value="yes" required style="margin-top: 2px;">
-						<span>I&rsquo;m happy for Treat Trunk to contact me about this enquiry. We won&rsquo;t add you to our newsletter - see our <a href="<?php echo esc_url( home_url( '/privacy-policy/' ) ); ?>" style="color: #12786C;">privacy policy</a>.</span>
-					</label>
-					<button type="submit" id="tt-cq-submit" style="background: #12786C; color: #FAFAF8; border: none; font-weight: 700; font-size: 16px; padding: 14px 0; border-radius: 999px; cursor: pointer;">Request a quote</button>
-					<p id="tt-cq-status" role="status" style="font-size: 13.5px; line-height: 1.5; margin: 0; display: none;"></p>
-				</form>
-				<script id="tt-corp-quote">
-				(function () {
-					var form = document.getElementById('tt-corp-quote-form');
-					var btn = document.getElementById('tt-cq-submit');
-					var status = document.getElementById('tt-cq-status');
-					function done( ok, msg ) {
-						btn.disabled = false;
-						btn.textContent = 'Request a quote';
-						status.style.display = 'block';
-						status.style.color = ok ? '#0B5951' : '#A03D3A';
-						status.textContent = msg;
-						if ( ok ) { form.reset(); }
-					}
-					form.addEventListener('submit', function ( e ) {
-						e.preventDefault();
-						if ( form.reportValidity && ! form.reportValidity() ) { return; }
-						btn.disabled = true;
-						btn.textContent = 'Sending…';
-
-						// Primary path: same-origin endpoint that emails the team.
-						// Drives the success/error UI because it's reliable (no
-						// cross-origin blind spot) and is what actually delivers
-						// the lead to hello@treattrunk.co.uk.
-						var data = new FormData( form );
-						fetch( '/wp-admin/admin-ajax.php?action=tt_corp_enquiry', { method: 'POST', body: data } )
-							.then( function ( r ) { return r.json(); } )
-							.then( function ( res ) {
-								if ( res && res.success ) {
-									done( true, 'Thanks, we have your enquiry. Our team replies personally, usually the same day and always within 24 hours.' );
-								} else {
-									done( false, ( res && res.data && res.data.message ) || 'Something went wrong. Please email hello@treattrunk.co.uk.' );
-								}
-							} )
-							.catch( function () {
-								done( false, 'Something went wrong. Please email hello@treattrunk.co.uk directly.' );
-							} );
-
-					});
-				})();
-				</script>
-			</div>
-		</div>
+	<!-- Cross-links (one intent per page) -->
+	<section class="tt-corp-section" style="padding: 24px 48px 72px; max-width: 860px; margin: 0 auto;">
+		<p style="font-size: 15.5px; line-height: 1.7; color: #1B2420; margin: 0;">Stocking the office kitchen rather than sending a gift? See our <a href="<?php echo esc_url( home_url( '/office-snack-boxes/' ) ); ?>" style="<?php echo esc_attr( $s_link ); ?>">office snack box subscription</a>, weekly or monthly with no minimum order. For December, our <a href="<?php echo esc_url( home_url( '/corporate-christmas-hampers/' ) ); ?>" style="<?php echo esc_attr( $s_link ); ?>">corporate Christmas hampers</a> are alcohol-free as standard. For ideas, read our guides to <a href="<?php echo esc_url( home_url( '/the-best-corporate-wellbeing-gifts-to-support-your-employees-healthwellness/' ) ); ?>" style="<?php echo esc_attr( $s_link ); ?>">corporate wellbeing gifts</a> and <a href="<?php echo esc_url( home_url( '/9-corporate-letterbox-gifts-to-send-to-your-staff-and-clients/' ) ); ?>" style="<?php echo esc_attr( $s_link ); ?>">corporate letterbox gifts</a>.</p>
 	</section>
 
 </div>

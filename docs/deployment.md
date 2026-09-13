@@ -117,3 +117,51 @@ with `no-store`, which the vhost `Header set` does not override — those (e.g.
 `newsletter-bg.png`) still don't cache. Needs a CompressX-side setting; ~150 KB,
 lower priority. An earlier `# BEGIN Treat Trunk static asset caching` block was
 also appended to prod `.htaccess` but is **inert** (AllowOverride None) — harmless.
+
+## Corporate SEO three-page split — done 2026-09-13
+
+Copy, keyword map and measurement plan: `docs/corporate-seo-pages-2026-09.md`.
+Staging was unreachable (SSH timeout), so this went to production directly
+under explicit approval, file by file with `.bak-20260913-seo` backups next
+to each replaced file in `wp-content/plugins/`.
+
+1. **Files**: `corporate-ui/` (corporate-ui.php registers the new office
+   template; `templates/gifting-template.php` rewritten as the Christmas
+   hampers page; new `templates/office-template.php`;
+   `templates/corporate-orders-template.php` rewritten as the gifting page
+   with the WeWork section kept verbatim; shared `templates/parts/`
+   quote-form / faqs / schema / trust) and `site-core/site-core.php`
+   (enquiry endpoint forwards the new structured fields and the source page;
+   footer links for all three pages; FAQPage schema for 36634 updated to the
+   gifting FAQs; `/send-a-gift/` cross-link block and homepage seasonal bar
+   via `elementor/frontend/the_content`; explicit 301 for
+   `/corporate-christmas-gifting/`). Linted with `php -l` on the server
+   before copying into place.
+2. **Data** (one idempotent WP-CLI script,
+   `scripts/deploy-corporate-seo-pages-2026-09.php`): page 54774 re-slugged
+   to `/corporate-christmas-hampers/` and retitled; new page 54968
+   `/office-snack-boxes/` on the office template; Yoast title/description/
+   focus keyword on 54774, 54968, 36634, 54610, 54627; main-menu item
+   "Corporate Orders" renamed "Corporate Gifts" with "Office Snack Boxes"
+   (item 54970) and "Christmas Hampers" children; Deluxe products renamed
+   "Deluxe Office Snack Box …" (slugs untouched); "Ordering for a team?"
+   link lines appended to 9 product short descriptions; featured-pick
+   inserts and commercial anchors in the three corporate blog posts; alt
+   text on the three hamper photos (attachments 54964-54966, imported from
+   the lookbook); stale RUCSS rows removed for the rebuilt URLs.
+3. **Gotchas found**: WordPress' automatic old-slug redirect does not fire
+   for page requests (`pagename`, not `name`), so the re-slug needed an
+   explicit `template_redirect` 301. The Hello Elementor header never calls
+   `wp_body_open`, so the homepage bar is prepended through
+   `elementor/frontend/the_content` instead. WP Rocket caches the homepage
+   as `index-https.html` (not `index.html`) - purge that name.
+4. **Verified live**: all three pages 200 with the intended title/meta/H1,
+   JSON-LD present, no PHP notices; old slug 301; footer links, homepage
+   bar, Send a Gift block, blog inserts, product rename, menu; quote
+   endpoint returns success with the new fields (test enquiry emailed).
+
+**Rollback**: restore the `.bak-20260913-seo` files; for the data, set
+54774's slug back to `corporate-christmas-gifting`, unpublish 54968, and
+revert the Yoast meta / menu titles / product titles by hand (the script
+logs every change it made). The blog and excerpt inserts are marked with
+`tt-featured-pick` / `tt-corp-link` classes so they can be found and removed.

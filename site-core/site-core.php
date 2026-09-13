@@ -1060,18 +1060,18 @@ add_action( 'wp_head', function () {
 			array( 'How can I contact you about your healthy snack boxes?', 'Email hello@treattrunk.co.uk or use the contact form on the Contact Us page.' ),
 		);
 	} elseif ( is_page( 36634 ) ) {
-		// Kept in sync with the visible Corporate FAQs accordion in
-		// corporate-ui/templates/corporate-orders-template.php - update both together.
+		// Kept in sync with the visible Corporate gifting FAQs accordion in
+		// corporate-ui/templates/corporate-orders-template.php - update both
+		// together. (The office and Christmas pages emit their own schema from
+		// corporate-ui/templates/parts/schema.php.)
 		$faqs = array(
-			array( 'What is a corporate snack box?', 'A curated selection of office snacks delivered to your workplace or straight to staff at home - ideal for office kitchens, client visits, staff wellbeing and team perks. Boxes are predominantly vegan, sugar sensible and sourced from independent UK brands.' ),
-			array( 'How much do office snacks cost for a team?', 'The Letterbox snack box is £15.99/box, dropping automatically to £13.75/box on 20+ box orders and £13.00/box on 50+ box orders to one address. A one-off Deluxe Corporate Snack Box (60+ snacks) is £125, about £2 a snack. For remote teams that works out from £13 per person with every box delivered to its own address. No minimum order, no discount code needed.' ),
-			array( 'Can you deliver to lots of individual home addresses?', "Yes - this is a speciality. Send a spreadsheet of names and addresses and we'll post a tracked, letterbox-friendly box to each one. We've handled orders of 800+ boxes." ),
-			array( 'Do the bulk discounts need a code?', 'No - order 20 or more Letterbox boxes to one address and the discount applies automatically in the cart.' ),
-			array( 'Can you handle dietary requirements and allergies?', 'All boxes are vegetarian (mostly vegan), low sugar and health-conscious throughout. Individual boxes within a single bulk order can be tailored for gluten-free, nut-free and other requirements.' ),
-			array( 'Can we add our company branding?', "Yes - branding can be incorporated on boxes, stickers, wrapping and gift cards. Mention it in your enquiry and we'll quote for it." ),
-			array( 'Can we pay by invoice?', "Yes - for corporate orders we can invoice your company directly. Mention it in the enquiry form and we'll set it up." ),
-			array( 'How fast is corporate delivery?', "We aim to post orders within 2 working days on a tracked 2 working day service, with a first class upgrade available. For larger bespoke orders, tell us your date in the enquiry and we'll work to it." ),
-			array( 'How many snacks should I order per employee?', 'For remote or hybrid teams, one Letterbox box per person posted to their home works best. For a shared office kitchen, one 60+ snack Deluxe box covers roughly 15 to 20 people for a week of snacking as a rule of thumb, or arrives weekly on the Deluxe subscription.' ),
+			array( 'Is there a minimum order for corporate snack gifts?', 'No. One New Mum Box for one colleague is a real order. Volume pricing on the Letterbox Gift and Full Treat Trunk starts at 20.' ),
+			array( 'Can we send employee gift boxes to home addresses?', 'Yes. Send us a spreadsheet of addresses and we handle every label, dispatch tracked and report delivery status for every recipient. The Letterbox Gift fits through any standard letterbox.' ),
+			array( 'Can we pay by invoice, and can it come out of our wellbeing budget?', 'Yes. Your company is invoiced directly and we will word the invoice line to match the budget you are using, wellbeing, HR, marketing or client entertainment. Our standard terms are payment on invoice, then dispatch.' ),
+			array( 'Can you add our branding?', 'Yes: gift cards with your artwork and message, branded stickers on the box, and ribbon on the gift-wrapped tiers. We proof everything first. Allow around two weeks.' ),
+			array( 'What is in the New Mum and Menopause boxes, and are they suitable as employee gifts?', 'Both are 20+ healthier-for-you snacks chosen for the moment: one-handed and energy-steady for new parents; energy, sleep and steadiness for menopause. Both are widely used as returning-from-leave and wellbeing-programme gifts. We suggest offering the Menopause Box as a choice within a wellbeing menu rather than sending it unrequested.' ),
+			array( 'Can you set up recurring gifts for new starters or anniversaries?', 'Yes. Give us a rolling list or the dates and we send a box each time, with a card, and invoice monthly.' ),
+			array( 'What dietary options are there?', 'Vegetarian throughout and mostly vegan. Vegan, gluten-free and nut-aware versions at no extra cost, per recipient. Kosher case by case. Every box carries a contents and allergen card.' ),
 		);
 	}
 
@@ -1671,10 +1671,14 @@ add_action( 'elementor/theme/before_do_archive', function () {
  * anything to rank on. It needs real content first.
  */
 add_action( 'wp_footer', function () {
+	// Three corporate pages, one intent each (2026-09-13): commercial anchors
+	// match each page's primary keyword - see docs/corporate-seo-pages-2026-09.md.
 	$links = array(
 		'/freebox/'                     => 'Free Box Offer',
 		'/affiliate-home/'              => 'Affiliate Portal',
-		'/corporate-christmas-gifting/' => 'Corporate Christmas Gifts',
+		'/office-snack-boxes/'          => 'Office Snack Boxes',
+		'/corporate-orders/'            => 'Corporate Snack Gifts',
+		'/corporate-christmas-hampers/' => 'Corporate Christmas Hampers',
 	);
 
 	$out = array();
@@ -1696,6 +1700,60 @@ add_action( 'wp_footer', function () {
 		. 'Treat Trunk Ltd &middot; Company No. 15624707 &middot; Registered office: 86-90 Paul Street, London, EC2A 4NE'
 		. '</p>';
 }, 30 );
+
+/**
+ * Corporate cross-links from the two Elementor-built pages in the linking map
+ * (docs/corporate-seo-pages-2026-09.md, Task 4) that cannot take a plain
+ * content edit: /send-a-gift/ (7013) gets a "Buying for a team?" block
+ * appended to its Elementor output, and the homepage gets a seasonal
+ * announcement bar until the last Christmas posting deadline. Both print
+ * server-side rather than editing _elementor_data (same reasoning as the
+ * footer links above) and are removed by deleting this block.
+ */
+add_filter( 'elementor/frontend/the_content', function ( $content ) {
+	if ( ! in_the_loop() ) {
+		return $content;
+	}
+	$link      = 'color:#12786C;font-weight:700;text-decoration:underline;text-underline-offset:3px;';
+	$xmas_open = time() < strtotime( '2026-12-18 00:00:00 Europe/London' );
+
+	if ( is_page( 7013 ) ) {
+		$xmas  = $xmas_open
+			? ' For December, our <a href="' . esc_url( home_url( '/corporate-christmas-hampers/' ) ) . '" style="' . $link . '">corporate Christmas hampers</a> are alcohol-free as standard.'
+			: '';
+		$block = '<section class="tt-gift-corporate-links" style="max-width:1100px;margin:8px auto 40px;padding:22px 26px;background:#FFFFFF;border:1px solid #DCEBE9;border-radius:20px;font-family:\'DM Sans\',-apple-system,sans-serif;font-size:15.5px;line-height:1.65;color:#1B2420;">'
+			. '<strong>Buying for a team?</strong> Our <a href="' . esc_url( home_url( '/corporate-orders/' ) ) . '" style="' . $link . '">employee gift boxes and client gifts</a> come with branded cards, no minimum order and invoicing, posted to one office or to every home address.'
+			. $xmas
+			. '</section>';
+		return $content . $block;
+	}
+
+	// Homepage: seasonal bar directly under the header (the Hello Elementor
+	// header template never calls wp_body_open, so this filter is the hook).
+	if ( is_front_page() && $xmas_open ) {
+		$bar = '<div class="tt-xmas-bar" style="background:#0B5951;color:#FAFAF8;text-align:center;padding:9px 16px;font-size:13.5px;font-weight:600;font-family:\'DM Sans\',-apple-system,sans-serif;">'
+			. 'Corporate Christmas 2026 is open: branded orders close Fri 20 Nov &nbsp;&middot;&nbsp; '
+			. '<a href="' . esc_url( home_url( '/corporate-christmas-hampers/' ) ) . '" style="color:#FAFAF8;text-decoration:underline;text-underline-offset:3px;">corporate Christmas hampers</a>'
+			. '</div>';
+		return $bar . $content;
+	}
+
+	return $content;
+}, 20 );
+
+/**
+ * 301 for the Christmas page's previous slug. WordPress' own old-slug
+ * redirect only fires for post-type queries (`name`), not page requests
+ * (`pagename`), so /corporate-christmas-gifting/ was a 404 after the
+ * 2026-09-13 re-slug despite the _wp_old_slug meta being in place.
+ */
+add_action( 'template_redirect', function () {
+	$path = trim( wp_parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH ), '/' );
+	if ( 'corporate-christmas-gifting' === $path ) {
+		wp_redirect( home_url( '/corporate-christmas-hampers/' ), 301 );
+		exit;
+	}
+}, 1 );
 
 /**
  * [tt_box_comparison] - Mini vs Standard box comparison table. Not
@@ -1820,12 +1878,42 @@ function tt_corporate_enquiry_notify() {
 
 	set_transient( $key, $hits + 1, 15 * MINUTE_IN_SECONDS );
 
+	// Structured fields added 2026-09-13 with the shared quote form
+	// (corporate-ui/templates/parts/quote-form.php). All optional; only the
+	// ones the enquirer filled in are listed in the email.
+	$extra_fields = array(
+		'company'   => 'Company',
+		'headcount' => 'Headcount',
+		'gifts'     => 'Gifts',
+		'box'       => 'Box',
+		'cadence'   => 'One-off / subscription',
+		'addresses' => 'Addresses',
+		'branding'  => 'Branding',
+		'week'      => 'Delivery week',
+		'occasion'  => 'Occasion / date',
+	);
+	$details = '';
+	foreach ( $extra_fields as $field => $label ) {
+		$value = isset( $_POST[ $field ] ) ? sanitize_text_field( wp_unslash( $_POST[ $field ] ) ) : '';
+		if ( '' !== $value ) {
+			$details .= str_pad( $label . ':', 24 ) . $value . "\n";
+		}
+	}
+	$source = isset( $_POST['source'] ) ? sanitize_title( wp_unslash( $_POST['source'] ) ) : 'corporate-orders';
+	$source_labels = array(
+		'corporate-orders'            => 'corporate gifting',
+		'office-snack-boxes'          => 'office snack box',
+		'corporate-christmas-hampers' => 'corporate Christmas hamper',
+	);
+	$source_label = isset( $source_labels[ $source ] ) ? $source_labels[ $source ] : 'corporate';
+
 	$name    = trim( $firstname . ' ' . $lastname );
-	$subject = 'New corporate enquiry: ' . $name;
-	$body    = "New corporate snack box enquiry from the /corporate-orders/ quote form.\n\n"
+	$subject = 'New ' . $source_label . ' enquiry: ' . $name . ( '' !== $details && false !== strpos( $details, 'Company:' ) ? ' (' . sanitize_text_field( wp_unslash( $_POST['company'] ) ) . ')' : '' );
+	$body    = "New " . $source_label . " enquiry from the /" . $source . "/ quote form.\n\n"
 		. "Name:  $name\n"
-		. "Email: $email\n\n"
-		. "Message:\n" . ( $message !== '' ? $message : '(none provided)' ) . "\n\n"
+		. "Email: $email\n"
+		. ( '' !== $details ? "\n" . $details : '' )
+		. "\nMessage:\n" . ( $message !== '' ? $message : '(none provided)' ) . "\n\n"
 		. "Reply directly to this email to respond to the enquirer.";
 	$headers = array(
 		'Content-Type: text/plain; charset=UTF-8',
