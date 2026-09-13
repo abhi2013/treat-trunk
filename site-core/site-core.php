@@ -2072,3 +2072,65 @@ add_filter( 'woocommerce_cart_shipping_packages', function ( $packages ) {
 	}
 	return $packages;
 }, 0 );
+
+/**
+ * Gift (block) subscriptions: N boxes in total, not N + 1.
+ *
+ * The 3 / 6 / 12 Month Gift Subscriptions (7009 / 7185 / 37760) are synced
+ * subscriptions with the whole price as the sign-up fee, £0 renewals and a
+ * length of N months. Since the shipping fix above, the initial order ships a
+ * box straight away, so the subscription itself must only produce N - 1
+ * renewal boxes.
+ *
+ * WooCommerce Subscriptions sets the end date to first renewal + N months, and
+ * the AutomateWoo workflow "End Expired Block Subs" (#38783) expires the
+ * subscription 27 days before that end date, i.e. a few days after the Nth
+ * renewal. Net result before this hook: N renewals + the immediate box.
+ *
+ * Pull the end date back by one billing period, counting from the first
+ * renewal date WCS has already scheduled on the subscription. Counting from
+ * the real next-payment date (rather than lowering the product's length) is
+ * right on every day of the month: bought on the sync day itself, the initial
+ * order already counts as the first billing period and the first renewal is a
+ * month later, so length - 1 would come up one box short there.
+ *   end = next_payment + (N - 1) periods  →  AutomateWoo expires the
+ *   subscription a few days after renewal N - 1.
+ */
+add_action( 'woocommerce_checkout_subscription_created', function ( $subscription ) {
+	if ( ! $subscription instanceof WC_Subscription || ! class_exists( 'WC_Subscriptions_Product' ) || ! function_exists( 'wcs_add_time' ) ) {
+		return;
+	}
+	$next_payment = (int) $subscription->get_time( 'next_payment' );
+	if ( $next_payment <= 0 ) {
+		return;
+	}
+	foreach ( $subscription->get_items() as $item ) {
+		$product = $item->get_product();
+		if ( ! tt_welcome_box_ships_now( $product ) ) {
+			continue;
+		}
+		$length = (int) WC_Subscriptions_Product::get_length( $product );
+		if ( $length < 2 ) {
+			continue; // open-ended monthly subscriptions (length 0) are untouched
+		}
+		$period   = WC_Subscriptions_Product::get_period( $product );
+		$interval = max( 1, (int) WC_Subscriptions_Product::get_interval( $product ) );
+		$new_end  = (int) wcs_add_time( ( $length - 1 ) * $interval, $period, $next_payment );
+		$old_end  = (int) $subscription->get_time( 'end' );
+		if ( $new_end <= $next_payment || ( $old_end > 0 && $new_end >= $old_end ) ) {
+			continue; // never extend, never end before the first renewal
+		}
+		try {
+			$subscription->update_dates( array( 'end' => gmdate( 'Y-m-d H:i:s', $new_end ) ) );
+			$subscription->add_order_note( sprintf(
+				'End date set to %s: the first box ships with the initial order, so %d monthly renewals complete this %d-box gift subscription.',
+				gmdate( 'j M Y', $new_end ),
+				$length - 1,
+				$length
+			) );
+		} catch ( Exception $e ) {
+			error_log( 'site-core gift subscription end date: ' . $e->getMessage() );
+		}
+		break;
+	}
+}, 10, 1 );
