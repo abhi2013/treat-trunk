@@ -97,3 +97,16 @@ body .elementor-element-2505bfb6,
 body .elementor-element-409157e {
 	background-color: #FAFAF8 !important;
 }
+
+/* ---------- header discount-code banner (element 416ec58) ----------
+   Same fix site-modernize.css applies sitewide, repeated here because that
+   stylesheet is deliberately not loaded on corporate-ui pages. Without it
+   the boxed column inside the full-width teal header strip keeps its old
+   hardcoded #0B6176 background, so the "Grab your 10% discount code" bar
+   reads as a darker, narrower band that stops short of the page edges.
+   The paint is on the column's .elementor-widget-wrap child (Elementor's
+   classic-background setting), so that child is what gets overridden. */
+body .elementor-element-416ec58,
+body .elementor-element-416ec58 > .elementor-widget-wrap {
+	background-color: #12786C !important;
+}
