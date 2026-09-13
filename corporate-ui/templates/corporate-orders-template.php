@@ -211,7 +211,7 @@ $s_td    = 'padding: 14px 16px; vertical-align: top;';
 				</tbody>
 			</table>
 		</div>
-		<p style="text-align: center; font-size: 13.5px; color: #5B6B68; margin: 14px 0 0;">Dietary versions at no extra cost on every gift. Branding quoted separately. Volume pricing on the Letterbox Gift and Full Treat Trunk applies automatically in the basket. No VAT to add: we are not VAT registered. Looking for the kitchen, not a gift? See our <a href="<?php echo esc_url( home_url( '/office-snack-boxes/' ) ); ?>" style="<?php echo esc_attr( $s_link ); ?>">office snack box subscription</a>.</p>
+		<p style="text-align: center; font-size: 13.5px; color: #5B6B68; margin: 14px 0 0;">Dietary versions at no extra cost on every gift. Branding quoted separately. Volume pricing on the Letterbox Gift and Full Treat Trunk applies automatically in the basket. All prices inclusive of VAT. Looking for the kitchen, not a gift? See our <a href="<?php echo esc_url( home_url( '/office-snack-boxes/' ) ); ?>" style="<?php echo esc_attr( $s_link ); ?>">office snack box subscription</a>.</p>
 	</section>
 
 	<!-- Branding + how it works + dietary -->

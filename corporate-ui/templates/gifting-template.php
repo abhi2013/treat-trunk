@@ -178,7 +178,7 @@ $s_price = 'font-weight: 700; font-size: 17px; color: #0B5951; margin: 0;';
 					<li>&#10003; Branded elements produced and proofed (branding costs confirmed in your written quote)</li>
 					<li>&#10003; One invoice for the whole order</li>
 				</ul>
-				<p style="font-size: 13.5px; line-height: 1.6; color: #5B6B68; margin: 16px 0 0;">&pound;125 per hamper is our rate for companies that have ordered from Treat Trunk before, a saving of &pound;24 on the standard &pound;149. Both include UK mainland delivery. Treat Trunk is not VAT registered, so there is no VAT to add to any price on this page.</p>
+				<p style="font-size: 13.5px; line-height: 1.6; color: #5B6B68; margin: 16px 0 0;">&pound;125 per hamper is our rate for companies that have ordered from Treat Trunk before, a saving of &pound;24 on the standard &pound;149. Both include UK mainland delivery. All prices inclusive of VAT.</p>
 			</div>
 		</div>
 	</section>
@@ -257,7 +257,7 @@ $s_price = 'font-weight: 700; font-size: 17px; color: #0B5951; margin: 0;';
 				</tbody>
 			</table>
 		</div>
-		<p style="text-align: center; font-size: 13.5px; color: #5B6B68; margin: 14px 0 0;">Dietary versions at no extra cost on every tier. Mixed orders welcome. No VAT: we are not VAT registered, so the price you see is the price you pay.</p>
+		<p style="text-align: center; font-size: 13.5px; color: #5B6B68; margin: 14px 0 0;">Dietary versions at no extra cost on every tier. Mixed orders welcome. All prices inclusive of VAT.</p>
 	</section>
 
 	<!-- Deadlines -->

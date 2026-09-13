@@ -179,7 +179,7 @@ $s_td    = 'padding: 14px 16px; vertical-align: top;';
 				</tbody>
 			</table>
 		</div>
-		<p style="font-size: 15px; line-height: 1.65; color: #1B2420; margin: 20px auto 0; max-width: 860px;"><strong>How to read the numbers.</strong> Every snack in a Treat Trunk is full-size, the pack you would buy in a good deli, not a bite-size sample. The Letterbox Box works out from &pound;13 a head for a whole remote team. The Full Treat Trunk at 50+ is &pound;35 for 20 to 25 full-size snacks, about &pound;1.50 a snack. The Deluxe box is about &pound;2 a snack and feeds a busy kitchen for a week. If a per-snack price elsewhere looks cheaper, check the pack size. We are not VAT registered, so there is no VAT to add.</p>
+		<p style="font-size: 15px; line-height: 1.65; color: #1B2420; margin: 20px auto 0; max-width: 860px;"><strong>How to read the numbers.</strong> Every snack in a Treat Trunk is full-size, the pack you would buy in a good deli, not a bite-size sample. The Letterbox Box works out from &pound;13 a head for a whole remote team. The Full Treat Trunk at 50+ is &pound;35 for 20 to 25 full-size snacks, about &pound;1.50 a snack. The Deluxe box is about &pound;2 a snack and feeds a busy kitchen for a week. If a per-snack price elsewhere looks cheaper, check the pack size. All prices inclusive of VAT.</p>
 
 		<h3 style="font-weight: 700; font-size: 24px; margin: 40px 0 18px; color: #1B2420; text-align: center;">Which office snack box is right for your team?</h3>
 		<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px;">
@@ -244,7 +244,7 @@ $s_td    = 'padding: 14px 16px; vertical-align: top;';
 			<div style="background: #12786C; color: #FAFAF8; border-radius: 20px; padding: 32px 32px 34px;">
 				<h2 style="font-weight: 700; font-size: 26px; line-height: 1.2; margin: 0 0 14px; color: #FAFAF8;">Pay by invoice</h2>
 				<p style="font-size: 15.5px; line-height: 1.65; color: #FAFAF8; margin: 0 0 12px;">Any office order can be invoiced to your company instead of paid by card. Ask for it in the quote form or the order note and we will send a proper invoice with your purchase order number on it. Our standard terms are simple: payment on invoice, then we dispatch. Subscriptions can be invoiced monthly.</p>
-				<p style="font-size: 15.5px; line-height: 1.65; color: #B9DBD6; margin: 0;">No card on file, no expense-claim chasing, and no VAT to add: Treat Trunk is not VAT registered.</p>
+				<p style="font-size: 15.5px; line-height: 1.65; color: #B9DBD6; margin: 0;">No card on file, no expense-claim chasing. All prices inclusive of VAT.</p>
 				<a href="#quote" style="<?php echo esc_attr( $s_btn ); ?> background: #FAFAF8; color: #0B5951; margin-top: 18px;">Set up invoicing for my team</a>
 			</div>
 		</div>
