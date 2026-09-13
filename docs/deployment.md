@@ -202,3 +202,19 @@ explicitly to 54987).
 - Verified: desktop hover and mobile tap dropdowns both work (the first tap
   on mobile is consumed by WP Rocket's delay-JS loading scripts; pre-existing,
   sitewide).
+
+### Mobile menu first tap — 2026-09-13
+
+Symptom: the first tap on the hamburger (and the basket icon) did nothing on
+every page; a second tap worked. Cause, confirmed with an on-page click
+logger: WP Rocket delay-JS swallows the real first click, loads the delayed
+scripts, then re-dispatches a synthetic (isTrusted=false) click. Elementor's
+handler opens the menu on that replayed sequence, but site-core's own
+`tt-mobile-menu-toggle-fallback` recorded "already open" at capture time,
+saw no change 50ms later and forced it closed. Both fallbacks (menu and
+basket) now treat the toggle's aria-expanded as the primary signal and only
+act when nothing changed at all. The fallback scripts were already excluded
+from delay-JS; no WP Rocket setting changed, so no PageSpeed impact.
+Load note: five `rocket_clean_domain()` purges in ~25 minutes pushed the
+5-minute load average to ~7 on 2 cores (preload regenerating ~550 URLs);
+space purges out.

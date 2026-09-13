@@ -722,8 +722,22 @@ add_action( 'wp_footer', function () {
 			dropdown.style.display = open ? 'block' : 'none';
 		}
 		toggle.addEventListener( 'click', function () {
-			var wasOpen = isOpen();
+			/* 2026-09-13: WP Rocket's delay-JS swallows the real first tap,
+			   loads the delayed scripts, then re-dispatches a synthetic
+			   click. By the time that replayed click reaches this listener
+			   the dropdown is already display:block (Elementor's handler
+			   has acted on the replayed sequence) while aria-expanded is
+			   still "false" - so the old "did the display change?" check
+			   saw no change 50ms later and forced the menu CLOSED again.
+			   Net effect: the first tap on every page did nothing. Now the
+			   toggle's own aria-expanded is the primary signal: if Elementor
+			   moved it, the native handler worked and we stay out of it. */
+			var wasOpen     = isOpen();
+			var wasExpanded = toggle.getAttribute( 'aria-expanded' );
 			setTimeout( function () {
+				if ( toggle.getAttribute( 'aria-expanded' ) !== wasExpanded ) {
+					return;
+				}
 				if ( isOpen() === wasOpen ) {
 					setOpen( ! wasOpen );
 				}
@@ -773,8 +787,14 @@ add_action( 'wp_footer', function () {
 			container.setAttribute( 'aria-hidden', open ? 'false' : 'true' );
 		}
 		toggle.addEventListener( 'click', function () {
-			var wasOpen = isOpen();
+			// Same aria-expanded guard as the hamburger fallback above (2026-09-13):
+			// if Elementor's own handler moved the state, leave it alone.
+			var wasOpen     = isOpen();
+			var wasExpanded = toggle.getAttribute( 'aria-expanded' );
 			setTimeout( function () {
+				if ( toggle.getAttribute( 'aria-expanded' ) !== wasExpanded ) {
+					return;
+				}
 				if ( isOpen() === wasOpen ) {
 					setOpen( ! wasOpen );
 				}
