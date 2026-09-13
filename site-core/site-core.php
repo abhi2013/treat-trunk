@@ -1733,7 +1733,9 @@ add_filter( 'elementor/frontend/the_content', function ( $content ) {
 	if ( is_front_page() && $xmas_open ) {
 		$bar = '<div class="tt-xmas-bar" style="background:#0B5951;color:#FAFAF8;text-align:center;padding:9px 16px;font-size:13.5px;font-weight:600;font-family:\'DM Sans\',-apple-system,sans-serif;">'
 			. 'Corporate Christmas 2026 is open: branded orders close Fri 20 Nov &nbsp;&middot;&nbsp; '
-			. '<a href="' . esc_url( home_url( '/corporate-christmas-hampers/' ) ) . '" style="color:#FAFAF8;text-decoration:underline;text-underline-offset:3px;">corporate Christmas hampers</a>'
+			// Inline !important: site-modernize.css paints every <a> teal with
+			// !important, which was rendering this link teal-on-dark-green.
+			. '<a href="' . esc_url( home_url( '/corporate-christmas-hampers/' ) ) . '" style="color:#FAFAF8 !important;font-weight:700;text-decoration:underline;text-underline-offset:3px;">corporate Christmas hampers</a>'
 			. '</div>';
 		return $bar . $content;
 	}
