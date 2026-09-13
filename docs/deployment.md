@@ -181,3 +181,24 @@ until its rows for the three URLs were deleted; Yoast's og:image comes from
 its indexable, so after setting `_thumbnail_id` the pages needed a no-op
 `wp post update` to rebuild it (36634 also had its Yoast og image set
 explicitly to 54987).
+
+### Header banner + main menu — 2026-09-13 (evening)
+
+- **Discount banner on corporate pages**: the boxed column behind "Grab your
+  10% discount code" (element 416ec58) kept its hardcoded #0B6176 on the
+  corporate-ui pages because site-modernize.css is excluded there. Same
+  override added to `corporate-ui/assets/corporate-orders.css`. Needed
+  `rocket_clean_minify()` + `rocket_clean_domain()` to take effect: WP Rocket
+  serves a minified copy from `cache/min/` and a page-cache purge alone does
+  not refresh it.
+- **Main menu (21) restructured** (owner-approved layout): How it works |
+  Corporate ▾ (Corporate Snack Gifts, Office Snack Boxes, Christmas Hampers,
+  New Mum Box, Menopause Box) | Subscribe | Gift ▾ | One Off Boxes ▾ | About ▾
+  (Our Story, Our Mission & Values, Our Snacks, Past Boxes, FAQ, Blog,
+  Contact). Done with WP-CLI (`wp_update_nav_menu_item`), no Elementor edits.
+  Watch-out: menu items sharing a URL with an existing custom item get
+  matched by URL, so the Corporate copies of New Mum / Menopause use a
+  `#corporate` fragment to stay distinct from the Gift dropdown's items.
+- Verified: desktop hover and mobile tap dropdowns both work (the first tap
+  on mobile is consumed by WP Rocket's delay-JS loading scripts; pre-existing,
+  sitewide).
