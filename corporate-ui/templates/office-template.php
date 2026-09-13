@@ -21,6 +21,10 @@ $tt_oneoff_std    = 7077; // Standard (20-25 Snacks)
 $tt_oneoff_mini   = 7078; // Mini (10-15 Snacks)
 $tt_std_attr      = 'Standard (20-25 Snacks)';
 $tt_mini_attr     = 'Mini (10-15 Snacks)';
+$tt_full_img      = 54985; // Two open Full Treat Trunks, real contents (13 Sep 2026).
+$tt_team_img      = 54986; // Row of Letterbox boxes packed for a team.
+$tt_lbx_img       = 54987; // Open Letterbox box.
+$tt_clip          = 54988; // 9-second packing clip, 480p MP4, muted loop.
 
 $tt_lb20  = esc_url( add_query_arg( array( 'add-to-cart' => $tt_letterbox_id, 'quantity' => 20 ), home_url( '/' ) ) );
 $tt_lb50  = esc_url( add_query_arg( array( 'add-to-cart' => $tt_letterbox_id, 'quantity' => 50 ), home_url( '/' ) ) );
@@ -44,14 +48,14 @@ $tt_products = array(
 	array(
 		'name'        => 'Treat Trunk Letterbox Office Snack Box',
 		'description' => 'Letterbox-sized box of 7 to 8 healthier-for-you snacks from small UK makers, vegetarian and mostly vegan, posted through any UK letterbox. No minimum order, volume pricing from 20 boxes, pay by invoice.',
-		'image'       => 'https://treattrunk.co.uk/wp-content/uploads/2021/05/Treat-Trunk-Mini-Healthy-Snack-Box-March-1200.jpg',
+		'image'       => wp_get_attachment_image_url( $tt_lbx_img, 'large' ),
 		'category'    => 'Office Snack Boxes',
 		'offers'      => array( 'lowPrice' => '13.00', 'highPrice' => '15.99', 'offerCount' => 3, 'url' => get_permalink() ),
 	),
 	array(
 		'name'        => 'Full Treat Trunk Office Snack Box (20 to 25 snacks)',
 		'description' => '20 to 25 full-size healthier-for-you snacks from small UK makers for the office kitchen, vegetarian throughout and mostly vegan. One-off, or a weekly or monthly office snack subscription, pause or cancel anytime, pay by invoice.',
-		'image'       => 'https://treattrunk.co.uk/wp-content/uploads/2022/02/IMG_0413-1-768x1024.jpeg',
+		'image'       => wp_get_attachment_image_url( $tt_full_img, 'large' ),
 		'category'    => 'Office Snack Boxes',
 		'offers'      => array( 'lowPrice' => '35.00', 'highPrice' => '44.99', 'offerCount' => 4, 'url' => get_permalink() ),
 	),
@@ -112,7 +116,7 @@ $s_td    = 'padding: 14px 16px; vertical-align: top;';
 			</div>
 		</div>
 		<div style="position: relative;">
-			<img src="https://treattrunk.co.uk/wp-content/uploads/2022/02/IMG_0413-1-768x1024.jpeg" data-skip-lazy="1" fetchpriority="high" alt="An office snack box of full-size healthy snacks being hand-packed at Treat Trunk" style="width: 100%; height: 460px; object-fit: cover; border-radius: 24px; box-shadow: 0 24px 48px -20px rgba(31, 61, 44, 0.35);">
+			<img src="<?php echo esc_url( wp_get_attachment_image_url( $tt_full_img, 'medium_large' ) ); ?>" width="768" height="576" alt="Two open Full Treat Trunk office snack boxes packed with full-size healthy snacks from small UK makers" style="width: 100%; height: 460px; object-fit: cover; border-radius: 24px; box-shadow: 0 24px 48px -20px rgba(31, 61, 44, 0.35);" data-skip-lazy="1" fetchpriority="high">
 		</div>
 	</section>
 
@@ -212,6 +216,12 @@ $s_td    = 'padding: 14px 16px; vertical-align: top;';
 				<h2 style="font-weight: 700; font-size: 26px; line-height: 1.2; margin: 0 0 12px; color: #1B2420;">Healthy office snacks, the Treat Trunk way</h2>
 				<p style="<?php echo esc_attr( $s_p ); ?> font-size: 15.5px; margin-bottom: 12px;">We choose every snack for two things: it has to taste properly good, and it has to be made with real ingredients by people we would happily introduce you to. That means protein-packed brownies from Vive, creamy Caroboo carob bars, Boundless activated nuts and seeds, and a rotating cast of small British makers you will not find in the meeting-room vending machine. Vegetarian throughout and mostly vegan, sugar-sensible by default, with gluten-free and nut-aware boxes available when you tell us who needs them.</p>
 				<p style="<?php echo esc_attr( $s_p ); ?> font-size: 15.5px;">Our whole idea is making snack time easier, adventurous and healthy. For an office that means fewer 3pm crashes, a kitchen people actually gather in, and the small daily signal that somebody thought about the team.</p>
+				<figure style="margin: 18px 0 0;">
+					<video muted autoplay loop playsinline preload="metadata" poster="<?php echo esc_url( wp_get_attachment_image_url( $tt_full_img, 'medium_large' ) ); ?>" style="width: 100%; max-height: 420px; object-fit: cover; border-radius: 16px; display: block; background: #DCEFEC;" aria-label="A Full Treat Trunk office snack box being packed">
+						<source src="<?php echo esc_url( wp_get_attachment_url( $tt_clip ) ); ?>" type="video/mp4">
+					</video>
+					<figcaption style="font-size: 13px; color: #5B6B68; margin: 8px 4px 0; line-height: 1.5;">A Full Treat Trunk being packed: 20 to 25 full-size snacks, every one chosen by hand.</figcaption>
+				</figure>
 			</div>
 		</div>
 	</section>
@@ -219,7 +229,9 @@ $s_td    = 'padding: 14px 16px; vertical-align: top;';
 	<!-- Delivery + invoice -->
 	<section class="tt-corp-section" style="padding: 24px 48px 40px; max-width: 1240px; margin: 0 auto;">
 		<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; align-items: start;">
-			<div style="<?php echo esc_attr( $s_card ); ?> padding: 32px 32px 34px;">
+			<div style="<?php echo esc_attr( $s_card ); ?> padding: 0 0 34px; overflow: hidden;">
+				<img src="<?php echo esc_url( wp_get_attachment_image_url( $tt_team_img, 'medium_large' ) ); ?>" width="768" height="1024" alt="A row of open Treat Trunk Letterbox snack boxes being packed for a remote team" style="width: 100%; height: 240px; object-fit: cover; display: block; margin-bottom: 24px;">
+				<div style="padding: 0 32px;">
 				<h2 style="font-weight: 700; font-size: 26px; line-height: 1.2; margin: 0 0 14px; color: #1B2420;">Office snacks delivery across the UK</h2>
 				<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 15px; line-height: 1.6; color: #1B2420;">
 					<li><strong>To your office:</strong> hand-packed and dispatched tracked, usually within two working days of the order, on a two working day service with a first class upgrade available. Subscriptions run to a fixed schedule so the kitchen is never empty.</li>
@@ -227,6 +239,7 @@ $s_td    = 'padding: 14px 16px; vertical-align: top;';
 					<li><strong>Both at once:</strong> one order can go to the office and to home addresses. Tell us the split in the quote form.</li>
 					<li><strong>Delivery reporting:</strong> for multi-address orders we report delivery status across all recipients.</li>
 				</ul>
+				</div>
 			</div>
 			<div style="background: #12786C; color: #FAFAF8; border-radius: 20px; padding: 32px 32px 34px;">
 				<h2 style="font-weight: 700; font-size: 26px; line-height: 1.2; margin: 0 0 14px; color: #FAFAF8;">Pay by invoice</h2>

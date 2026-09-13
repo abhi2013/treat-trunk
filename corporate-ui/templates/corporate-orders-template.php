@@ -24,6 +24,8 @@ get_header();
 $tt_newmum_img    = get_the_post_thumbnail_url( 8122, 'large' );
 $tt_menopause_img = get_the_post_thumbnail_url( 50327, 'large' );
 $tt_hamper_img    = wp_get_attachment_image_url( 54964, 'large' );
+$tt_lbx_img       = 54987; // Open Letterbox gift box, real contents (13 Sep 2026).
+$tt_full_img      = 54985; // Two open Full Treat Trunks, real contents.
 
 $s_card  = 'background: #FFFFFF; border: 1px solid #DCEBE9; border-radius: 20px;';
 $s_h2    = 'font-weight: 700; font-size: 34px; line-height: 1.15; margin: 0 0 12px; color: #1B2420;';
@@ -76,7 +78,7 @@ $s_td    = 'padding: 14px 16px; vertical-align: top;';
 			</div>
 		</div>
 		<div style="position: relative;">
-			<img src="https://treattrunk.co.uk/wp-content/uploads/2022/02/IMG_0413-1-768x1024.jpeg" data-skip-lazy="1" fetchpriority="high" alt="A corporate snack gift box of healthy snacks being hand-packed at Treat Trunk" style="width: 100%; height: 460px; object-fit: cover; border-radius: 24px; box-shadow: 0 24px 48px -20px rgba(31, 61, 44, 0.35);">
+			<img src="<?php echo esc_url( wp_get_attachment_image_url( $tt_lbx_img, 'medium_large' ) ); ?>" width="768" height="576" alt="An open Treat Trunk Letterbox gift box with seven healthy snacks and yellow tissue, ready to post to an employee" style="width: 100%; height: 460px; object-fit: cover; border-radius: 24px; box-shadow: 0 24px 48px -20px rgba(31, 61, 44, 0.35);" data-skip-lazy="1" fetchpriority="high">
 		</div>
 	</section>
 
@@ -141,7 +143,7 @@ $s_td    = 'padding: 14px 16px; vertical-align: top;';
 				</div>
 			</div>
 			<div class="tt-corp-card-wrap" style="<?php echo esc_attr( $s_card ); ?> overflow: hidden; display: flex; flex-direction: column;">
-				<img src="https://treattrunk.co.uk/wp-content/uploads/2020/08/Treat-Trunk-August-2020-1200.jpg" alt="The Full Treat Trunk: an everyday wellness gift box for employees with 20+ healthy snacks" style="width: 100%; height: 210px; object-fit: cover; display: block;">
+				<img src="<?php echo esc_url( wp_get_attachment_image_url( $tt_full_img, 'medium_large' ) ); ?>" width="768" height="576" alt="The Full Treat Trunk: an open box of 20+ full-size healthy snacks, the everyday wellness gift box for employees" style="width: 100%; height: 210px; object-fit: cover; display: block;">
 				<div class="tt-corp-card" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
 					<h3 style="<?php echo esc_attr( $s_h3 ); ?>">The everyday wellness gift box for employees</h3>
 					<p style="font-size: 14.5px; line-height: 1.6; color: #1B2420; margin: 0; flex: 1;">The Full Treat Trunk is the all-rounder for wellbeing budgets: real ingredients, sugar-sensible, mostly vegan, full-size packs. Send it for mental health awareness week, at the end of a heavy month, or as the box everyone gets when a wellbeing programme launches.</p>

@@ -23,6 +23,8 @@ get_header();
 $tt_hero_img = 54964; // Closed black wicker hamper in the garden (lookbook cover).
 $tt_lid_img  = 54965; // Lifting the leather-strapped lid.
 $tt_card_img = 54966; // Hand-written gift card over the open hamper.
+$tt_full_img = 54985; // Two open Full Treat Trunks, real contents (13 Sep 2026).
+$tt_lbx_img  = 54987; // Open Letterbox gift box, real contents.
 
 $tt_faqs = array(
 	array( 'When do I need to order corporate Christmas hampers by?', 'Three dates matter. Branded and bespoke orders close on Friday 20 November, because gift cards, ribbon and sleeves need proofing and printing. Bulk orders to a single office address need to be confirmed by Friday 11 December. Individual gifts posted to home addresses need to be confirmed by Thursday 17 December. If you order early we can hold dispatch to the week you choose.' ),
@@ -46,14 +48,14 @@ $tt_products = array(
 	array(
 		'name'        => 'Full Treat Trunk Corporate Christmas Gift Box',
 		'description' => '20 to 25 full-size healthier-for-you snacks from small UK makers, vegetarian throughout and mostly vegan. Volume pricing from 20 boxes, delivered to one office or to individual home addresses.',
-		'image'       => 'https://treattrunk.co.uk/wp-content/uploads/2022/02/IMG_0413-1-768x1024.jpeg',
+		'image'       => wp_get_attachment_image_url( $tt_full_img, 'large' ),
 		'category'    => 'Corporate Christmas Hampers',
 		'offers'      => array( 'lowPrice' => '35.00', 'highPrice' => '37.50', 'offerCount' => 2, 'url' => get_permalink(), 'eligibleQuantity' => array( '@type' => 'QuantitativeValue', 'minValue' => 20 ) ),
 	),
 	array(
 		'name'        => 'Treat Trunk Letterbox Christmas Gift',
 		'description' => 'Letterbox-sized selection of 7 to 8 healthier-for-you snacks from small UK makers, posted through any UK letterbox. Volume pricing from 20 gifts.',
-		'image'       => 'https://treattrunk.co.uk/wp-content/uploads/2021/05/Treat-Trunk-Mini-Healthy-Snack-Box-March-1200.jpg',
+		'image'       => wp_get_attachment_image_url( $tt_lbx_img, 'large' ),
 		'category'    => 'Corporate Christmas Hampers',
 		'offers'      => array( 'lowPrice' => '13.00', 'highPrice' => '13.99', 'offerCount' => 3, 'url' => get_permalink() ),
 	),
@@ -191,7 +193,7 @@ $s_price = 'font-weight: 700; font-size: 17px; color: #0B5951; margin: 0;';
 		<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
 			<div class="tt-corp-card-wrap" style="<?php echo esc_attr( $s_card ); ?> overflow: hidden; display: flex; flex-direction: column;">
 				<div style="position: relative;">
-					<img src="https://treattrunk.co.uk/wp-content/uploads/2022/02/IMG_0413-1-768x1024.jpeg" alt="The Full Treat Trunk: a Christmas gift box of 20 to 25 full-size healthy snacks for employees" style="width: 100%; height: 220px; object-fit: cover; display: block;">
+					<img src="<?php echo esc_url( wp_get_attachment_image_url( $tt_full_img, 'medium_large' ) ); ?>" width="768" height="576" alt="The Full Treat Trunk: two open boxes of full-size healthy snacks from small UK makers, the Christmas gift box for employees" style="width: 100%; height: 240px; object-fit: cover; display: block;">
 					<span style="position: absolute; top: 12px; left: 12px; background: #12786C; color: #FAFAF8; font-size: 11.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px;">Team thank-yous</span>
 				</div>
 				<div class="tt-corp-card" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
@@ -203,7 +205,7 @@ $s_price = 'font-weight: 700; font-size: 17px; color: #0B5951; margin: 0;';
 			</div>
 			<div class="tt-corp-card-wrap" style="<?php echo esc_attr( $s_card ); ?> overflow: hidden; display: flex; flex-direction: column;">
 				<div style="position: relative;">
-					<img src="https://treattrunk.co.uk/wp-content/uploads/2021/05/Treat-Trunk-Mini-Healthy-Snack-Box-March-1200.jpg" alt="The Letterbox Gift: a slim Christmas gift box of healthy snacks that posts through any letterbox" style="width: 100%; height: 220px; object-fit: cover; display: block;">
+					<img src="<?php echo esc_url( wp_get_attachment_image_url( $tt_lbx_img, 'medium_large' ) ); ?>" width="768" height="576" alt="The Letterbox Gift: an open slim box of seven healthy snacks with yellow tissue, posts through any letterbox" style="width: 100%; height: 240px; object-fit: cover; display: block;">
 					<span style="position: absolute; top: 12px; left: 12px; background: #12786C; color: #FAFAF8; font-size: 11.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px;">Whole company</span>
 				</div>
 				<div class="tt-corp-card" style="display: flex; flex-direction: column; gap: 10px; flex: 1;">

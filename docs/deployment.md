@@ -165,3 +165,19 @@ to each replaced file in `wp-content/plugins/`.
 revert the Yoast meta / menu titles / product titles by hand (the script
 logs every change it made). The blog and excerpt inserts are marked with
 `tt-featured-pick` / `tt-corp-link` classes so they can be found and removed.
+
+### Real product photos + packing clip — 2026-09-13 (later the same day)
+
+Owner supplied three photos and a 9s clip. Photos resized to 2000px and
+imported as attachments 54985 (two open Full Treat Trunks), 54986 (row of
+Letterbox boxes packed for a team), 54987 (open Letterbox gift box); the MOV
+converted with macOS `avconvert` (Preset640x480, ~3MB) and imported as 54988.
+Swapped into all three corporate templates in place of the 2022 placeholder
+photo, plus a muted autoplay loop of the clip on /office-snack-boxes/.
+Gotchas: the site's `large` size is a 1024x1024 centre-crop, so these 4:3
+photos use `medium_large` (768x576) via a plain `<img>`; WP Rocket's
+above-the-fold table (`wp_wpr_above_the_fold`) kept preloading the old hero
+until its rows for the three URLs were deleted; Yoast's og:image comes from
+its indexable, so after setting `_thumbnail_id` the pages needed a no-op
+`wp post update` to rebuild it (36634 also had its Yoast og image set
+explicitly to 54987).
