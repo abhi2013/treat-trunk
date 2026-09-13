@@ -110,3 +110,28 @@ body .elementor-element-416ec58,
 body .elementor-element-416ec58 > .elementor-widget-wrap {
 	background-color: #12786C !important;
 }
+
+/* ---------- basket side-panel buttons ----------
+   "View basket" / "Checkout" in the header's slide-out cart inherit the
+   sitewide teal button treatment from site-modernize.css everywhere else;
+   on corporate-ui pages (which don't load that file) they fell back to
+   Elementor's grey. Same values as the sitewide rule (teal, canvas text,
+   11px radius, deep teal on hover), scoped to the cart panel only. */
+body .elementor-menu-cart__footer-buttons .elementor-button,
+body .elementor-menu-cart__footer-buttons a.button {
+	background-color: #12786C !important;
+	border-color: #12786C !important;
+	color: #FAFAF8 !important;
+	border-radius: 11px !important;
+	font-family: 'DM Sans', sans-serif !important;
+	font-weight: 700 !important;
+}
+body .elementor-menu-cart__footer-buttons .elementor-button:hover,
+body .elementor-menu-cart__footer-buttons a.button:hover {
+	background-color: #0B5951 !important;
+	border-color: #0B5951 !important;
+	color: #FAFAF8 !important;
+}
+body .elementor-menu-cart__footer-buttons .elementor-button .elementor-button-text {
+	color: #FAFAF8 !important;
+}

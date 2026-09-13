@@ -92,6 +92,11 @@ add_filter( 'rocket_rucss_safelist', function ( $safelist ) {
 	// the gift-page / homepage product images flat; safelisting the fragment
 	// forces every rule whose selector contains it to be retained.
 	$safelist[] = '[href*="/product/"]';
+	// The header's slide-out basket is off-canvas (aria-hidden) when RUCSS
+	// snapshots the page, so its "View basket"/"Checkout" button rules
+	// (corporate-ui/assets/corporate-orders.css, added 2026-09-13) would be
+	// dropped as unused and the buttons fall back to Elementor's grey.
+	$safelist[] = '.elementor-menu-cart__footer-buttons';
 	return $safelist;
 } );
 
