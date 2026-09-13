@@ -942,6 +942,17 @@ add_action( 'wp_footer', function () {
 			}
 			var submenu = li.querySelector( ':scope > .sub-menu' );
 			if ( submenu ) {
+				/* The last top-level dropdown ("About", added 2026-09-13)
+				   sits at the right edge of the header and Elementor
+				   positions panels from the parent's left edge, so it ran
+				   off the viewport. Anchor it to the right instead. Done
+				   here as inline styles because a <style> rule for it gets
+				   stripped by WP Rocket's Remove Unused CSS (the panel is
+				   display:none when RUCSS scans the page). */
+				if ( show && li.parentElement && li === li.parentElement.lastElementChild ) {
+					submenu.style.left  = 'auto';
+					submenu.style.right = '0';
+				}
 				submenu.style.display = show ? 'block' : 'none';
 			}
 		}
@@ -1749,18 +1760,6 @@ add_filter( 'elementor/frontend/the_content', function ( $content ) {
  * (`pagename`), so /corporate-christmas-gifting/ was a 404 after the
  * 2026-09-13 re-slug despite the _wp_old_slug meta being in place.
  */
-/**
- * Desktop nav: the last top-level dropdown ("About", added 2026-09-13) sits
- * at the right edge of the header, and Elementor positions sub-menus from
- * their parent's left edge, so its panel ran off the right of the viewport
- * ("Our Mission & Valu…"). Anchor the last item's panel to the right instead.
- * Printed sitewide from here because the header is shared by every page,
- * including the corporate-ui pages that don't load site-modernize.css.
- */
-add_action( 'wp_head', function () {
-	echo '<style id="tt-nav-last-dropdown">.elementor-nav-menu--main > ul.elementor-nav-menu > li.menu-item-has-children:last-child > ul.sub-menu{left:auto !important;right:0 !important;}</style>' . "\n";
-}, 40 );
-
 add_action( 'template_redirect', function () {
 	$path = trim( wp_parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH ), '/' );
 	if ( 'corporate-christmas-gifting' === $path ) {
