@@ -1858,3 +1858,91 @@ function tt_corporate_enquiry_notify() {
 add_filter( 'rocket_atf_elements', function ( $elements ) {
 	return is_front_page() ? array() : $elements;
 } );
+
+/**
+ * Subscriptions: ship the welcome box on the initial order (added 2026-09-13).
+ *
+ * Every subscription variation is synced to the 28th with proration off, so
+ * unless the customer buys on the sync day WooCommerce Subscriptions marks
+ * the cart item as a one-period free trial
+ * (WC_Subscriptions_Synchroniser::maybe_set_free_trial) so that only the
+ * sign-up fee is charged now. Two side effects of that "free trial" then
+ * remove shipping from the initial order entirely, even though the
+ * sign-up-fee welcome box / gift box ships immediately:
+ *   1. WC_Subscriptions_Cart::charge_shipping_up_front() says "everything is
+ *      on a free trial, don't charge shipping now";
+ *   2. WC_Subscriptions_Cart::set_cart_shipping_packages() (priority -10 on
+ *      woocommerce_cart_shipping_packages) strips every trial item out of the
+ *      initial shipping packages, so no rates are calculated at all.
+ * The order is therefore created with NO shipping line. Royal Mail Click &
+ * Drop silently drops any order without a shipping line, so none of these
+ * welcome boxes ever reached it (every new-subscription checkout order since
+ * at least Sep 2025, e.g. #54943). Renewal orders are unaffected: they
+ * inherit the subscription's recurring shipping line.
+ *
+ * Gated on a non-zero sign-up fee so the "wait for the next box" option
+ * (sign-up fee 0, nothing ships now) stays shipping-free. The UK zone offers
+ * Free shipping with no minimum, so customers still normally pay £0; this
+ * only makes the checkout pick a method and record it on the order.
+ */
+function tt_welcome_box_ships_now( $product ) {
+	return $product instanceof WC_Product
+		&& class_exists( 'WC_Subscriptions_Product' )
+		&& WC_Subscriptions_Product::is_subscription( $product )
+		&& $product->needs_shipping()
+		&& (float) WC_Subscriptions_Product::get_sign_up_fee( $product ) > 0;
+}
+
+// 1. Charge shipping up front when a welcome box ships now.
+add_filter( 'woocommerce_subscriptions_cart_shipping_up_front', function ( $up_front ) {
+	if ( $up_front || ! function_exists( 'WC' ) || ! WC()->cart ) {
+		return $up_front;
+	}
+	foreach ( WC()->cart->get_cart() as $cart_item ) {
+		if ( isset( $cart_item['data'] ) && tt_welcome_box_ships_now( $cart_item['data'] ) ) {
+			return true;
+		}
+	}
+	return $up_front;
+} );
+
+// 2. Put the welcome box back into the initial shipping packages after
+//    Subscriptions strips it. Snapshot the packages before WCS runs (-10),
+//    then restore the qualifying items afterwards (0).
+function tt_welcome_box_package_store( $packages = null ) {
+	static $store = array();
+	if ( null !== $packages ) {
+		$store = $packages;
+	}
+	return $store;
+}
+add_filter( 'woocommerce_cart_shipping_packages', function ( $packages ) {
+	tt_welcome_box_package_store( is_array( $packages ) ? $packages : array() );
+	return $packages;
+}, -20 );
+add_filter( 'woocommerce_cart_shipping_packages', function ( $packages ) {
+	if ( ! is_array( $packages ) || ! class_exists( 'WC_Subscriptions_Cart' ) || 'none' !== WC_Subscriptions_Cart::get_calculation_type() ) {
+		return $packages;
+	}
+	foreach ( tt_welcome_box_package_store() as $index => $original ) {
+		if ( empty( $original['contents'] ) || ! is_array( $original['contents'] ) ) {
+			continue;
+		}
+		foreach ( $original['contents'] as $key => $cart_item ) {
+			if ( isset( $packages[ $index ]['contents'][ $key ] ) ) {
+				continue;
+			}
+			if ( empty( $cart_item['data'] ) || ! tt_welcome_box_ships_now( $cart_item['data'] ) ) {
+				continue;
+			}
+			if ( ! isset( $packages[ $index ] ) ) {
+				$packages[ $index ]                  = $original;
+				$packages[ $index ]['contents']      = array();
+				$packages[ $index ]['contents_cost'] = 0;
+			}
+			$packages[ $index ]['contents'][ $key ] = $cart_item;
+			$packages[ $index ]['contents_cost']   += isset( $cart_item['line_total'] ) ? (float) $cart_item['line_total'] : 0;
+		}
+	}
+	return $packages;
+}, 0 );
