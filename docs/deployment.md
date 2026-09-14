@@ -218,3 +218,42 @@ from delay-JS; no WP Rocket setting changed, so no PageSpeed impact.
 Load note: five `rocket_clean_domain()` purges in ~25 minutes pushed the
 5-minute load average to ~7 on 2 cores (preload regenerating ~550 URLs);
 space purges out.
+
+### SEO weekly actions — 2026-09-14
+
+Source: the weekly GSC analysis for 5–11 Sep (pasted by the owner). Deployed
+directly to production (staging still unreachable), owner approved all seven
+writes in one batch. Script and snippets: `scripts/seo-weekly-2026-09-14/`
+(`DRY_RUN=1` builds and diffs only). Server backups of every post_content and
+Yoast value touched: `/home/bitnami/backups/2026-09-14-seo/`.
+
+- 54675 `/best-snack-subscription-boxes-uk/`: Yoast title
+  "Best Snack Box Subscription UK 2026: 6 Boxes Compared" (was H1-derived) +
+  new meta naming the six boxes and the from-price. Head-term CTR fix.
+- 41958 menopause blog: `tt-featured-pick` callout after paragraph 1 linking
+  the Menopause Snack Box (page reached position 6 with 0 product clicks).
+- 40571 commute blog: Yoast title "5 Best Snack Boxes for Your Commute +
+  Snack Box Subscription" + meta, subscription CTA block before the closing
+  paragraph (monthly / Mini / Letterbox / plans).
+- 37444 wellbeing-gifts blog: three-card `tt-product-block` (New Mum,
+  Menopause, Full Treat Trunk) after the existing pick box, plus a line to
+  corporate gifts and Christmas hampers.
+- 41103 corporate Christmas blog: hampers callout with the 20 Nov / 11 Dec /
+  17 Dec deadlines after the intro; Yoast title now "...to Staff in 2026".
+- Content went in with `wp post update <id> <file>` (WP Rocket purges on
+  wp_update_post); Yoast meta via `wp post meta update` followed by a manual
+  `find <rocket-cache>/<slug> -type f -delete` (meta updates do not purge).
+
+Checked and deliberately not changed:
+- `/office-snack-boxes/` and `/corporate-christmas-hampers/` were already
+  200, index/follow, self-canonical, in the page sitemap and in the nav (the
+  report's data window predates the 13 Sep launch). Owner requested indexing
+  in GSC on 14 Sep. `/corporate-christmas-gifting/` 301s to the hampers page.
+- Head term "snack box subscription" −22%: GSC daily export shows no
+  single-day cliff; the prior week held 2.5–3.4k/day spikes, 3-month trend is
+  up (5–6k/week in June → 10–14k/week in Aug–Sep). Desktop product-grid
+  slots supply ~90% of impressions; mobile (pos 3.3) supplies the clicks.
+- `/subscribe/`: 316 impressions / 0 clicks in 3 months, position 50–99 on
+  head terms the listicle already owns. NOT canonicalised to a product.
+- Ahrefs MCP `gsc-*` endpoints return "Insufficient plan"; the Chrome
+  extension's Google account has no access to the GSC property.
