@@ -45,7 +45,7 @@ $col    = 1;
 <p>
 	<?php echo apply_filters( 'woocommerce_my_account_my_address_description', esc_html__( 'The following addresses will be used on the checkout page by default.', 'woocommerce' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 </p>
-<div id="address-change-message">Changes to your address will take effect from your next subscription order. To change the address on any open orders, please email us at <a href="mailto:hello@treattrunk.co.uk?subject=Address Change">hello@treattrunk.co.uk</a></div>
+<div id="address-change-message">Your subscription boxes go to the address saved on your subscription (shown below). When you edit your shipping address, keep the box ticked to move your subscription too. For an order already placed this month, email us at <a href="mailto:hello@treattrunk.co.uk?subject=Address Change">hello@treattrunk.co.uk</a>.</div>
 
 <?php if ( ! wc_ship_to_billing_address_only() && wc_shipping_enabled() ) : ?>
 	<div class="u-columns woocommerce-Addresses col2-set addresses">

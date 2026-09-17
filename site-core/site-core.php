@@ -2162,3 +2162,137 @@ add_action( 'woocommerce_checkout_subscription_created', function ( $subscriptio
 		break;
 	}
 }, 10, 1 );
+
+/**
+ * My Account → Addresses: keep subscriptions in step with the account address.
+ *
+ * WooCommerce Subscriptions only copies an edit of the account shipping
+ * address onto existing subscriptions when the customer ticks an unticked,
+ * jargon-labelled checkbox ("Update the Shipping Address used for all future
+ * renewals of my active subscriptions"). Renewal orders, their emails and the
+ * Royal Mail labels all take the SUBSCRIPTION's address, not the account one,
+ * so a customer who edits the account address and misses the box keeps getting
+ * boxes at the old place with no warning (found 2026-09-17: two years of boxes
+ * to a subscriber's previous flat). The theme's Addresses page even told them
+ * the change would apply to their next subscription order.
+ *
+ * Five small pieces, all on the customer-facing account pages only:
+ *  1. the WCS checkbox defaults to ticked;
+ *  2. its label is plain English;
+ *  3. (theme/hello-elementor/woocommerce/myaccount/my-address.php) the banner
+ *     on the Addresses page says what actually happens;
+ *  4. after saving the shipping address the customer sees a green notice with
+ *     the address the subscription will now ship to, or a red one naming the
+ *     old address the subscription still uses, with a link to change it;
+ *  5. the Addresses page shows the subscription's own shipping address under
+ *     the account one, flagged when the two differ.
+ */
+
+/** Active / on-hold subscriptions for a user (empty array if WCS is absent). */
+function tt_customer_live_subscriptions( $user_id ) {
+	if ( ! $user_id || ! function_exists( 'wcs_get_users_subscriptions' ) ) {
+		return array();
+	}
+	$live = array();
+	foreach ( wcs_get_users_subscriptions( $user_id ) as $subscription ) {
+		if ( $subscription->has_status( array( 'active', 'on-hold' ) ) ) {
+			$live[] = $subscription;
+		}
+	}
+	return $live;
+}
+
+/** Loose comparison of two WC address arrays: same first line and postcode. */
+function tt_same_delivery_address( $a, $b ) {
+	$key = function ( $addr ) {
+		$s = ( isset( $addr['address_1'] ) ? $addr['address_1'] : '' ) . ( isset( $addr['postcode'] ) ? $addr['postcode'] : '' );
+		return preg_replace( '/[^a-z0-9]/', '', strtolower( $s ) );
+	};
+	return $key( $a ) === $key( $b );
+}
+
+/** One-line rendering of a WC address array. */
+function tt_inline_address( $addr ) {
+	return wp_strip_all_tags( WC()->countries->get_formatted_address( (array) $addr, ', ' ) );
+}
+
+/** URL of the per-subscription "Change address" form. */
+function tt_subscription_change_address_url( $subscription ) {
+	return add_query_arg( 'subscription', $subscription->get_id(), wc_get_endpoint_url( 'edit-address', 'shipping', wc_get_page_permalink( 'myaccount' ) ) );
+}
+
+// 1. Tick "also update my subscriptions" by default.
+add_filter( 'wcs_update_all_subscriptions_addresses_checked', '__return_true' );
+
+// 2. Plain-English label for that checkbox.
+add_filter( 'woocommerce_form_field_args', function ( $args, $key ) {
+	if ( 'update_all_subscriptions_addresses' !== $key ) {
+		return $args;
+	}
+	global $wp;
+	$type          = isset( $wp->query_vars['edit-address'] ) ? $wp->query_vars['edit-address'] : 'shipping';
+	$args['label'] = ( 'billing' === $type )
+		? 'Also use this billing address for my subscription'
+		: 'Also send my subscription boxes to this address';
+	return $args;
+}, 10, 2 );
+
+// 4. Tell the customer what happened to the subscription after they save.
+add_action( 'woocommerce_customer_save_address', function ( $user_id, $address_type, $fields = null, $customer = null ) {
+	if ( 'shipping' !== $address_type || isset( $_POST['update_subscription_address'] ) || wc_notice_count( 'error' ) > 0 ) {
+		return; // billing edits, the per-subscription form (WCS redirects itself), or a failed save
+	}
+	$subscriptions = tt_customer_live_subscriptions( $user_id );
+	if ( ! $subscriptions ) {
+		return;
+	}
+	if ( ! $customer instanceof WC_Customer ) {
+		$customer = new WC_Customer( $user_id );
+	}
+	$account = $customer->get_shipping();
+	if ( isset( $_POST['update_all_subscriptions_addresses'] ) ) {
+		// WCS (priority 10) has already copied the address onto every live subscription.
+		wc_add_notice( 'Your subscription boxes will now be sent to: ' . esc_html( tt_inline_address( $account ) ), 'success' );
+		return;
+	}
+	foreach ( $subscriptions as $subscription ) {
+		$sub_address = $subscription->get_address( 'shipping' );
+		if ( tt_same_delivery_address( $sub_address, $account ) ) {
+			continue;
+		}
+		wc_add_notice( sprintf(
+			'Your subscription boxes are still being sent to: %s. <a href="%s">Change the subscription address</a> if you want them at your new address.',
+			esc_html( tt_inline_address( $sub_address ) ),
+			esc_url( tt_subscription_change_address_url( $subscription ) )
+		), 'error' );
+	}
+}, 20, 4 );
+
+// 5. Show the subscription's own delivery address under the account shipping address.
+add_action( 'woocommerce_my_account_after_my_address', function ( $name ) {
+	if ( 'shipping' !== $name ) {
+		return;
+	}
+	$subscriptions = tt_customer_live_subscriptions( get_current_user_id() );
+	if ( ! $subscriptions ) {
+		return;
+	}
+	$customer = new WC_Customer( get_current_user_id() );
+	$account  = $customer->get_shipping();
+	$many     = count( $subscriptions ) > 1;
+	echo '<style>.tt-sub-address{margin-top:.9rem;padding:.75rem .9rem;border-radius:.5rem;background:rgba(0,0,0,.05);font-size:.95em;line-height:1.5}.tt-sub-address strong{display:block;margin-bottom:.15rem}.tt-sub-address .tt-ok{color:#1b7f3b}.tt-sub-address .tt-warn{color:#b00020;font-weight:600}.tt-sub-address a{text-decoration:underline}</style>';
+	foreach ( $subscriptions as $subscription ) {
+		$sub_address = $subscription->get_address( 'shipping' );
+		$same        = tt_same_delivery_address( $sub_address, $account );
+		echo '<div class="tt-sub-address">';
+		echo '<strong>' . ( $many ? sprintf( 'Subscription #%d boxes are sent to:', $subscription->get_id() ) : 'Your subscription boxes are sent to:' ) . '</strong>';
+		echo esc_html( tt_inline_address( $sub_address ) ) . '<br>';
+		if ( $same ) {
+			echo '<span class="tt-ok">&#10003; Same as your shipping address above.</span> ';
+		} else {
+			echo '<span class="tt-warn">&#9888; Different from your shipping address above.</span> ';
+		}
+		echo '<a href="' . esc_url( tt_subscription_change_address_url( $subscription ) ) . '">Change subscription address</a>';
+		echo '</div>';
+	}
+}, 10, 1 );
