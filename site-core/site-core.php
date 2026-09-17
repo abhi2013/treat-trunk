@@ -1381,9 +1381,12 @@ function tt_noindex_utility_page_paths() {
  * through a campaign link must NOT be added here.
  *
  * 43461 vegan-snack-box - retired, confirmed 2026-08-01.
+ * 7589  gift-treat-trunk - hidden duplicate of one-off-treat-trunk; its URL
+ *       already 301s there, yet product-sitemap.xml still listed it and GSC
+ *       reported it as "crawled - currently not indexed" (2026-09-17).
  */
 function tt_noindex_product_ids() {
-	return array( 43461 );
+	return array( 43461, 7589 );
 }
 
 function tt_thin_recap_slugs() {
@@ -1515,6 +1518,31 @@ add_filter( 'wpseo_exclude_from_sitemap_by_post_ids', function ( $excluded ) {
 	}
 	return array_merge( (array) $excluded, $ids );
 } );
+
+/**
+ * Crawl-budget hygiene for the virtual robots.txt (there is no physical file;
+ * WooCommerce and Yoast both append to this same filter). Three weeks of
+ * Googlebot traffic to 2026-09-17 showed ~5% of its requests going to
+ * ?wc-ajax=get_refreshed_fragments (a JSON cart endpoint) and a steady stream of
+ * WooPayments express-checkout URLs - each carries a fresh _wpnonce, so Google
+ * scrapes an endless supply of unique URLs out of the "you must log in" JSON
+ * blob in product-page HTML. GSC listed 16 of them under "crawled - currently
+ * not indexed". The product_shipping_class query URLs are already noindexed
+ * above but have no reason to be fetched at all. None of these is ever needed
+ * for rendering, so blocking them costs nothing.
+ */
+add_filter( 'robots_txt', function ( $output, $public ) {
+	if ( ! $public ) {
+		return $output;
+	}
+	$output .= "\n# Treat Trunk: crawl-budget hygiene (site-core)\n";
+	$output .= "User-agent: *\n";
+	$output .= "Disallow: /*?wc-ajax=\n";
+	$output .= "Disallow: /*&wc-ajax=\n";
+	$output .= "Disallow: /*wcpay_express_checkout_redirect_url=\n";
+	$output .= "Disallow: /*?taxonomy=product_shipping_class\n";
+	return $output;
+}, 20, 2 );
 
 /**
  * Drop the post_tag and product_tag archives from the XML sitemap so they match
