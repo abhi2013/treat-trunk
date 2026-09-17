@@ -2260,11 +2260,13 @@ add_action( 'woocommerce_customer_save_address', function ( $user_id, $address_t
 		if ( tt_same_delivery_address( $sub_address, $account ) ) {
 			continue;
 		}
+		// A 'notice' (not 'error') so WooCommerce still completes the save and redirect;
+		// the tt-warn class paints it red (see the account-page CSS below).
 		wc_add_notice( sprintf(
-			'Your subscription boxes are still being sent to: %s. <a href="%s">Change the subscription address</a> if you want them at your new address.',
+			'<span class="tt-warn">Your subscription boxes are still being sent to: %s.</span> <a href="%s">Change the subscription address</a> if you want them at your new address.',
 			esc_html( tt_inline_address( $sub_address ) ),
 			esc_url( tt_subscription_change_address_url( $subscription ) )
-		), 'error' );
+		), 'notice' );
 	}
 }, 20, 4 );
 
@@ -2280,7 +2282,6 @@ add_action( 'woocommerce_my_account_after_my_address', function ( $name ) {
 	$customer = new WC_Customer( get_current_user_id() );
 	$account  = $customer->get_shipping();
 	$many     = count( $subscriptions ) > 1;
-	echo '<style>.tt-sub-address{margin-top:.9rem;padding:.75rem .9rem;border-radius:.5rem;background:rgba(0,0,0,.05);font-size:.95em;line-height:1.5}.tt-sub-address strong{display:block;margin-bottom:.15rem}.tt-sub-address .tt-ok{color:#1b7f3b}.tt-sub-address .tt-warn{color:#b00020;font-weight:600}.tt-sub-address a{text-decoration:underline}</style>';
 	foreach ( $subscriptions as $subscription ) {
 		$sub_address = $subscription->get_address( 'shipping' );
 		$same        = tt_same_delivery_address( $sub_address, $account );
@@ -2296,3 +2297,20 @@ add_action( 'woocommerce_my_account_after_my_address', function ( $name ) {
 		echo '</div>';
 	}
 }, 10, 1 );
+
+// Styling for the pieces above, account pages only: the subscription-address block,
+// the red warning inside a WooCommerce notice, and no "(optional)" on the checkbox.
+add_action( 'wp_head', function () {
+	if ( ! function_exists( 'is_account_page' ) || ! is_account_page() ) {
+		return;
+	}
+	echo '<style id="tt-account-address-css">'
+		. '.tt-sub-address{margin-top:.9rem;padding:.75rem .9rem;border-radius:.5rem;background:rgba(0,0,0,.05);font-size:.95em;line-height:1.5}'
+		. '.tt-sub-address strong{display:block;margin-bottom:.15rem}'
+		. '.tt-sub-address a{text-decoration:underline}'
+		. '.tt-ok{color:#1b7f3b}'
+		. '.tt-warn{color:#b00020;font-weight:600}'
+		. '.woocommerce-info .tt-warn{color:#b00020}'
+		. 'label[for="update_all_subscriptions_addresses"] .optional{display:none}'
+		. '</style>';
+} );
