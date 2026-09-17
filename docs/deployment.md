@@ -257,3 +257,30 @@ Checked and deliberately not changed:
   head terms the listicle already owns. NOT canonicalised to a product.
 - Ahrefs MCP `gsc-*` endpoints return "Insufficient plan"; the Chrome
   extension's Google account has no access to the GSC property.
+
+## My Account addresses: subscriptions follow the account address — 2026-09-17
+
+Background: WooCommerce Subscriptions only copies an account shipping-address
+edit onto existing subscriptions when an unticked checkbox is ticked, while the
+theme's Addresses banner told customers the change applied automatically. One
+subscriber's boxes went to her previous flat from Aug 2024 to Sep 2026.
+
+Files: `site-core/site-core.php` (end of file: checkbox default-ticked,
+plain-English label via `woocommerce_form_field_args`, post-save notice on
+`woocommerce_customer_save_address` at priority 20, subscription address block
+on `woocommerce_my_account_after_my_address`, account-page CSS via `wp_head`)
+and `theme/hello-elementor/woocommerce/myaccount/my-address.php` (banner copy).
+Commits 27f00ff, c43374b.
+
+Verified on staging (instance started with `aws lightsail start-instance`,
+stopped again afterwards) with a throwaway subscriber, then copied to
+production with `.bak-20260917-addr` backups next to each file. No PHP restart
+needed: prod OPcache revalidates every 60s. The same site-core.php deploy also
+took live the 2026-09-17 robots.txt crawl-budget rules and the product 7589
+sitemap exclusion, which had been committed but not deployed.
+
+Gotcha: the "still ships to the old address" message must be a `notice`, not an
+`error` notice — WooCommerce aborts its own success redirect when any error
+notice exists after the save-address action, leaving the customer on the form.
+
+Rollback: restore the two `.bak-20260917-addr` files.
